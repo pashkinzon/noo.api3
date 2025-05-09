@@ -1,0 +1,5 @@
+.env
+obj
+bin
+Debug
+appsettings.json

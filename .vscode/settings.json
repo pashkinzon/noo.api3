@@ -1,0 +1,6 @@
+{
+	"omnisharp.enableEditorConfigSupport": true,
+	"omnisharp.useModernNet": true,
+	"editor.detectIndentation": false,
+	"prettier.useTabs": false
+}
