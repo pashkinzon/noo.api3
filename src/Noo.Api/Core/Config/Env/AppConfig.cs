@@ -13,6 +13,9 @@ public class AppConfig : IConfig
     public required string Location { get; set; }
 
     [Required]
+    public required string BaseUrl { get; set; }
+
+    [Required]
     public readonly Version AppVersion = new(4, 0, 0);
 
     [Required]

@@ -18,7 +18,7 @@ public class JwtConfig : IConfig
     public required string Audience { get; init; }
 
     [Required]
-    public required int ExpireHours { get; init; }
+    public required int ExpireDays { get; init; }
 
     public SymmetricSecurityKey GetSymmetricSecurityKey()
     {

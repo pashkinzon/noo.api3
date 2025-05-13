@@ -1,13 +1,13 @@
 using AutoMapper;
+using SystemTextJsonPatch;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
-using Noo.Api.Core.Request;
 using Noo.Api.Core.Utils.DI;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Works.DTO;
 using Noo.Api.Works.Models;
-using SystemTextJsonPatch;
 
 namespace Noo.Api.Works.Services;
 
@@ -31,7 +31,7 @@ public class WorkService : IWorkService
     {
         var model = Mapper.Map<WorkModel>(work);
 
-        await UnitOfWork.GetRepository<WorkModel>().AddAsync(model);
+        UnitOfWork.GetRepository<WorkModel>().Add(model);
         await UnitOfWork.CommitAsync();
 
         return model.Id;
@@ -58,17 +58,21 @@ public class WorkService : IWorkService
     {
         var repository = UnitOfWork.GetRepository<WorkModel>();
         var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException("Work not found");
+
+        if (model == null)
+        {
+            throw new NotFoundException();
+        }
+
         var dto = Mapper.Map<UpdateWorkDTO>(model);
 
         modelState ??= new ModelStateDictionary();
 
-        workUpdatePayload.ApplyTo(dto, (error) =>
-            modelState.AddModelError(error.Operation.ToString() ?? "Unknown operation", error.ErrorMessage)
-        );
+        workUpdatePayload.ApplyToAndValidate(dto, modelState);
 
         if (!modelState.IsValid)
         {
-            return;
+            throw new BadRequestException();
         }
 
         Mapper.Map(dto, model);

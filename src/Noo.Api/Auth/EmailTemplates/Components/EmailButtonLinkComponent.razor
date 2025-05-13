@@ -1,0 +1,28 @@
+<div class="button-link" style="
+	text-align: center;
+	padding: 20px 0;
+">
+	<a href="@Link" style="
+		text-decoration: none;
+		display: inline-block;
+		background-color: @Variables.PrimaryColor;
+		color: #000;
+		padding: 6px 20px;
+		border-radius: 60px;
+		font-size: 16px;
+		text-transform: uppercase;
+		font-weight: 500;
+		font-family: 'Montserrat', Arial, sans-serif;
+		border: 1px solid #000;
+	">
+		@Title
+	</a>
+</div>
+
+@code {
+	[Parameter]
+	public string Title { get; set; } = default!;
+
+	[Parameter]
+	public string Link { get; set; } = default!;
+}

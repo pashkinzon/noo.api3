@@ -32,9 +32,9 @@ public class Repository<T> : IRepository<T> where T : BaseModel, new()
             .FirstOrDefaultAsync();
     }
 
-    public async Task AddAsync(T entity)
+    public void Add(T entity)
     {
-        await Context.GetDbSet<T>().AddAsync(entity);
+        Context.GetDbSet<T>().Add(entity);
     }
 
     public Task<bool> ExistsAsync(Ulid id)

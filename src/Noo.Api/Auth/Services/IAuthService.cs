@@ -1,0 +1,18 @@
+using Noo.Api.Auth.DTO;
+
+namespace Noo.Api.Auth.Services;
+
+public interface IAuthService
+{
+    public Task<LoginResponseDTO> LoginAsync(LoginDTO request);
+
+    public Task RegisterAsync(RegisterDTO request);
+
+    public Task RequestPasswordResetAsync(string email);
+
+    public Task ConfirmPasswordResetAsync(string email, string token, string newPassword);
+
+    public Task RequestEmailChangeAsync(string newEmail);
+
+    public Task ConfirmEmailChangeAsync(string token);
+}

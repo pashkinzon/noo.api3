@@ -17,7 +17,7 @@ public interface IRepository<T> where T : BaseModel
 
     public Task<bool> ExistsAsync(Ulid id);
 
-    public Task AddAsync(T entity);
+    public void Add(T entity);
 
     public void Update(T entity);
 

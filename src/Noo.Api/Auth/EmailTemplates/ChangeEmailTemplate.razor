@@ -1,0 +1,16 @@
+@using Noo.Api.Auth.EmailTemplates.Components
+
+<BaseEmailTemplate Title="Изменение email">
+	Здравствуйте, @Data.Name!
+	<br><br>
+	С вашей учетной записи была получен запрос на изменение адреса электронной почты. Чтобы подтвердить его, перейдите по следующей ссылке:
+	<br>
+	<EmailButtonLinkComponent Title="Подтвердить email" Link="@Data.ChangeEmailLink" />
+	<br>
+	Если вы не запрашивали изменение адреса электронной почты, просто проигнорируйте это письмо.
+</BaseEmailTemplate>
+
+@code {
+    [Parameter]
+    public ChangeEmailData Data { get; set; } = default!;
+}

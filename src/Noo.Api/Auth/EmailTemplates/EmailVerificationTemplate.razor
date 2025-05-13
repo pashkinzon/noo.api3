@@ -1,0 +1,16 @@
+@using Noo.Api.Auth.EmailTemplates.Components
+
+<BaseEmailTemplate Title="Сброс пароля">
+	@Data.Name, добро пожаловать на НОО. Платформе!
+	<br><br>
+	Ваша учетная запись была успешно создана. Чтобы активировать ее, перейдите по следующей ссылке:
+	<br>
+	<EmailButtonLinkComponent Title="Подтвердить регистрацию" Link="@Data.VerificationLink" />
+	<br>
+	Если вы не запрашивали регистрацию, просто проигнорируйте это письмо.
+</BaseEmailTemplate>
+
+@code {
+    [Parameter]
+    public EmailVerificationData Data { get; set; } = default!;
+}

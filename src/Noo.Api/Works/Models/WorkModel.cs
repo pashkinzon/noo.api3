@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
-using Noo.Api.Works.DTO;
 using Noo.Api.Works.Types;
 
 namespace Noo.Api.Works.Models;
@@ -28,7 +27,11 @@ public class WorkModel : BaseModel
 
     public ICollection<WorkTaskModel>? Tasks { get; set; }
 
+    #region Navigation Properties
+
     public WorkModel() { }
+
+    #endregion
 
     public WorkModel(Ulid? id)
     {

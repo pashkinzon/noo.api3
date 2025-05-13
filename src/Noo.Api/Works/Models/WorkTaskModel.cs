@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Utils.Richtext;
@@ -48,15 +49,6 @@ public class WorkTaskModel : OrderedModel
     [ForeignKey(nameof(Work))]
     public Ulid WorkId { get; set; }
 
+    [DeleteBehavior(DeleteBehavior.Cascade)]
     public WorkModel? Work { get; set; }
-
-    public WorkTaskModel() { }
-
-    public WorkTaskModel(Ulid? id)
-    {
-        if (id != null)
-        {
-            Id = id.Value;
-        }
-    }
 }

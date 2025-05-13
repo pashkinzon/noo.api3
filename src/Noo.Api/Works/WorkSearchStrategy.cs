@@ -9,6 +9,6 @@ public class WorkSearchStrategy : ISearchStrategy<WorkModel>
 {
     public IQueryable<WorkModel> Apply(IQueryable<WorkModel> query, string needle)
     {
-        return query.Where(x => x.Title.Contains(needle));
+        return query.Where(x => x.Title.Contains(needle, StringComparison.OrdinalIgnoreCase));
     }
 }
