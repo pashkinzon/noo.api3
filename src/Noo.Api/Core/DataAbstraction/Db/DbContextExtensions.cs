@@ -32,15 +32,6 @@ public static class DbContextExtensions
                 .HasKey("Id");
 
             modelBuilder.Entity(modelType)
-                .Property("Id")
-                .HasConversion(
-                    new ValueConverter<Ulid, byte[]>(
-                        v => v.ToByteArray(),
-                        v => new Ulid(v)
-                    )
-                );
-
-            modelBuilder.Entity(modelType)
                 .Property("CreatedAt")
                 .ValueGeneratedOnAdd();
 

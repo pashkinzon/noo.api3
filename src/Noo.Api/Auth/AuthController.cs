@@ -6,6 +6,12 @@ using Noo.Api.Core.Utils.Versioning;
 
 namespace Noo.Api.Auth;
 
+/// <summary>
+/// Controller responsible for handling authentication and user account related actions.
+/// </summary>
+/// <remarks>
+/// Provides endpoints for user login, registration, password reset, and email change operations.
+/// </remarks>
 [ApiVersion(NooApiVersions.Current)]
 [ApiController]
 [Route("auth")]
@@ -19,22 +25,25 @@ public class AuthController : ApiController
     }
 
     [HttpPost("login")]
+    [MapToApiVersion(NooApiVersions.Current)]
     public async Task<IActionResult> LoginAsync([FromBody] LoginDTO request)
     {
         var result = await _authService.LoginAsync(request);
 
-        return Ok(result);
+        return OkResponse(result);
     }
 
     [HttpPost("register")]
+    [MapToApiVersion(NooApiVersions.Current)]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterDTO request)
     {
         await _authService.RegisterAsync(request);
 
-        return CreatedAtAction(nameof(LoginAsync), null);
+        return NoContent();
     }
 
     [HttpPatch("request-password-change")]
+    [MapToApiVersion(NooApiVersions.Current)]
     public async Task<IActionResult> RequestPasswordChangeAsync([FromBody] RequestPasswordChangeDTO request)
     {
         await _authService.RequestPasswordResetAsync(request.Email);
@@ -43,6 +52,7 @@ public class AuthController : ApiController
     }
 
     [HttpPatch("confirm-password-change")]
+    [MapToApiVersion(NooApiVersions.Current)]
     public async Task<IActionResult> ConfirmPasswordChangeAsync([FromBody] ConfirmPasswordChangeDTO request)
     {
         await _authService.ConfirmPasswordResetAsync(request.Email, request.Token, request.NewPassword);
@@ -51,17 +61,19 @@ public class AuthController : ApiController
     }
 
     [HttpPatch("request-email-change")]
+    [MapToApiVersion(NooApiVersions.Current)]
     public async Task<IActionResult> RequestEmailChangeAsync([FromBody] RequestEmailChangeDTO request)
     {
-        await _authService.RequestEmailChangeAsync(request.NewEmail);
+        await _authService.RequestEmailChangeAsync(User.GetId(), request.NewEmail);
 
         return NoContent();
     }
 
     [HttpPatch("confirm-email-change")]
+    [MapToApiVersion(NooApiVersions.Current)]
     public async Task<IActionResult> ConfirmEmailChangeAsync([FromBody] ConfirmEmailChangeDTO request)
     {
-        await _authService.ConfirmEmailChangeAsync(request.Token);
+        await _authService.ConfirmEmailChangeAsync(User.GetId(), request.Token);
 
         return NoContent();
     }

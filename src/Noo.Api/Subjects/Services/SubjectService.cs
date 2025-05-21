@@ -28,7 +28,7 @@ public class SubjectService : ISubjectService
     public async Task<Ulid> CreateSubjectAsync(SubjectCreationDTO subject)
     {
         var subjectModel = _mapper.Map<SubjectModel>(subject);
-        var repository = _unitOfWork.GetRepository<SubjectModel>();
+        var repository = _unitOfWork.SubjectRepository();
 
         repository.Add(subjectModel);
         await _unitOfWork.CommitAsync();
@@ -38,20 +38,20 @@ public class SubjectService : ISubjectService
 
     public async Task DeleteSubjectAsync(Ulid id)
     {
-        var repository = _unitOfWork.GetRepository<SubjectModel>();
+        var repository = _unitOfWork.SubjectRepository();
         repository.DeleteById(id);
         await _unitOfWork.CommitAsync();
     }
 
     public Task<SubjectDTO?> GetSubjectByIdAsync(Ulid id)
     {
-        var repository = _unitOfWork.GetRepository<SubjectModel>();
+        var repository = _unitOfWork.SubjectRepository();
         return repository.GetByIdAsync<SubjectDTO>(id, _mapper.ConfigurationProvider);
     }
 
     public async Task<(IEnumerable<SubjectDTO>, int)> GetSubjectsAsync(Criteria<SubjectModel> criteria)
     {
-        var repository = _unitOfWork.GetRepository<SubjectModel>();
+        var repository = _unitOfWork.SubjectRepository();
         var (items, total) = await repository.SearchAsync<SubjectDTO>(
             criteria,
             _searchStrategy,
@@ -63,7 +63,7 @@ public class SubjectService : ISubjectService
 
     public async Task UpdateSubjectAsync(Ulid id, JsonPatchDocument<SubjectUpdateDTO> subject, ModelStateDictionary? modelState = null)
     {
-        var repository = _unitOfWork.GetRepository<SubjectModel>();
+        var repository = _unitOfWork.SubjectRepository();
         var model = await repository.GetByIdAsync(id);
 
         if (model == null)

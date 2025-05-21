@@ -8,9 +8,7 @@ public static class AuthorizationExtension
     {
         services.AddAuthorization(options =>
         {
-            var registrars = GetPolicyRegistrars();
-
-            foreach (var registrar in registrars)
+            foreach (var registrar in GetPolicyRegistrars())
             {
                 registrar.RegisterPolicies(options);
             }

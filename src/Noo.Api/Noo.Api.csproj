@@ -40,6 +40,7 @@
   <PropertyGroup>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<NoWarn>RCS1021</NoWarn>
     <WarningsAsErrors>IDE1006;$(WarningsAsErrors);RCS1098;RCS1163;</WarningsAsErrors>
   </PropertyGroup>
 

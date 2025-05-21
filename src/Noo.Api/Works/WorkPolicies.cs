@@ -18,61 +18,61 @@ public class WorkPolicies : IPolicyRegistrar
         options.AddPolicy(CanSearchWorks, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString(),
-                UserRoles.Mentor.ToString(),
-                UserRoles.Assistant.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher),
+                nameof(UserRoles.Mentor),
+                nameof(UserRoles.Assistant)
+            ).RequireNotBlocked();
         });
 
         options.AddPolicy(CanGetWork, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString(),
-                UserRoles.Mentor.ToString(),
-                UserRoles.Assistant.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher),
+                nameof(UserRoles.Mentor),
+                nameof(UserRoles.Assistant)
+            ).RequireNotBlocked();
         });
 
         options.AddPolicy(CanSeeWorkStatistics, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher)
+            ).RequireNotBlocked();
         });
 
         options.AddPolicy(CanSeeWorkRelatedMaterials, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher)
+            ).RequireNotBlocked();
         });
 
         options.AddPolicy(CanCreateWorks, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher)
+            ).RequireNotBlocked();
         });
 
         options.AddPolicy(CanEditWorks, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher)
+            ).RequireNotBlocked();
         });
 
         options.AddPolicy(CanDeleteWorks, policy =>
         {
             policy.RequireRole(
-                UserRoles.Admin.ToString(),
-                UserRoles.Teacher.ToString()
-            );
+                nameof(UserRoles.Admin),
+                nameof(UserRoles.Teacher)
+            ).RequireNotBlocked();
         });
     }
 }

@@ -1,7 +1,7 @@
 using AutoMapper;
 using Noo.Api.Core.Utils.AutoMapper;
 using Noo.Api.Users.DTO;
-using Telegram.Bot.Types;
+using Noo.Api.Users.Types;
 
 namespace Noo.Api.Users.Models;
 
@@ -12,7 +12,15 @@ public class UserMapperProfile : Profile
     {
         // user
         CreateMap<UserModel, UserDTO>();
-        CreateMap<UserCreationPayload, User>();
+        CreateMap<UserCreationPayload, UserModel>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.TelegramId, opt => opt.Ignore())
+            .ForMember(dest => dest.TelegramUsername, opt => opt.Ignore())
+            .ForMember(dest => dest.IsBlocked, opt => opt.MapFrom(_ => false))
+            .ForMember(dest => dest.IsVerified, opt => opt.MapFrom(_ => false));
+
 
         // mentor assignment
         CreateMap<MentorAssignmentModel, MentorAssignmentDTO>();

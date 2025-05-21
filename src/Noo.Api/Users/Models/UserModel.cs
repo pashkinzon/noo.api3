@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Noo.Api.Core.DataAbstraction.Model;
+using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Security.Authorization;
 
 namespace Noo.Api.Users.Models;
 
+[Model("user")]
 public class UserModel : BaseModel
 {
     [Required]
@@ -27,6 +29,13 @@ public class UserModel : BaseModel
     [Index("user_email_unique", IsUnique = true)]
     public string Email { get; set; } = string.Empty;
 
+    [Column("telegram_id", TypeName = "VARCHAR(200)")]
+    [Index("user_telegram_id_unique", IsUnique = true)]
+    public string? TelegramId { get; set; }
+
+    [Column("telegram_username", TypeName = "VARCHAR(255)")]
+    public string? TelegramUsername { get; set; }
+
     [Required]
     [MinLength(1)]
     [MaxLength(255)]
@@ -40,4 +49,8 @@ public class UserModel : BaseModel
     [Required]
     [Column("is_blocked", TypeName = "TINYINT(1)")]
     public bool IsBlocked { get; set; }
+
+    [Required]
+    [Column("is_verified", TypeName = "TINYINT(1)")]
+    public bool IsVerified { get; set; }
 }

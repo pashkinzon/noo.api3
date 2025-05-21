@@ -13,12 +13,18 @@ public record UserDTO
 
     public string Name { get; set; } = string.Empty;
 
+    public string? TelegramId { get; set; }
+
+    public string? TelegramUsername { get; set; }
+
     public UserRoles Role { get; set; } = UserRoles.Student;
 
     [JsonIgnore]
     public string PasswordHash { get; set; } = string.Empty;
 
     public bool IsBlocked { get; set; }
+
+    public bool IsVerified { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

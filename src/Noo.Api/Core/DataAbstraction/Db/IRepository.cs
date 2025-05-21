@@ -5,7 +5,7 @@ namespace Noo.Api.Core.DataAbstraction.Db;
 
 public interface IRepository<T> where T : BaseModel
 {
-    public void SetContext(NooDbContext context);
+    public NooDbContext Context { get; init; }
 
     public Task<T?> GetByIdAsync(Ulid id);
 

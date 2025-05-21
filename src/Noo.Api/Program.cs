@@ -4,6 +4,12 @@ using Noo.Api.Core.Initialization.WebHostBuilder;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseDefaultServiceProvider((context, options) =>
+{
+    options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
+    options.ValidateOnBuild = true;
+});
+
 builder.Services.LoadEnvConfigs(builder.Configuration);
 builder.Services.AddNooDbContext(builder.Configuration);
 builder.Services.AddNooAuthentication(builder.Configuration);
@@ -19,7 +25,7 @@ builder.Services.AddNooResponseCompression();
 builder.Services.AddHealthcheckServices();
 builder.Services.AddRequestRateLimiter();
 // TODO: understand response caching and add it
-//builder.Services.AddNooResponseCaching(builder.Configuration);
+// builder.Services.AddNooResponseCaching(builder.Configuration);
 builder.Services.AddRouting();
 builder.Services.AddAutoMapperProfiles();
 // TODO: builder.Services.AddCacheProvider(builder.Configuration);

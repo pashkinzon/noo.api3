@@ -31,7 +31,7 @@ public class WorkService : IWorkService
     {
         var model = Mapper.Map<WorkModel>(work);
 
-        UnitOfWork.GetRepository<WorkModel>().Add(model);
+        UnitOfWork.WorkRepository().Add(model);
         await UnitOfWork.CommitAsync();
 
         return model.Id;
@@ -39,25 +39,22 @@ public class WorkService : IWorkService
 
     public async Task<WorkResponseDTO?> GetWorkAsync(Ulid id)
     {
-        var repository = UnitOfWork.GetSpecificRepository<WorkRepository, WorkModel>();
-
-        var model = await repository.GetWithTasksAsync(id);
+        var model = await UnitOfWork.WorkRepository().GetWithTasksAsync(id);
 
         return Mapper.Map<WorkResponseDTO?>(model);
     }
 
     public async Task<(IEnumerable<WorkResponseDTO>, int)> GetWorksAsync(Criteria<WorkModel> criteria)
     {
-        var repository = UnitOfWork.GetRepository<WorkModel>();
-        var (items, total) = await repository.SearchAsync<WorkResponseDTO>(criteria, SearchStrategy, Mapper.ConfigurationProvider);
+        var (items, total) = await UnitOfWork.WorkRepository().SearchAsync<WorkResponseDTO>(criteria, SearchStrategy, Mapper.ConfigurationProvider);
 
         return (items, total);
     }
 
     public async Task UpdateWorkAsync(Ulid id, JsonPatchDocument<UpdateWorkDTO> workUpdatePayload, ModelStateDictionary? modelState = null)
     {
-        var repository = UnitOfWork.GetRepository<WorkModel>();
-        var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException("Work not found");
+        var repository = UnitOfWork.WorkRepository();
+        var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException();
 
         if (model == null)
         {
@@ -83,8 +80,7 @@ public class WorkService : IWorkService
 
     public async Task DeleteWorkAsync(Ulid id)
     {
-        var repository = UnitOfWork.GetRepository<WorkModel>();
-        repository.DeleteById(id);
+        UnitOfWork.WorkRepository().DeleteById(id);
 
         await UnitOfWork.CommitAsync();
     }

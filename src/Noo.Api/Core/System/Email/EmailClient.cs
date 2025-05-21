@@ -15,11 +15,10 @@ public class EmailClient : IEmailClient
 
     private readonly EmailConfig _config;
 
-    public EmailClient(IOptions<EmailConfig> config, ILogger<EmailClient> logger, ISmtpClient smtpClient)
+    public EmailClient(IOptions<EmailConfig> config, ILogger<EmailClient> logger)
     {
         _logger = logger;
         _config = config.Value;
-        _client = smtpClient;
 
         _client = new SmtpClient
         {
@@ -103,6 +102,6 @@ public class EmailClient : IEmailClient
             return;
         }
 
-        await _client.AuthenticateAsync();
+        await _client.AuthenticateAsync(_config.SmtpUsername, _config.SmtpPassword);
     }
 }

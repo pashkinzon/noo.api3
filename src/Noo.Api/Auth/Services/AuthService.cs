@@ -4,8 +4,9 @@ using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Security;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
-using Noo.Api.Users;
+using Noo.Api.Users.Types;
 using Noo.Api.Users.Services;
+using Microsoft.Extensions.Options;
 
 namespace Noo.Api.Auth.Services;
 
@@ -30,14 +31,14 @@ public class AuthService : IAuthService
         IAuthUrlGenerator urlGenerator,
         IUserService userService,
         IHashService hashService,
-        JwtConfig jwtConfig
+        IOptions<JwtConfig> jwtConfig
     )
     {
         _tokenService = tokenService;
         _userService = userService;
         _emailService = emailService;
         _hashService = hashService;
-        _jwtConfig = jwtConfig;
+        _jwtConfig = jwtConfig.Value;
         _urlGenerator = urlGenerator;
     }
 
@@ -145,7 +146,7 @@ public class AuthService : IAuthService
         await _userService.UpdateUserPasswordAsync(user.Id, _hashService.Hash(newPassword));
     }
 
-    public async Task RequestEmailChangeAsync(string newEmail)
+    public async Task RequestEmailChangeAsync(Ulid userId, string newEmail)
     {
         var exists = await _userService.UserExistsAsync(null, newEmail);
 
@@ -154,7 +155,7 @@ public class AuthService : IAuthService
             throw new AlreadyExistsException();
         }
 
-        var user = await _userService.GetCurrentUserAsync();
+        var user = await _userService.GetUserByIdAsync(userId);
 
         if (user == null)
         {
@@ -167,9 +168,9 @@ public class AuthService : IAuthService
         await _emailService.SendEmailChangeEmailAsync(newEmail, user.Name, link);
     }
 
-    public async Task ConfirmEmailChangeAsync(string token)
+    public async Task ConfirmEmailChangeAsync(Ulid userId, string token)
     {
-        var user = await _userService.GetCurrentUserAsync();
+        var user = await _userService.GetUserByIdAsync(userId);
 
         if (user == null)
         {

@@ -15,6 +15,4 @@ public abstract class BaseModel
 
     [Column("updated_at", TypeName = "TIMESTAMP(6)")]
     public DateTime? UpdatedAt { get; set; }
-
-    public BaseModel() { }
 }

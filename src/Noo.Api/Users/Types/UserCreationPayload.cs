@@ -1,6 +1,6 @@
 using Noo.Api.Core.Security.Authorization;
 
-namespace Noo.Api.Users;
+namespace Noo.Api.Users.Types;
 
 public class UserCreationPayload
 {

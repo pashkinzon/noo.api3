@@ -26,7 +26,20 @@ public class NooDbContext : DbContext
         modelBuilder.HasCharSet(_dbConfig.DefaultCharset);
         modelBuilder.UseCollation(_dbConfig.DefaultCollation);
 
-        modelBuilder.UseRichTextColumns();
         modelBuilder.RegisterModels();
+        modelBuilder.UseRichTextColumns();
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+
+        configurationBuilder.Properties<Ulid>()
+            .HaveConversion<UlidToBytesConverter>()
+            .HaveColumnType("BINARY(16)");
+
+        configurationBuilder.Properties<Ulid?>()
+            .HaveConversion<NullableUlidToBytesConverter>()
+            .HaveColumnType("BINARY(16)");
     }
 }

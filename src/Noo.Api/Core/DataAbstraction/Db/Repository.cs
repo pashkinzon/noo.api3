@@ -7,16 +7,11 @@ namespace Noo.Api.Core.DataAbstraction.Db;
 
 public class Repository<T> : IRepository<T> where T : BaseModel, new()
 {
-    protected NooDbContext Context { get; set; }
+    public NooDbContext Context { get; init; }
 
     public Repository(NooDbContext? context = null)
     {
         Context = context!;
-    }
-
-    public void SetContext(NooDbContext context)
-    {
-        Context = context;
     }
 
     public Task<T?> GetByIdAsync(Ulid id)

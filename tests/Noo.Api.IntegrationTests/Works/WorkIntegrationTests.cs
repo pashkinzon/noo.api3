@@ -10,114 +10,113 @@ namespace Noo.Api.IntegrationTests.Works;
 
 public class WorkIntegrationTests : IClassFixture<NooWebApplicationFactory>
 {
-    private readonly HttpClient _client;
-    private readonly NooWebApplicationFactory _factory;
-    private const string _baseUrl = "/api/work";
+	private readonly HttpClient _client;
 
-    public WorkIntegrationTests(NooWebApplicationFactory factory)
-    {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
+	private const string _baseUrl = "/work";
 
-    [Fact(DisplayName = "Create a work and try to get it by id")]
-    public async Task CreateWorkAsync__ShouldReturnCreated()
-    {
-        // Arrange
-        var createDto = new CreateWorkDTO()
-        {
-            Title = "Test Work",
-            Type = WorkType.Test,
-            Description = "Test Description",
-            Tasks =
-            [
-                new CreateWorkTaskDTO()
-                {
-                    Type = WorkTaskType.Word,
-                    Order = 1,
-                    MaxScore = 10,
-                    Content = RichTestFactory.Create("Test Content"),
-                    RightAnswer = "Test Answer",
-                    SolveHint = RichTestFactory.Create("Test Hint"),
-                    Explanation = RichTestFactory.Create("Test Explanation"),
-                    CheckStrategy = WorkTaskCheckStrategy.Manual,
-                    ShowAnswerBeforeCheck = false,
-                    CheckOneByOne = false
-                }
-            ]
-        };
+	public WorkIntegrationTests(NooWebApplicationFactory factory)
+	{
+		_client = factory.CreateClient();
+	}
 
-        var content = JsonSerializer.Serialize(createDto);
-        var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
+	[Fact(DisplayName = "Create a work and try to get it by id")]
+	public async Task CreateWorkAsync__ShouldReturnCreated()
+	{
+		// Arrange
+		var createDto = new CreateWorkDTO()
+		{
+			Title = "Test Work",
+			Type = WorkType.Test,
+			Description = "Test Description",
+			Tasks =
+			[
+				new CreateWorkTaskDTO()
+				{
+					Type = WorkTaskType.Word,
+					Order = 1,
+					MaxScore = 10,
+					Content = RichTestFactory.Create("Test Content"),
+					RightAnswer = "Test Answer",
+					SolveHint = RichTestFactory.Create("Test Hint"),
+					Explanation = RichTestFactory.Create("Test Explanation"),
+					CheckStrategy = WorkTaskCheckStrategy.Manual,
+					ShowAnswerBeforeCheck = false,
+					CheckOneByOne = false
+				}
+			]
+		};
 
-        // Act
-        var response = await _client.PostAsync(_baseUrl, httpContent);
+		var content = JsonSerializer.Serialize(createDto);
+		var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+		// Act
+		var response = await _client.PostAsync(_baseUrl, httpContent);
 
-        var responseBody = await response.Content.ReadAsStringAsync();
-        responseBody.Should().NotBeNullOrEmpty();
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var workId = JsonSerializer.Deserialize<Ulid>(responseBody);
-        workId.Should().NotBeNull();
+		var responseBody = await response.Content.ReadAsStringAsync();
+		responseBody.Should().NotBeNullOrEmpty();
 
-        var workResponse = await _client.GetAsync($"{_baseUrl}/{workId}");
+		var workId = JsonSerializer.Deserialize<Ulid>(responseBody);
+		workId.Should().NotBeNull();
 
-        workResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+		var workResponse = await _client.GetAsync($"{_baseUrl}/{workId}");
 
-        var workContent = await workResponse.Content.ReadAsStringAsync();
+		workResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        workContent.Should().Contain("Test Work");
-        workContent.Should().Contain("Test Description");
+		var workContent = await workResponse.Content.ReadAsStringAsync();
 
-        workResponse.Dispose();
-        response.Dispose();
+		workContent.Should().Contain("Test Work");
+		workContent.Should().Contain("Test Description");
 
-        // clean the db
-        // TODO: Implement a method to clean the database after each test
-        // await _factory.CleanDatabaseAsync();
-    }
+		workResponse.Dispose();
+		response.Dispose();
 
-    [Fact(DisplayName = "Create a work with invalid data")]
-    public async Task CreateWorkAsync__ShouldReturnBadRequest()
-    {
-        // Arrange
-        var createDto = new CreateWorkDTO()
-        {
-            Title = "Test Work",
-            Type = WorkType.Test,
-            Description = "Test Description",
-            Tasks =
-            [
-                new CreateWorkTaskDTO()
-                {
-                    Type = WorkTaskType.Word,
-                    Order = 1,
-                    MaxScore = 10,
-                    Content = RichTestFactory.Create("Test Content"),
-                    RightAnswer = "Test Answer",
-                    SolveHint = RichTestFactory.Create("Test Hint"),
-                    Explanation = RichTestFactory.Create("Test Explanation"),
-                    CheckStrategy = WorkTaskCheckStrategy.Manual,
-                    ShowAnswerBeforeCheck = false,
-                    CheckOneByOne = false
-                }
-            ]
-        };
+		// clean the db
+		// TODO: Implement a method to clean the database after each test
+		// await _factory.CleanDatabaseAsync();
+	}
 
-        var content = JsonSerializer.Serialize(createDto);
-        var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
+	[Fact(DisplayName = "Create a work with invalid data")]
+	public async Task CreateWorkAsync__ShouldReturnBadRequest()
+	{
+		// Arrange
+		var createDto = new CreateWorkDTO()
+		{
+			Title = "Test Work",
+			Type = WorkType.Test,
+			Description = "Test Description",
+			Tasks =
+			[
+				new CreateWorkTaskDTO()
+				{
+					Type = WorkTaskType.Word,
+					Order = 1,
+					MaxScore = 10,
+					Content = RichTestFactory.Create("Test Content"),
+					RightAnswer = "Test Answer",
+					SolveHint = RichTestFactory.Create("Test Hint"),
+					Explanation = RichTestFactory.Create("Test Explanation"),
+					CheckStrategy = WorkTaskCheckStrategy.Manual,
+					ShowAnswerBeforeCheck = false,
+					CheckOneByOne = false
+				}
+			]
+		};
 
-        // Act
-        var response = await _client.PostAsync(_baseUrl, httpContent);
+		var content = JsonSerializer.Serialize(createDto);
+		var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		// Act
+		var response = await _client.PostAsync(_baseUrl, httpContent);
 
-        var responseBody = await response.Content.ReadAsStringAsync();
-        responseBody.Should().NotBeNullOrEmpty();
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        response.Dispose();
-    }
+		var responseBody = await response.Content.ReadAsStringAsync();
+		responseBody.Should().NotBeNullOrEmpty();
+
+		response.Dispose();
+	}
 }

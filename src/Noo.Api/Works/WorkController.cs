@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
@@ -23,7 +24,7 @@ public class WorkController : ApiController
 
     [HttpGet]
     [MapToApiVersion(NooApiVersions.Current)]
-    //[Policy(typeof(WorkPolicies), WorkPolicies.CanSearchWorks)]
+    [Authorize(WorkPolicies.CanSearchWorks)]
     public async Task<IActionResult> GetWorksAsync([FromQuery] Criteria<WorkModel> criteria)
     {
         var (results, count) = await _workService.GetWorksAsync(criteria);
@@ -32,7 +33,7 @@ public class WorkController : ApiController
 
     [HttpGet("{id}")]
     [MapToApiVersion(NooApiVersions.Current)]
-    //[Policy(typeof(WorkPolicies), WorkPolicies.CanGetWork)]
+    [Authorize(Policy = WorkPolicies.CanGetWork)]
     public async Task<IActionResult> GetWorkAsync([FromRoute] Ulid id)
     {
         var work = await _workService.GetWorkAsync(id);
@@ -47,7 +48,7 @@ public class WorkController : ApiController
 
     [HttpPost]
     [MapToApiVersion(NooApiVersions.Current)]
-    //[Policy(typeof(WorkPolicies), WorkPolicies.CanCreateWorks)]
+    [Authorize(WorkPolicies.CanCreateWorks)]
     public async Task<IActionResult> CreateWorkAsync([FromBody] CreateWorkDTO work)
     {
         var id = await _workService.CreateWorkAsync(work);
@@ -56,7 +57,7 @@ public class WorkController : ApiController
 
     [HttpPatch("{id}")]
     [MapToApiVersion(NooApiVersions.Current)]
-    //[Policy(typeof(WorkPolicies), WorkPolicies.CanEditWorks)]
+    [Authorize(WorkPolicies.CanEditWorks)]
     public async Task<IActionResult> UpdateWorkAsync([FromRoute] Ulid id, [FromBody] JsonPatchDocument<UpdateWorkDTO> work)
     {
         await _workService.UpdateWorkAsync(id, work, ModelState);
@@ -71,7 +72,7 @@ public class WorkController : ApiController
 
     [HttpDelete("{id}")]
     [MapToApiVersion(NooApiVersions.Current)]
-    //[Policy(typeof(WorkPolicies), WorkPolicies.CanDeleteWorks)]
+    [Authorize(WorkPolicies.CanDeleteWorks)]
     public async Task<IActionResult> DeleteWorkAsync([FromRoute] Ulid id)
     {
         await _workService.DeleteWorkAsync(id);
