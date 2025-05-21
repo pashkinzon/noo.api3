@@ -1,10 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Noo.Api.Core.Utils.DI;
 using Noo.Api.Users.Services;
-using Noo.Api.Core.Security.Authorization.Requirements;
 
-namespace Noo.Api.Core.Security.Authorization;
+namespace Noo.Api.Core.Security.Authorization.Requirements;
 
+[RegisterScoped(typeof(IAuthorizationHandler))]
 public class NotBlockedHandler : AuthorizationHandler<NotBlockedRequirement>
 {
     private readonly IUserService _userService;

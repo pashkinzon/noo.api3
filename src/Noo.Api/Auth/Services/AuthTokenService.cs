@@ -26,35 +26,35 @@ public class AuthTokenService : IAuthTokenService
     public string GenerateAccessToken(AccessTokenPayload payload)
     {
         return GenerateToken([
-            new Claim("type", nameof(AuthTokenType.Access)),
-            new Claim("userId", payload.UserId.ToString()),
-            new Claim("sessionId", payload.SessionId.ToString()),
-            new Claim("role", payload.UserRole.ToString()),
+            new Claim(ClaimTypes.Name, nameof(AuthTokenType.Access)),
+            new Claim(ClaimTypes.NameIdentifier, payload.UserId.ToString()),
+            new Claim(ClaimTypes.Sid, payload.SessionId.ToString()),
+            new Claim(ClaimTypes.Role, payload.UserRole.ToString()),
         ], TimeSpan.FromDays(_jwtConfig.ExpireDays));
     }
 
     public string GenerateEmailVerificationToken(Ulid userId)
     {
         return GenerateToken([
-            new Claim("type", nameof(AuthTokenType.EmailVerification)),
-            new Claim("userId", userId.ToString()),
+            new Claim(ClaimTypes.Name, nameof(AuthTokenType.EmailVerification)),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
         ], _verificationTokenExpiration);
     }
 
     public string GeneratePasswordResetToken(Ulid userId)
     {
         return GenerateToken([
-            new Claim("type", nameof(AuthTokenType.PasswordReset)),
-            new Claim("userId", userId.ToString()),
+            new Claim(ClaimTypes.Name, nameof(AuthTokenType.PasswordReset)),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
         ], _passwordResetTokenExpiration);
     }
 
     public string GenerateEmailChangeToken(Ulid userId, string newEmail)
     {
         return GenerateToken([
-            new Claim("type", nameof(AuthTokenType.EmailChange)),
-            new Claim("userId", userId.ToString()),
-            new Claim("newEmail", newEmail),
+            new Claim(ClaimTypes.Name, nameof(AuthTokenType.EmailChange)),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim(ClaimTypes.Email, newEmail),
         ], _emailChangeTokenExpiration);
     }
 
