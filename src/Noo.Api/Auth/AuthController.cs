@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Auth.DTO;
 using Noo.Api.Auth.Services;
+using Noo.Api.Core.Exceptions;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
@@ -28,9 +29,9 @@ public class AuthController : ApiController
     [HttpPost("login")]
     [MapToApiVersion(NooApiVersions.Current)]
     [ProducesResponseType(typeof(ApiResponseDTO<LoginResponseDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> LoginAsync([FromBody] LoginDTO request)
     {
         var result = await _authService.LoginAsync(request);
@@ -41,8 +42,8 @@ public class AuthController : ApiController
     [HttpPost("register")]
     [MapToApiVersion(NooApiVersions.Current)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterDTO request)
     {
         await _authService.RegisterAsync(request);
@@ -53,8 +54,8 @@ public class AuthController : ApiController
     [HttpPatch("request-password-change")]
     [MapToApiVersion(NooApiVersions.Current)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RequestPasswordChangeAsync([FromBody] RequestPasswordChangeDTO request)
     {
         await _authService.RequestPasswordResetAsync(request.Email);
@@ -65,8 +66,8 @@ public class AuthController : ApiController
     [HttpPatch("confirm-password-change")]
     [MapToApiVersion(NooApiVersions.Current)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ConfirmPasswordChangeAsync([FromBody] ConfirmPasswordChangeDTO request)
     {
         await _authService.ConfirmPasswordResetAsync(request.Email, request.Token, request.NewPassword);
@@ -77,9 +78,9 @@ public class AuthController : ApiController
     [HttpPatch("request-email-change")]
     [MapToApiVersion(NooApiVersions.Current)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RequestEmailChangeAsync([FromBody] RequestEmailChangeDTO request)
     {
         await _authService.RequestEmailChangeAsync(User.GetId(), request.NewEmail);
@@ -90,9 +91,9 @@ public class AuthController : ApiController
     [HttpPatch("confirm-email-change")]
     [MapToApiVersion(NooApiVersions.Current)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> ConfirmEmailChangeAsync([FromBody] ConfirmEmailChangeDTO request)
     {
         await _authService.ConfirmEmailChangeAsync(User.GetId(), request.Token);

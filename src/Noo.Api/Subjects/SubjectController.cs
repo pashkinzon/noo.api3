@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.DataAbstraction.Criteria;
+using Noo.Api.Core.Exceptions;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
@@ -27,8 +28,8 @@ public class SubjectController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanGetSubjects)]
     [ProducesResponseType(typeof(ApiResponseDTO<IEnumerable<SubjectDTO>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetSubjectsAsync([FromQuery] Criteria<SubjectModel> criteria)
     {
         var (items, total) = await _subjectService.GetSubjectsAsync(criteria);
@@ -39,10 +40,10 @@ public class SubjectController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanGetSubject)]
     [ProducesResponseType(typeof(ApiResponseDTO<SubjectDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetSubjectByIdAsync([FromRoute] Ulid id)
     {
         var subject = await _subjectService.GetSubjectByIdAsync(id);
@@ -53,9 +54,9 @@ public class SubjectController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanCreateSubject)]
     [ProducesResponseType(typeof(ApiResponseDTO<IdResponseDTO>), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateSubjectAsync([FromBody] SubjectCreationDTO subject)
     {
         var id = await _subjectService.CreateSubjectAsync(subject);
@@ -66,9 +67,9 @@ public class SubjectController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanPatchSubject)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateSubjectAsync([FromRoute] Ulid id, [FromBody] JsonPatchDocument<SubjectUpdateDTO> subject)
     {
         await _subjectService.UpdateSubjectAsync(id, subject);
@@ -80,9 +81,9 @@ public class SubjectController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanDeleteSubject)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteSubjectAsync([FromRoute] Ulid id)
     {
         await _subjectService.DeleteSubjectAsync(id);

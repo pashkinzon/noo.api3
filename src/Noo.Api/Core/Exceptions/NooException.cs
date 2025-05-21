@@ -9,7 +9,7 @@ public class NooException : Exception
 
     public string? LogId { get; init; }
 
-    public bool IsInternal { get; init; } = false;
+    public bool IsInternal { get; init; }
 
     public HttpStatusCode StatusCode { get; init; } = HttpStatusCode.InternalServerError;
 
@@ -33,15 +33,15 @@ public class NooException : Exception
         };
     }
 
-    public object SerializePublicly()
+    public SerializedNooException SerializePublicly()
     {
-        return new
+        return new SerializedNooException
         {
-            id = Id,
-            logId = LogId,
-            statusCode = StatusCode.GetHashCode(),
-            message = publicMessage(),
-            payload = Payload,
+            Id = Id,
+            LogId = LogId,
+            StatusCode = StatusCode.GetHashCode(),
+            Message = publicMessage(),
+            Payload = Payload,
         };
     }
 
