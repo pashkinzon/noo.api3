@@ -188,9 +188,47 @@ namespace Noo.Api.Migrations
                 column: "subject_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_email",
+                table: "user",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_name",
+                table: "user",
+                column: "name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_telegram_id",
+                table: "user",
+                column: "telegram_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_telegram_username",
+                table: "user",
+                column: "telegram_username");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_username",
+                table: "user",
+                column: "username",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_work_SubjectModelId",
                 table: "work",
                 column: "SubjectModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_work_title",
+                table: "work",
+                column: "title");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_work_type",
+                table: "work",
+                column: "type");
 
             migrationBuilder.CreateIndex(
                 name: "IX_work_task_work_id",

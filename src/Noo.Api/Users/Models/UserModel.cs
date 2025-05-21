@@ -3,34 +3,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Security.Authorization;
+using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.Users.Models;
 
 [Model("user")]
+[Index(nameof(Name), IsUnique = false)]
+[Index(nameof(Username), IsUnique = true)]
+[Index(nameof(Email), IsUnique = true)]
+[Index(nameof(TelegramId), IsUnique = true)]
+[Index(nameof(TelegramUsername), IsUnique = false)]
 public class UserModel : BaseModel
 {
     [Required]
     [MinLength(1)]
     [MaxLength(200)]
     [Column("name", TypeName = "VARCHAR(200)")]
-    [Index("user_name")]
     public string Name { get; set; } = string.Empty;
 
     [Required]
     [MinLength(1)]
     [MaxLength(200)]
     [Column("username", TypeName = "VARCHAR(200)")]
-    [Index("user_username_unique", IsUnique = true)]
     public string Username { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]
     [Column("email", TypeName = "VARCHAR(200)")]
-    [Index("user_email_unique", IsUnique = true)]
     public string Email { get; set; } = string.Empty;
 
     [Column("telegram_id", TypeName = "VARCHAR(200)")]
-    [Index("user_telegram_id_unique", IsUnique = true)]
     public string? TelegramId { get; set; }
 
     [Column("telegram_username", TypeName = "VARCHAR(255)")]

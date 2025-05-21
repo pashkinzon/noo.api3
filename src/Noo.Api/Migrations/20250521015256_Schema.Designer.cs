@@ -12,7 +12,7 @@ using Noo.Api.Core.DataAbstraction.Db;
 namespace Noo.Api.Migrations
 {
     [DbContext(typeof(NooDbContext))]
-    [Migration("20250521012535_Schema")]
+    [Migration("20250521015256_Schema")]
     partial class Schema
     {
         /// <inheritdoc />
@@ -166,6 +166,19 @@ namespace Noo.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("TelegramId")
+                        .IsUnique();
+
+                    b.HasIndex("TelegramUsername");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
                     b.ToTable("user");
                 });
 
@@ -209,6 +222,10 @@ namespace Noo.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectModelId");
+
+                    b.HasIndex("Title");
+
+                    b.HasIndex("Type");
 
                     b.ToTable("work");
                 });
