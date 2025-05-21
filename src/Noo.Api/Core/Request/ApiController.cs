@@ -8,18 +8,18 @@ public abstract class ApiController : ControllerBase
     protected OkObjectResult OkResponse(object? data, object? metadata = null)
     {
         Console.WriteLine("OkResponse called with object object");
-        return Ok(new ApiResponseDTO(data, metadata));
+        return Ok(new ApiResponseDTO<object?>(data, metadata));
     }
 
     protected OkObjectResult OkResponse((IEnumerable<object> data, int total) response)
     {
         Console.WriteLine("OkResponse called with tuple");
-        return Ok(new ApiResponseDTO(response.data, new { response.total }));
+        return Ok(new ApiResponseDTO<object?>(response.data, new { response.total }));
     }
 
     protected CreatedResult CreatedResponse(Ulid id)
     {
-        return Created(string.Empty, new ApiResponseDTO(new { Id = id }, null));
+        return Created(string.Empty, new ApiResponseDTO<object?>(new { Id = id }, null));
     }
 }
 

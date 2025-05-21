@@ -48,6 +48,10 @@ public class WorkTaskModel : OrderedModel
     [ForeignKey(nameof(Work))]
     public Ulid WorkId { get; set; }
 
+    #region Navigation Properties
+
     [DeleteBehavior(DeleteBehavior.Cascade)]
     public WorkModel? Work { get; set; }
+
+    #endregion
 }

@@ -117,6 +117,7 @@ Those are optional requirements that are needed for some features to work. All o
 
 ## Current TODO
 
+- Change `ProducesResponseTypeAttribute` to Custom attribute to automatically include NooException schema, as well as properly type the `ApiResponseDTO` and handle `Ulid` so that swagger doesn't think it's an object
 - [50%] Add configurable startup to be able to start without optional components
 - [50%] Migrate all the modules
 - [50%] Add unit, integration tests

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Works.Types;
@@ -26,6 +27,7 @@ public class WorkModel : BaseModel
     [Column("description", TypeName = "VARCHAR(255)")]
     public string? Description { get; set; }
 
+    [InverseProperty(nameof(WorkTaskModel.Work))]
     public ICollection<WorkTaskModel>? Tasks { get; set; }
 
     #region Navigation Properties

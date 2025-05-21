@@ -41,7 +41,7 @@ public class UserPolicies : IPolicyRegistrar
 
         options.AddPolicy(CanPatchSelf, policy => policy.RequireAuthenticatedUser().RequireNotBlocked());
 
-        options.AddPolicy(CanDeleteSelf, policy => policy.RequireAuthenticatedUser().RequireNotBlocked());
+        options.AddPolicy(CanDeleteSelf, policy => policy.RequireAuthenticatedUser());
 
         options.AddPolicy(CanBlockUser, policy =>
         {

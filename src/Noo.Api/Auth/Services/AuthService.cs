@@ -56,6 +56,16 @@ public class AuthService : IAuthService
             throw new UnauthorizedException();
         }
 
+        if (!user.IsVerified)
+        {
+            throw new UserIsNotVerifiedException();
+        }
+
+        if (user.IsBlocked)
+        {
+            throw new UserIsBlockedException();
+        }
+
         var ExpiresAt = DateTime.UtcNow.AddDays(_jwtConfig.ExpireDays);
 
         var token = _tokenService.GenerateAccessToken(new AccessTokenPayload()
