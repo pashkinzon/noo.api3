@@ -27,8 +27,8 @@ public record CreateWorkTaskDTO
     [JsonPropertyName("content")]
     public IRichTextType Content { get; set; } = default!;
 
-    [JsonPropertyName("rightAnswer")]
-    public string? RightAnswer { get; set; }
+    [JsonPropertyName("rightAnswers")]
+    public IEnumerable<string>? RightAnswers { get; set; }
 
     [RichText(AllowEmpty = true, AllowNull = true)]
     [JsonPropertyName("solveHint")]

@@ -18,6 +18,11 @@ public class UserMapperProfile : Profile
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.TelegramId, opt => opt.Ignore())
             .ForMember(dest => dest.TelegramUsername, opt => opt.Ignore())
+            .ForMember(dest => dest.CoursesAsMember, opt => opt.Ignore())
+            .ForMember(dest => dest.CoursesAsAssigner, opt => opt.Ignore())
+            .ForMember(dest => dest.CoursesAsAuthor, opt => opt.Ignore())
+            .ForMember(dest => dest.CoursesAsEditor, opt => opt.Ignore())
+            .ForMember(dest => dest.CourseMaterialReactions, opt => opt.Ignore())
             .ForMember(dest => dest.IsBlocked, opt => opt.MapFrom(_ => false))
             .ForMember(dest => dest.IsVerified, opt => opt.MapFrom(_ => false));
 

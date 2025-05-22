@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Courses.Models;
+using Noo.Api.Subjects.Models;
 using Noo.Api.Works.Types;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
@@ -15,32 +18,33 @@ public class WorkModel : BaseModel
 {
     [Required]
     [MinLength(1)]
-    [MaxLength(200)]
-    [Column("title", TypeName = "VARCHAR(200)")]
+    [MaxLength(255)]
+    [Column("title", TypeName = DbDataTypes.Varchar255)]
     public string Title { get; set; } = string.Empty;
 
     [Required]
-    [Column("type", TypeName = "VARCHAR(50)")]
+    [Column("type", TypeName = "ENUM('Test','MiniTest','Phrase','TrialWork','SecondPart')")]
     public WorkType Type { get; set; }
 
     [MaxLength(255)]
-    [Column("description", TypeName = "VARCHAR(255)")]
+    [Column("description", TypeName = DbDataTypes.Varchar255)]
     public string? Description { get; set; }
+
+    [Column("subject_id", TypeName = DbDataTypes.Ulid)]
+    [ForeignKey(nameof(Subject))]
+    public Ulid? SubjectId { get; set; }
+
+    #region Navigation Properties
 
     [InverseProperty(nameof(WorkTaskModel.Work))]
     public ICollection<WorkTaskModel>? Tasks { get; set; }
 
-    #region Navigation Properties
+    [DeleteBehavior(DeleteBehavior.SetNull)]
+    [InverseProperty(nameof(SubjectModel.Works))]
+    public SubjectModel? Subject { get; set; }
 
-    public WorkModel() { }
+    [InverseProperty(nameof(CourseMaterialContentModel.Work))]
+    public ICollection<CourseMaterialContentModel> CourseMaterialContents { get; set; } = [];
 
     #endregion
-
-    public WorkModel(Ulid? id)
-    {
-        if (id != null)
-        {
-            Id = id.Value;
-        }
-    }
 }

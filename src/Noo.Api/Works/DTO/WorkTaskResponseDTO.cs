@@ -24,7 +24,7 @@ public record WorkTaskResponseDTO
     public IRichTextType Content { get; set; } = default!;
 
     [JsonPropertyName("rightAnswer")]
-    public string? RightAnswer { get; set; }
+    public IEnumerable<string>? RightAnswers { get; set; }
 
     [JsonPropertyName("solveHint")]
     public IRichTextType? SolveHint { get; set; }

@@ -36,11 +36,15 @@ public class WorkMapperProfile : Profile
         CreateMap<UpdateWorkDTO, WorkModel>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Subject, opt => opt.Ignore())
+            .ForMember(dest => dest.CourseMaterialContents, opt => opt.Ignore());
 
         CreateMap<CreateWorkDTO, WorkModel>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Subject, opt => opt.Ignore())
+            .ForMember(dest => dest.CourseMaterialContents, opt => opt.Ignore());
     }
 }

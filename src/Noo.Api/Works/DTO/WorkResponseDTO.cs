@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Noo.Api.Subjects.DTO;
 
 namespace Noo.Api.Works.DTO;
 
@@ -15,6 +16,12 @@ public record WorkResponseDTO
 
     [JsonPropertyName("description")]
     public string? Description { get; init; }
+
+    [JsonPropertyName("subjectId")]
+    public Ulid? SubjectId { get; init; }
+
+    [JsonPropertyName("subject")]
+    public SubjectDTO? Subject { get; init; }
 
     [JsonPropertyName("tasks")]
     public ICollection<WorkTaskResponseDTO> Tasks { get; init; } = [];

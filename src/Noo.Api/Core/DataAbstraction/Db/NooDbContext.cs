@@ -27,6 +27,7 @@ public class NooDbContext : DbContext
         modelBuilder.UseCollation(_dbConfig.DefaultCollation);
 
         modelBuilder.RegisterModels();
+        modelBuilder.ConfigureManyToManyTables();
         modelBuilder.UseRichTextColumns();
     }
 

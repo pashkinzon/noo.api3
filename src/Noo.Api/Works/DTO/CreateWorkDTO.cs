@@ -21,8 +21,13 @@ public record CreateWorkDTO
     public string? Description { get; set; }
 
     [Required]
+    [JsonPropertyName("subjectId")]
+    public Ulid? SubjectId { get; set; }
+
+    [Required]
     [MinLength(1)]
     [MaxLength(300)]
     [ValidateEnumeratedItems]
+    [JsonPropertyName("tasks")]
     public ICollection<CreateWorkTaskDTO> Tasks { get; set; } = [];
 }

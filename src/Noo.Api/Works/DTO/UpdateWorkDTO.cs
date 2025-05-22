@@ -20,10 +20,15 @@ public record UpdateWorkDTO
     public WorkType? Type { get; set; }
 
     [MaxLength(255)]
+    [JsonPropertyName("description")]
     public string? Description { get; set; }
+
+    [JsonPropertyName("subjectId")]
+    public Ulid? SubjectId { get; set; }
 
     [Required]
     [MaxLength(300)]
     [ValidateEnumeratedItems]
+    [JsonPropertyName("tasks")]
     public ICollection<UpdateWorkTaskDTO>? Tasks { get; set; }
 }

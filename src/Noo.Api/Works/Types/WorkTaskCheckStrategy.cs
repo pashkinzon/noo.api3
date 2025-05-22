@@ -8,22 +8,24 @@ public enum WorkTaskCheckStrategy
     Manual,
 
     /// <summary>
-    /// Check if the answer is exactly the same as the correct answer, otherwise 0 points
+    /// Identical to the answer key: max points, otherwise 0
     /// </summary>
     ExactMatchOrZero,
 
     /// <summary>
-    /// Check if the answer is exactly the same as the correct answer, otherwise 0 points
+    /// Аully correct order: maximum points, for every wrong one - minus 1 point
     /// </summary>
-    MinusPointForEveryWrongCharacter,
+    ExactMatchWithWrongCharacter,
 
     /// <summary>
-    /// Check if the answer is exactly the same as the correct answer, otherwise 0 points
+    /// fully correct, order does not matter: maximum points;
+    /// for every mistake (extra and missing choice counts as well) - minus one
     /// </summary>
-    MinusPointForMissingOrWrongOrExtraCharacter,
+    MultipleChoice,
 
     /// <summary>
-    /// Check if the answer is exactly the same as the correct answer, otherwise 0 points
+    /// fully correct order: maximum points;
+    /// 2 characters swapped with one another - minus 1 point
     /// </summary>
-    Type4
+    Sequence
 }

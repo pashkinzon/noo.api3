@@ -24,10 +24,10 @@ public record UpdateWorkTaskDTO
 
     [RichText(AllowEmpty = false, AllowNull = true)]
     [JsonPropertyName("content")]
-    public IRichTextType? Content { get; set; } = default!;
+    public IRichTextType? Content { get; set; }
 
-    [JsonPropertyName("rightAnswer")]
-    public string? RightAnswer { get; set; }
+    [JsonPropertyName("rightAnswers")]
+    public IEnumerable<string>? RightAnswers { get; set; }
 
     [RichText(AllowEmpty = true)]
     [JsonPropertyName("solveHint")]

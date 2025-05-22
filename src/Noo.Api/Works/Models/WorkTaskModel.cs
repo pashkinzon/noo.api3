@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Utils.Richtext;
@@ -21,36 +22,37 @@ public class WorkTaskModel : OrderedModel
     [RichTextColumn("explanation")]
     public IRichTextType? Explanation { get; set; }
 
-    [Column("right_answer", TypeName = "VARCHAR(255)")]
-    [MaxLength(255)]
-    public string? RightAnswer { get; set; }
+    [Column("right_answers", TypeName = DbDataTypes.StringArray)]
+    [MaxLength(16)]
+    public IEnumerable<string>? RightAnswers { get; set; }
 
-    [Column("type", TypeName = "VARCHAR(50)")]
+    [Column("type", TypeName = "ENUM('Word','Text','Essay','FinalEssay')")]
     [Required]
     public WorkTaskType Type { get; set; }
 
-    [Column("check_strategy", TypeName = "VARCHAR(50)")]
+    [Column("check_strategy", TypeName = "ENUM('Manual','Auto')")]
     [Required]
     public WorkTaskCheckStrategy CheckStrategy { get; set; } = WorkTaskCheckStrategy.Manual;
 
-    [Column("max_score", TypeName = "INT")]
+    [Column("max_score", TypeName = DbDataTypes.TinyIntUnsigned)]
     [Required]
     [Range(0, int.MaxValue)]
     public int MaxScore { get; set; }
 
-    [Column("show_answer_before_check", TypeName = "TINYINT(1)")]
-    public bool ShowAnswerBeforeCheck { get; set; } = false;
+    [Column("show_answer_before_check", TypeName = DbDataTypes.Boolean)]
+    public bool ShowAnswerBeforeCheck { get; set; }
 
-    [Column("check_one_by_one", TypeName = "TINYINT(1)")]
-    public bool CheckOneByOne { get; set; } = false;
+    [Column("check_one_by_one", TypeName = DbDataTypes.Boolean)]
+    public bool CheckOneByOne { get; set; }
 
-    [Column("work_id", TypeName = "BINARY(16)")]
+    [Column("work_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(Work))]
     public Ulid WorkId { get; set; }
 
     #region Navigation Properties
 
     [DeleteBehavior(DeleteBehavior.Cascade)]
+    [InverseProperty(nameof(WorkModel.Tasks))]
     public WorkModel? Work { get; set; }
 
     #endregion

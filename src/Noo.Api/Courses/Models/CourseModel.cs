@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Media.Models;
 using Noo.Api.Users.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
@@ -13,31 +15,34 @@ namespace Noo.Api.Courses.Models;
 public class CourseModel : BaseModel
 {
     [Required]
-    [Column("name", TypeName = "varchar(255)")]
+    [Column("name", TypeName = DbDataTypes.Varchar255)]
     public string Name { get; set; } = string.Empty;
 
-    [Column("description", TypeName = "text")]
+    [Column("description", TypeName = DbDataTypes.Text)]
     [MaxLength(500)]
     public string? Description { get; set; }
 
-    // TODO: Add media table
-    // [Column("thumbnail_id", TypeName = "BINARY(16)")]
-    // [ForeignKey(nameof(Thumbnail))]
-    // public Ulid? ThumbnailId { get; set; }
+    [Column("thumbnail_id", TypeName = DbDataTypes.Ulid)]
+    [ForeignKey(nameof(Thumbnail))]
+    public Ulid? ThumbnailId { get; set; }
 
     #region Navigation Properties
 
-    [DeleteBehavior(DeleteBehavior.Cascade)]
+    [DeleteBehavior(DeleteBehavior.SetNull)]
+    [InverseProperty(nameof(MediaModel.Courses))]
+    public MediaModel? Thumbnail { get; set; }
+
+    [InverseProperty(nameof(CourseChapterModel.Course))]
     public ICollection<CourseChapterModel> Chapters { get; set; } = [];
 
-    [DeleteBehavior(DeleteBehavior.SetNull)]
+    [InverseProperty(nameof(UserModel.CoursesAsEditor))]
     public ICollection<UserModel> Editors { get; set; } = [];
 
-    [DeleteBehavior(DeleteBehavior.SetNull)]
+    [InverseProperty(nameof(UserModel.CoursesAsAuthor))]
     public ICollection<UserModel> Authors { get; set; } = [];
 
-    [DeleteBehavior(DeleteBehavior.SetNull)]
-    public ICollection<CourseAssignmentModel> Assignments { get; set; } = [];
+    [InverseProperty(nameof(CourseMembershipModel.Course))]
+    public ICollection<CourseMembershipModel> Memberships { get; set; } = [];
 
     #endregion
 }
