@@ -8,6 +8,7 @@ public static class DbDataTypes
     public const string Varchar63 = "VARCHAR(63)";
     public const string Varchar127 = "VARCHAR(127)";
     public const string Varchar255 = "VARCHAR(255)";
+    public const string Varchar512 = "VARCHAR(512)";
 
     public const string StringArray = "VARCHAR(512)";
 

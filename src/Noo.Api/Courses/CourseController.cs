@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.Exceptions;
 using Noo.Api.Core.Request;
+using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Courses.DTO;
 using Noo.Api.Courses.Services;
+using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.Courses;
 
@@ -26,14 +27,19 @@ public class CourseController : ApiController
         _courseMembershipService = courseMembershipService;
     }
 
+    /// <summary>
+    /// Retrieves a course by its unique identifier.
+    /// </summary>
     [HttpGet("{id}")]
     [ApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CoursePolicies.CanGetCourse)]
-    [ProducesResponseType(typeof(CourseDTO), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        typeof(ApiResponseDTO<CourseDTO>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> GetCourseAsync([FromRoute] Ulid id)
     {
         var course = await _courseService.GetByIdAsync(id);

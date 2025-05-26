@@ -7,6 +7,11 @@
     <RootNamespace>Noo.Api</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn> <!-- Optional: suppress missing XML comment warnings -->
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="AutoMapper" Version="14.0.0" />
@@ -40,8 +45,8 @@
   <PropertyGroup>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<NoWarn>RCS1021</NoWarn>
-    <WarningsAsErrors>IDE1006;$(WarningsAsErrors);RCS1098;RCS1163;</WarningsAsErrors>
+	<NoWarn>RCS1021;CS1591</NoWarn>
+    <WarningsAsErrors>IDE1006;$(WarningsAsErrors);RCS1098;RCS1163</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

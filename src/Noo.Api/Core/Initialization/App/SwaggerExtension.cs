@@ -1,3 +1,4 @@
+using System.Reflection;
 using Noo.Api.Core.Config;
 using Noo.Api.Core.Config.Env;
 using Noo.Api.Core.Initialization.Configuration;

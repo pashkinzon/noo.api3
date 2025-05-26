@@ -1,15 +1,19 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net.Mime;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Courses.Models;
+using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.Media.Models;
 
 [Model("media")]
+[Index(nameof(Hash), IsUnique = false)]
 public class MediaModel : BaseModel
 {
+    [Column("hash", TypeName = DbDataTypes.Varchar512)]
+    public string Hash { get; set; } = string.Empty;
+
     [Column("path", TypeName = DbDataTypes.Varchar255)]
     public string Path { get; set; } = string.Empty;
 

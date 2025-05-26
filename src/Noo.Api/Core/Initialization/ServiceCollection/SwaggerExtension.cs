@@ -1,5 +1,7 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Noo.Api.Core.Config.Env;
+using Noo.Api.Core.Documentation;
 using Noo.Api.Core.Initialization.Configuration;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -23,6 +25,12 @@ public static class AppSwaggerExtension
             });
 
             options.AddJwtSecurityDefinition();
+            options.OperationFilter<ProducesOperationFilter>();
+            options.SchemaFilter<UlidSchemaFilter>();
+
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
         });
     }
 

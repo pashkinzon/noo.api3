@@ -11,6 +11,7 @@ using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Users.DTO;
 using Noo.Api.Users.Models;
 using Noo.Api.Users.Services;
+using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.Users;
 
@@ -36,13 +37,19 @@ public class UserController : ApiController
         _authService = authService;
     }
 
+    /// <summary>
+    /// Retrieves the current user's information based on the authenticated user's ID.
+    /// </summary>
     [HttpGet("me")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetSelf)]
-    [ProducesResponseType(typeof(ApiResponseDTO<UserDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        typeof(ApiResponseDTO<UserDTO>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> GetMeAsync()
     {
         var result = await _userService.GetUserByIdAsync(User.GetId());
@@ -55,11 +62,17 @@ public class UserController : ApiController
         return OkResponse(result);
     }
 
+    /// <summary>
+    /// Deletes the current user's account.
+    /// It won't delete the user from the database, but mark it as deleted and remove all personal data.
+    /// </summary>
     [HttpDelete("me")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanDeleteSelf)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status401Unauthorized
+    )]
     public async Task<IActionResult> DeleteMeAsync()
     {
         var userId = User.GetId();
@@ -69,15 +82,20 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates the current user's email address.
+    /// </summary>
     [HttpPatch("me/email")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> UpdateMyEmailAsync([FromBody] UpdateEmailDTO dto)
     {
         await _authService.RequestEmailChangeAsync(User.GetId(), dto.Email);
@@ -85,14 +103,19 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates the current user's password.
+    /// </summary>
     [HttpPatch("me/password")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordDTO dto)
     {
         var userId = User.GetId();
@@ -102,15 +125,20 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates the current user's Telegram data like username, avatar and telegram ID
+    /// </summary>
     [HttpPatch("me/telegram")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> UpdateTelegramAsync([FromBody] UpdateTelegramDTO updateTelegramDTO)
     {
         var userId = User.GetId();
@@ -120,13 +148,18 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Retrieves a list of users based on the provided search criteria.
+    /// </summary>
     [HttpGet]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanSearchUsers)]
-    [ProducesResponseType(typeof(ApiResponseDTO<IEnumerable<UserDTO>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
+    [Produces(
+        typeof(ApiResponseDTO<IEnumerable<UserDTO>>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
     public async Task<IActionResult> GetUsersAsync([FromQuery] Criteria<UserModel> criteria)
     {
         var (results, count) = await _userService.GetUsersAsync(criteria);
@@ -134,14 +167,19 @@ public class UserController : ApiController
         return OkResponse((results, count));
     }
 
+    /// <summary>
+    /// Retrieves a user by their unique username
+    /// </summary>
     [HttpGet("{username}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
-    [ProducesResponseType(typeof(ApiResponseDTO<UserDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        typeof(ApiResponseDTO<UserDTO>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> GetUserByUsernameAsync([FromRoute] string username)
     {
         var result = await _userService.GetUserByUsernameOrEmailAsync(username);
@@ -154,15 +192,21 @@ public class UserController : ApiController
         return OkResponse(result);
     }
 
+    /// <summary>
+    /// Changes the role of a user by their unique identifier.
+    /// Only possible to change role if the user is a student, otherwise it will throw a conflict error.
+    /// </summary>
     [HttpPatch("{id}/role")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanChangeRole)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> ChangeRoleAsync([FromRoute] Ulid id, [FromBody] UserRoles newRole)
     {
         await _userService.ChangeRoleAsync(id, newRole);
@@ -170,14 +214,19 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Blocks a user by their unique identifier.
+    /// </summary>
     [HttpPatch("{id}/block")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanBlockUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> BlockUserAsync([FromRoute] Ulid id)
     {
         await _userService.BlockUserAsync(id);
@@ -185,14 +234,19 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Unblocks a user by their unique identifier.
+    /// </summary>
     [HttpPatch("{id}/unblock")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanBlockUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> UnblockUserAsync([FromRoute] Ulid id)
     {
         await _userService.UnblockUserAsync(id);
@@ -200,14 +254,19 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Verifies a user manually by their unique identifier.
+    /// </summary>
     [HttpPatch("{id}/verify-manual")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanVerifyUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> VerifyUserAsync([FromRoute] Ulid id)
     {
         await _userService.VerifyUserAsync(id);
@@ -215,13 +274,18 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Retrieves a student's mentor assignments by their unique identifier.
+    /// </summary>
     [HttpGet("{id}/mentor-assignment")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
-    [ProducesResponseType(typeof(ApiResponseDTO<IEnumerable<MentorAssignmentDTO>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
+    [Produces(
+        typeof(ApiResponseDTO<IEnumerable<MentorAssignmentDTO>>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
     public async Task<IActionResult> GetMentorAssignmentsAsync([FromRoute] Ulid id, [FromQuery] Criteria<MentorAssignmentModel> criteria)
     {
         var (results, count) = await _mentorService.GetMentorAssignmentsAsync(id, criteria);
@@ -229,6 +293,9 @@ public class UserController : ApiController
         return OkResponse((results, count));
     }
 
+    /// <summary>
+    /// Retrieves a mentor's assignments by their unique identifier.
+    /// </summary>
     [HttpGet("{id}/student-assignment")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
@@ -236,6 +303,12 @@ public class UserController : ApiController
     [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
+    [Produces(
+        typeof(ApiResponseDTO<IEnumerable<MentorAssignmentDTO>>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
     public async Task<IActionResult> GetStudentAssignmentsAsync([FromRoute] Ulid id, [FromQuery] Criteria<MentorAssignmentModel> criteria)
     {
         var (results, count) = await _mentorService.GetStudentAssignmentsAsync(id, criteria);
@@ -243,15 +316,20 @@ public class UserController : ApiController
         return OkResponse((results, count));
     }
 
+    /// <summary>
+    /// Assigns a mentor to a student for a specific subject.
+    /// </summary>
     [HttpPatch("{id}/assignment-mentor")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanAssignMentor)]
-    [ProducesResponseType(typeof(ApiResponseDTO<IdResponseDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        typeof(ApiResponseDTO<IdResponseDTO>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> AssignMentorAsync([FromRoute] Ulid id, [FromBody] CreateMentorAssignmentDTO assignment)
     {
         var assignmentId = await _mentorService.AssignMentorAsync(id, assignment.MentorId, assignment.SubjectId);
@@ -259,14 +337,19 @@ public class UserController : ApiController
         return OkResponse(assignmentId);
     }
 
+    /// <summary>
+    /// Unassigns a mentor from a student.
+    /// </summary>
     [HttpPatch("{id}/unassign-mentor")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanAssignMentor)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
     public async Task<IActionResult> UnassignMentorAsync([FromRoute] Ulid id)
     {
         await _mentorService.UnassignMentorAsync(id);

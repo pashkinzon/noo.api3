@@ -5,6 +5,7 @@ using Noo.Api.Core.Exceptions;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
+using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.Auth;
 
@@ -26,12 +27,17 @@ public class AuthController : ApiController
         _authService = authService;
     }
 
+    /// <summary>
+    /// Logs in a user with the provided credentials.
+    /// </summary>
     [HttpPost("login")]
     [MapToApiVersion(NooApiVersions.Current)]
-    [ProducesResponseType(typeof(ApiResponseDTO<LoginResponseDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status403Forbidden)]
+    [Produces(
+        typeof(ApiResponseDTO<LoginResponseDTO>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
     public async Task<IActionResult> LoginAsync([FromBody] LoginDTO request)
     {
         var result = await _authService.LoginAsync(request);
@@ -39,11 +45,17 @@ public class AuthController : ApiController
         return OkResponse(result);
     }
 
+    /// <summary>
+    /// Registers a new user with the provided details.
+    /// During registration, an email verification token is sent to the user's email address.
+    /// </summary>
     [HttpPost("register")]
     [MapToApiVersion(NooApiVersions.Current)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterDTO request)
     {
         await _authService.RegisterAsync(request);
@@ -51,11 +63,16 @@ public class AuthController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Requests a password change by sending a reset token to the user's email address.
+    /// </summary>
     [HttpPatch("request-password-change")]
     [MapToApiVersion(NooApiVersions.Current)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status404NotFound)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized
+    )]
     public async Task<IActionResult> RequestPasswordChangeAsync([FromBody] RequestPasswordChangeDTO request)
     {
         await _authService.RequestPasswordResetAsync(request.Email);
@@ -63,11 +80,16 @@ public class AuthController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Confirms a password change by validating the reset token and setting a new password.
+    /// </summary>
     [HttpPatch("confirm-password-change")]
     [MapToApiVersion(NooApiVersions.Current)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized
+    )]
     public async Task<IActionResult> ConfirmPasswordChangeAsync([FromBody] ConfirmPasswordChangeDTO request)
     {
         await _authService.ConfirmPasswordResetAsync(request.Email, request.Token, request.NewPassword);
@@ -75,12 +97,17 @@ public class AuthController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Requests an email change by sending a confirmation token to the new email address.
+    /// </summary>
     [HttpPatch("request-email-change")]
     [MapToApiVersion(NooApiVersions.Current)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> RequestEmailChangeAsync([FromBody] RequestEmailChangeDTO request)
     {
         await _authService.RequestEmailChangeAsync(User.GetId(), request.NewEmail);
@@ -88,12 +115,18 @@ public class AuthController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Confirms an email change by validating the confirmation token.
+    /// This endpoint is used to finalize the email change process after the user has requested it.
+    /// </summary>
     [HttpPatch("confirm-email-change")]
     [MapToApiVersion(NooApiVersions.Current)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(SerializedNooException), StatusCodes.Status409Conflict)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status409Conflict
+    )]
     public async Task<IActionResult> ConfirmEmailChangeAsync([FromBody] ConfirmEmailChangeDTO request)
     {
         await _authService.ConfirmEmailChangeAsync(User.GetId(), request.Token);

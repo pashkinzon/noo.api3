@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Noo.Api.Core.Security.Authorization;
+using Noo.Api.Courses.AuthorizationRequirements;
 
 namespace Noo.Api.Courses;
 
@@ -15,7 +16,7 @@ public class CoursePolicies : IPolicyRegistrar
     public void RegisterPolicies(AuthorizationOptions options)
     {
         options.AddPolicy(CanGetCourse, policy =>
-            policy.AddRequirements(/* TODO: Add policy to get course */).RequireNotBlocked());
+            policy.AddRequirements(new CourseAccessRequirement()).RequireNotBlocked());
 
         options.AddPolicy(CanSearchAllCourses, policy =>
             policy.RequireRole(
