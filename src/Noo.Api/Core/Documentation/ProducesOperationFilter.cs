@@ -1,7 +1,12 @@
+using System.Net;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.OpenApi.Models;
-using Noo.Api.Core.Documentation;
 using Noo.Api.Core.Exceptions;
+using Noo.Api.Core.Response;
+using Noo.Api.Users.DTO;
 using Swashbuckle.AspNetCore.SwaggerGen;
+
+namespace Noo.Api.Core.Documentation;
 
 public class ProducesOperationFilter : IOperationFilter
 {
@@ -11,38 +16,49 @@ public class ProducesOperationFilter : IOperationFilter
             .GetCustomAttributes(typeof(ProducesAttribute), false)
             .Cast<ProducesAttribute>();
 
+        operation.Responses.Clear();
+
         foreach (var attr in attributes)
         {
-            // Add the primary response (success case)
-            AddResponse(operation, attr.Status, attr.ResponseType);
+            var schema = attr.ResponseType != null
+                ? context.SchemaGenerator.GenerateSchema(attr.ResponseType, context.SchemaRepository)
+                : null;
+
+            AddResponse(operation, attr.Status, schema);
+
+            var errorSchema = context.SchemaGenerator.GenerateSchema(typeof(SerializedNooException), context.SchemaRepository);
 
             // Add error responses from exception types
             foreach (var statusCode in attr.ExceptionCodes)
             {
-                AddResponse(operation, statusCode, typeof(SerializedNooException));
+                AddResponse(operation, statusCode, errorSchema);
             }
         }
     }
 
-    private void AddResponse(OpenApiOperation operation, int statusCode, Type? responseType)
+    private void AddResponse(OpenApiOperation operation, int statusCode, OpenApiSchema? schema)
     {
         var statusCodeStr = statusCode.ToString();
-        var response = new OpenApiResponse { Description = "Result" };
-
-        if (responseType != null)
+        var response = new OpenApiResponse
         {
-            response.Content = new Dictionary<string, OpenApiMediaType>
+            Description = GetDescription(statusCode),
+            Content = new Dictionary<string, OpenApiMediaType>
             {
                 ["application/json"] = new OpenApiMediaType
                 {
-                    Schema = new OpenApiSchema { Reference = new OpenApiReference { Id = responseType.Name, Type = ReferenceType.Schema } }
+                    Schema = schema
                 }
-            };
-        }
+            }
+        };
 
         if (!operation.Responses.ContainsKey(statusCodeStr))
         {
             operation.Responses.Add(statusCodeStr, response);
         }
+    }
+
+    private string GetDescription(int statusCode)
+    {
+        return ReasonPhrases.GetReasonPhrase(statusCode);
     }
 }

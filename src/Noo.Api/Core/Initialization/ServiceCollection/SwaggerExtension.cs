@@ -27,6 +27,7 @@ public static class AppSwaggerExtension
             options.AddJwtSecurityDefinition();
             options.OperationFilter<ProducesOperationFilter>();
             options.SchemaFilter<UlidSchemaFilter>();
+            options.OperationFilter<JsonPatchOperationFilter>();
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
