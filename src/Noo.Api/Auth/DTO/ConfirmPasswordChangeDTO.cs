@@ -7,11 +7,6 @@ namespace Noo.Api.Auth.DTO;
 public record ConfirmPasswordChangeDTO
 {
     [Required]
-    [EmailAddress]
-    [JsonPropertyName("email")]
-    public string Email { get; set; } = string.Empty;
-
-    [Required]
     [MinLength(1)]
     [MaxLength(200)]
     [JsonPropertyName("token")]

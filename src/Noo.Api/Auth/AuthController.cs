@@ -92,7 +92,7 @@ public class AuthController : ApiController
     )]
     public async Task<IActionResult> ConfirmPasswordChangeAsync([FromBody] ConfirmPasswordChangeDTO request)
     {
-        await _authService.ConfirmPasswordResetAsync(request.Email, request.Token, request.NewPassword);
+        await _authService.ConfirmPasswordResetAsync(request.Token, request.NewPassword);
 
         return NoContent();
     }

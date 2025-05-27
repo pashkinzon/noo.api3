@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Courses.DTO;
+using Noo.Api.Courses.Models;
 using Noo.Api.Courses.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -42,8 +44,27 @@ public class CourseController : ApiController
     )]
     public async Task<IActionResult> GetCourseAsync([FromRoute] Ulid id)
     {
-        var course = await _courseService.GetByIdAsync(id);
+        var userRole = User.GetRole();
+        var course = await _courseService.GetByIdAsync(id,
+
+        );
 
         return course is null ? NotFound() : OkResponse(course);
+    }
+
+    [HttpGet]
+    [ApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = CoursePolicies.CanSearchCourses)]
+    [Produces(
+        typeof(ApiResponseDTO<IEnumerable<CourseModel>>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
+    public async Task<IActionResult> GetCoursesAsync([FromQuery] Criteria<CourseModel> criteria)
+    {
+        var (courses, total) = await _courseService.SearchAsync(criteria);
+
+        return OkResponse((courses, total));
     }
 }

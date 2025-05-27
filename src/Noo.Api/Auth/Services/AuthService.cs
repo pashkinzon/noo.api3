@@ -137,20 +137,20 @@ public class AuthService : IAuthService
         await _emailService.SendForgotPasswordEmailAsync(email, user.Name, link);
     }
 
-    public async Task ConfirmPasswordResetAsync(string email, string token, string newPassword)
+    public async Task ConfirmPasswordResetAsync(string token, string newPassword)
     {
-        var user = await _userService.GetUserByUsernameOrEmailAsync(email);
+        var userId = _tokenService.ValidatePasswordResetToken(token);
+
+        if (userId is null)
+        {
+            throw new UnauthorizedException();
+        }
+
+        var user = await _userService.GetUserByIdAsync((Ulid)userId);
 
         if (user == null)
         {
             throw new NotFoundException();
-        }
-
-        var isValid = _tokenService.ValidatePasswordResetToken(token);
-
-        if (!isValid)
-        {
-            throw new UnauthorizedException();
         }
 
         await _userService.UpdateUserPasswordAsync(user.Id, _hashService.Hash(newPassword));

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Courses.AuthorizationRequirements;
 
@@ -7,7 +6,7 @@ namespace Noo.Api.Courses;
 
 public class CoursePolicies : IPolicyRegistrar
 {
-    public const string CanSearchAllCourses = nameof(CanSearchAllCourses);
+    public const string CanSearchCourses = nameof(CanSearchCourses);
     public const string CanGetCourse = nameof(CanGetCourse);
     public const string CanPatchCourse = nameof(CanPatchCourse);
     public const string CanAddCourseMembers = nameof(CanAddCourseMembers);
@@ -18,7 +17,7 @@ public class CoursePolicies : IPolicyRegistrar
         options.AddPolicy(CanGetCourse, policy =>
             policy.AddRequirements(new CourseAccessRequirement()).RequireNotBlocked());
 
-        options.AddPolicy(CanSearchAllCourses, policy =>
+        options.AddPolicy(CanSearchCourses, policy =>
             policy.RequireRole(
                 nameof(UserRoles.Admin),
                 nameof(UserRoles.Teacher),

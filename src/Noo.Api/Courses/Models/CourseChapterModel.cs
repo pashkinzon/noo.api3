@@ -29,7 +29,7 @@ public class CourseChapterModel : OrderedModel
 
     [Column("parent_chapter_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(ParentChapter))]
-    public Ulid ParentChapterId { get; set; }
+    public Ulid? ParentChapterId { get; set; }
 
     #region Navigation properties
 

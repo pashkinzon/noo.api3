@@ -12,7 +12,7 @@ public interface IAuthTokenService
 
     public bool ValidateEmailVerificationToken(string token);
 
-    public bool ValidatePasswordResetToken(string token);
+    public Ulid? ValidatePasswordResetToken(string token);
 
     public string? ValidateEmailChangeToken(string token);
 }

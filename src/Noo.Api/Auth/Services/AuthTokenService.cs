@@ -60,12 +60,26 @@ public class AuthTokenService : IAuthTokenService
 
     public bool ValidateEmailVerificationToken(string token)
     {
-        return ValidateToken(token, AuthTokenType.EmailVerification);
+        return ValidateToken(token, AuthTokenType.EmailVerification) != null;
     }
 
-    public bool ValidatePasswordResetToken(string token)
+    public Ulid? ValidatePasswordResetToken(string token)
     {
-        return ValidateToken(token, AuthTokenType.PasswordReset);
+        var principal = ValidateToken(token, AuthTokenType.PasswordReset);
+
+        if (principal == null)
+        {
+            return null;
+        }
+
+        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null || !Ulid.TryParse(userIdClaim.Value, out var userId))
+        {
+            return null;
+        }
+
+        return userId;
     }
 
     /// <summary>
@@ -75,42 +89,14 @@ public class AuthTokenService : IAuthTokenService
     /// <returns>The new email to change to or null if validation fails</returns>
     public string? ValidateEmailChangeToken(string token)
     {
-        var key = _jwtConfig.GetSymmetricSecurityKey();
+        var principal = ValidateToken(token, AuthTokenType.EmailChange);
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = key,
-            ValidateIssuer = true,
-            ValidIssuer = _jwtConfig.Issuer,
-            ValidateAudience = true,
-            ValidAudience = _jwtConfig.Audience,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-        try
-        {
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-
-            if (validatedToken is JwtSecurityToken jwt)
-            {
-                var userIdClaim = principal.FindFirst("userId");
-                var typeClaim = principal.FindFirst("type");
-                var newEmailClaim = principal.FindFirst("newEmail");
-
-                if (userIdClaim != null && typeClaim != null && newEmailClaim != null)
-                {
-                    return newEmailClaim.Value;
-                }
-            }
-        }
-        catch (Exception)
+        if (principal == null)
         {
             return null;
         }
 
-        return null;
+        return principal.FindFirst(ClaimTypes.Email)?.Value;
     }
 
     private string GenerateToken(Claim[] claims, TimeSpan expiration)
@@ -128,7 +114,7 @@ public class AuthTokenService : IAuthTokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private bool ValidateToken(string token, AuthTokenType tokenType)
+    private ClaimsPrincipal? ValidateToken(string token, AuthTokenType tokenType)
     {
         var key = _jwtConfig.GetSymmetricSecurityKey();
 
@@ -153,18 +139,22 @@ public class AuthTokenService : IAuthTokenService
                 var userIdClaim = principal.FindFirst("userId");
                 var typeClaim = principal.FindFirst("type");
 
-                return
-                    userIdClaim != null
+                if (userIdClaim != null
                     && typeClaim != null
                     && tokenType.ToString() == typeClaim.Value
-                    && Ulid.TryParse(userIdClaim.Value, out _);
+                    && Ulid.TryParse(userIdClaim.Value, out _))
+                {
+                    return principal;
+                }
+
+                return null;
             }
         }
         catch (Exception)
         {
-            return false;
+            return null;
         }
 
-        return false;
+        return null;
     }
 }

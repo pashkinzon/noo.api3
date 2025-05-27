@@ -10,7 +10,7 @@ public interface IAuthService
 
     public Task RequestPasswordResetAsync(string email);
 
-    public Task ConfirmPasswordResetAsync(string email, string token, string newPassword);
+    public Task ConfirmPasswordResetAsync(string token, string newPassword);
 
     public Task RequestEmailChangeAsync(Ulid userId, string newEmail);
 
