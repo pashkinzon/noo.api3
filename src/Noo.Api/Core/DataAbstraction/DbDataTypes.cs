@@ -12,6 +12,8 @@ public static class DbDataTypes
 
     public const string StringArray = "VARCHAR(512)";
 
+    public const string BigStringArray = "VARCHAR(2048)";
+
     /// <summary>
     /// The TEXT type is a string with a maximum length of 65,535 characters.
     /// </summary>
@@ -21,6 +23,8 @@ public static class DbDataTypes
     /// The MEDIUMTEXT type is a string with a maximum length of 16,777,215 characters.
     /// </summary>
     public const string MediumText = "MEDIUMTEXT";
+
+    public const string Json = "JSON";
 
     public const string Ulid = "BINARY(16)";
 

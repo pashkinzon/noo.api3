@@ -169,6 +169,36 @@ It is used to log the errors. If a controller action throws an exception, it wil
 
 Always use wrappers for all the third-party libraries, such as EF Core, Redis, RabbitMQ, etc. This will help to decouple the code from the third-party libraries and make it more testable. It will also help to avoid issues with the third-party libraries, such as breaking changes or bugs. The wrappers should be implemented in the Core module and used in other modules.
 
+## Modules
+
+Rewrite of the modules is in progress.
+
+**Basic functionality ready:**
+
+- [x] Works
+- [x] Auth
+- [x] Users (missing avatar)
+- [x] Subjects
+- [x] Snippets
+
+**In progress:**
+
+- [ ] AssignedWorks
+- [ ] Sessions
+- [ ] Media
+- [ ] Courses
+- [ ] Calender
+
+**Not started:**
+
+- [ ] Nootube
+- [ ] Polls
+- [ ] Notifications (with all the buses)
+- [ ] UserSettings
+- [ ] Platform (metadata, version, etc.)
+- [ ] GoogleSheets
+- [ ] Faq
+
 ## Ideas
 
 - [ ] Use ETags for caching and concurrency control
