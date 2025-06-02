@@ -82,4 +82,35 @@ public class Repository<T> : IRepository<T> where T : BaseModel, new()
 
         return new SearchResult<TDTO>(results, total);
     }
+
+    public async Task<SearchResult<T>> GetManyAsync(Criteria<T> criteria)
+    {
+        var query = Context.GetDbSet<T>().AsQueryable();
+
+        var total = await query
+            .AddCountingCriteria(criteria)
+            .CountAsync();
+
+        var results = await query
+            .AddCriteria(criteria)
+            .ToListAsync();
+
+        return new SearchResult<T>(results, total);
+    }
+
+    public async Task<SearchResult<TDTO>> GetManyAsync<TDTO>(Criteria<T> criteria, AutoMapper.IConfigurationProvider configurationProvider) where TDTO : class
+    {
+        var query = Context.GetDbSet<T>().AsQueryable();
+
+        var total = await query
+            .AddCountingCriteria(criteria)
+            .CountAsync();
+
+        var results = await query
+            .AddCriteria(criteria)
+            .ProjectTo<TDTO>(configurationProvider)
+            .ToListAsync();
+
+        return new SearchResult<TDTO>(results, total);
+    }
 }

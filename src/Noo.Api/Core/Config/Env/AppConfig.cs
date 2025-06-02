@@ -21,5 +21,11 @@ public class AppConfig : IConfig
     [Required]
     public readonly AuthenticationType AuthenticationType = AuthenticationType.Bearer;
 
+    [Required]
+    public required int UserOnlineThresholdMinutes { get; set; } = 15;
+
+    [Required]
+    public required int UserActiveThresholdDays { get; set; } = 14;
+
     public required string[] AllowedOrigins { get; set; } = [];
 }

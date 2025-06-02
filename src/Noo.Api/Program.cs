@@ -28,7 +28,7 @@ builder.Services.AddRequestRateLimiter();
 // builder.Services.AddNooResponseCaching(builder.Configuration);
 builder.Services.AddRouting();
 builder.Services.AddAutoMapperProfiles();
-// TODO: builder.Services.AddCacheProvider(builder.Configuration);
+builder.Services.AddCacheProvider(builder.Configuration);
 // TODO: builder.Services.AddMetrics();
 // TODO: builder.Services.AddHostFiltering();
 

@@ -12,7 +12,6 @@ public class CourseRepository : Repository<CourseModel>, ICourseRepository
 
         var chapters = await Context.GetDbSet<CourseChapterModel>()
             .Where(c => c.CourseId == courseId)
-            .Include(c => c.SubChapters)
             .Include(c => c.Materials)
             .ToListAsync();
 
@@ -45,7 +44,7 @@ public class CourseRepository : Repository<CourseModel>, ICourseRepository
     }
 }
 
-public static class UnitIOfWorkCourseRepositoryExtensions
+public static class IUnitOfWorkCourseRepositoryExtensions
 {
     public static ICourseRepository CourseRepository(this IUnitOfWork unitOfWork)
     {

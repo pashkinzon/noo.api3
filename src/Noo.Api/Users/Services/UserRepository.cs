@@ -69,7 +69,7 @@ public class UserRepository : Repository<UserModel>, IUserRepository
     }
 }
 
-public static class UnitIOfWorkUserRepositoryExtensions
+public static class IUnitOfWorkUserRepositoryExtensions
 {
     public static IUserRepository UserRepository(this IUnitOfWork unitOfWork)
     {

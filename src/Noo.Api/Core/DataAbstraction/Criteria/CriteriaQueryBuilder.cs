@@ -35,7 +35,7 @@ public static class CriteriaQueryBuilder
         return query.Skip(criteria.Skip).Take(criteria.Take);
     }
 
-    public static IQueryable<T> AddCountingCriteria<T>(this IQueryable<T> query, Criteria<T>? criteria, ISearchStrategy<T> searchStrategy) where T : BaseModel
+    public static IQueryable<T> AddCountingCriteria<T>(this IQueryable<T> query, Criteria<T>? criteria, ISearchStrategy<T>? searchStrategy = null) where T : BaseModel
     {
         if (criteria == null)
         {

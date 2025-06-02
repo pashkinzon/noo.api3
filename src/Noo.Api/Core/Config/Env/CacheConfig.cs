@@ -11,4 +11,9 @@ public class CacheConfig : IConfig
 
     [Required]
     public required int DefaultCacheTime { get; init; }
+
+    public TimeSpan DefaultCacheTimeSpan => TimeSpan.FromSeconds(DefaultCacheTime);
+
+    [Required]
+    public required string Prefix { get; init; }
 }

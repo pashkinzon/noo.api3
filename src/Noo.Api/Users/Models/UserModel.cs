@@ -5,6 +5,8 @@ using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Courses.Models;
+using Noo.Api.Sessions.Models;
+using Noo.Api.Snippets.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.Users.Models;
@@ -74,6 +76,10 @@ public class UserModel : BaseModel
     public ICollection<CourseMembershipModel> CoursesAsAssigner { get; set; } = [];
 
     public ICollection<CourseMaterialReactionModel> CourseMaterialReactions { get; set; } = [];
+
+    public ICollection<SessionModel> Sessions { get; set; } = [];
+
+    public ICollection<SnippetModel> Snippets { get; set; } = [];
 
     #endregion
 }

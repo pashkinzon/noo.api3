@@ -15,4 +15,8 @@ public record CourseDTO
 
     [JsonPropertyName("thumbnailId")]
     public Ulid? ThumbnailId { get; init; }
+
+    [JsonPropertyName("memberCount")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? MemberCount { get; init; }
 }

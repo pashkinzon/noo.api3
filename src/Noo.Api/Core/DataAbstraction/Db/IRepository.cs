@@ -15,6 +15,10 @@ public interface IRepository<T> where T : BaseModel
 
     public Task<SearchResult<TDTO>> SearchAsync<TDTO>(Criteria<T> criteria, ISearchStrategy<T> searchStrategy, AutoMapper.IConfigurationProvider configurationProvider) where TDTO : class;
 
+    public Task<SearchResult<T>> GetManyAsync(Criteria<T> criteria);
+
+    public Task<SearchResult<TDTO>> GetManyAsync<TDTO>(Criteria<T> criteria, AutoMapper.IConfigurationProvider configurationProvider) where TDTO : class;
+
     public Task<bool> ExistsAsync(Ulid id);
 
     public void Add(T entity);

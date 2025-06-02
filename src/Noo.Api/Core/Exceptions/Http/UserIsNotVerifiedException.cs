@@ -6,7 +6,7 @@ public class UserIsNotVerifiedException : NooException
 {
     public UserIsNotVerifiedException(string message = "User is not verified") : base(message)
     {
-        Id = "USER_IS_NOT_VERIFIED";
+        Id = "USER_NOT_VERIFIED";
         StatusCode = HttpStatusCode.Unauthorized;
     }
 }

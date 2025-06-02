@@ -7,7 +7,7 @@ public record LoginResponseDTO
     [JsonPropertyName("accessToken")]
     public string AccessToken { get; set; } = string.Empty;
 
-    [JsonPropertyName("expiresIn")]
+    [JsonPropertyName("expiresAt")]
     public DateTime ExpiresAt { get; set; }
 
     [JsonPropertyName("userInfo")]

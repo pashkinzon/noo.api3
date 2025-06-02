@@ -7,6 +7,7 @@ using Noo.Api.Core.Utils.DI;
 using Noo.Api.Users.Types;
 using Noo.Api.Users.Services;
 using Microsoft.Extensions.Options;
+using Noo.Api.Sessions.Services;
 
 namespace Noo.Api.Auth.Services;
 
@@ -17,6 +18,8 @@ public class AuthService : IAuthService
 
     private readonly IUserService _userService;
 
+    private readonly ISessionService _sessionService;
+
     private readonly IAuthEmailService _emailService;
 
     private readonly IAuthUrlGenerator _urlGenerator;
@@ -25,13 +28,17 @@ public class AuthService : IAuthService
 
     private readonly JwtConfig _jwtConfig;
 
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
     public AuthService(
         IAuthTokenService tokenService,
         IAuthEmailService emailService,
         IAuthUrlGenerator urlGenerator,
         IUserService userService,
         IHashService hashService,
-        IOptions<JwtConfig> jwtConfig
+        IOptions<JwtConfig> jwtConfig,
+        ISessionService sessionService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _tokenService = tokenService;
@@ -40,6 +47,8 @@ public class AuthService : IAuthService
         _hashService = hashService;
         _jwtConfig = jwtConfig.Value;
         _urlGenerator = urlGenerator;
+        _sessionService = sessionService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<LoginResponseDTO> LoginAsync(LoginDTO request)
@@ -66,14 +75,25 @@ public class AuthService : IAuthService
             throw new UserIsBlockedException();
         }
 
+        var context = _httpContextAccessor.HttpContext;
+
+        if (context == null)
+        {
+            throw new InvalidOperationException("HttpContext is not available.");
+        }
+
+        var sessionId = await _sessionService.CreateSessionIfNotExistsAsync(
+            context,
+            user.Id
+        );
+
         var ExpiresAt = DateTime.UtcNow.AddDays(_jwtConfig.ExpireDays);
 
         var token = _tokenService.GenerateAccessToken(new AccessTokenPayload()
         {
             UserId = user.Id,
             UserRole = user.Role,
-            // TODO: Add normal session id
-            SessionId = Ulid.NewUlid(),
+            SessionId = sessionId,
             ExpiresAt = ExpiresAt
         });
 
@@ -154,6 +174,7 @@ public class AuthService : IAuthService
         }
 
         await _userService.UpdateUserPasswordAsync(user.Id, _hashService.Hash(newPassword));
+        await _sessionService.DeleteAllSessionsAsync(user.Id);
     }
 
     public async Task RequestEmailChangeAsync(Ulid userId, string newEmail)
