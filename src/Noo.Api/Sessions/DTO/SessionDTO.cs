@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Noo.Api.Sessions.Types;
+using Noo.Api.Core.Utils.UserAgent;
 
 namespace Noo.Api.Sessions.DTO;
 

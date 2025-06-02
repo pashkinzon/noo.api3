@@ -55,7 +55,9 @@ public class SessionController : ApiController
     public async Task<IActionResult> DeleteSessionAsync()
     {
         var userId = User.GetId();
-        await _sessionService.DeleteCurrentSessionAsync(userId);
+        var sessionId = User.GetSessionId();
+
+        await _sessionService.DeleteSessionAsync(sessionId, userId);
 
         return NoContent();
     }

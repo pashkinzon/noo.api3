@@ -4,7 +4,7 @@ Backend API for Noo project.
 
 ## Requirements
 
-- .NET 8.0
+- .NET 9.0 or higher
 - MySQL 8.4 or higher
 
 ## Installation
@@ -12,14 +12,20 @@ Backend API for Noo project.
 1. Clone or pull the repository
 2. Open the solution in Visual Studio or VS Code
 3. Restore the NuGet packages
+   ```bash
+   dotnet restore
+   ```
 4. Create a new MySQL database
-5. Update the connection string and all the other settings in `appsettings.json` file in each project
+   ```sql
+   CREATE DATABASE `noo_example_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+   ```
+5. Update the connection string and all the other settings in `appsettings.json` file in each project (example below)
 6. Run the migrations to create the database schema:
    ```bash
    dotnet ef database update
    ```
 7. Run or Debug the application
-8. Open the Swagger UI in your browser (usually at `http://localhost:5001/api-docs`)
+8. Open the Swagger UI in your browser (usually at `http://localhost:5001/api-docs`, the path can be configured in `appsettings.json`)
 
 ## Configuration
 
@@ -109,26 +115,59 @@ The configuration is done in the `appsettings.json` file. An example (all possib
 Those are optional requirements that are needed for some features to work. All of them can be disabled.
 
 - Docker
-- Redis [Not implemented yet]
+- Redis
 - RabbitMQ (or other message broker, not decided yet) [Not implemented yet]
 - SMTP Server [Not implemented yet]
 - Telegram Bot for notifications [Not implemented yet]
 - Telegram Bot for logs
 
-## Current TODO
+## Code practices
 
-- Change `ProducesResponseTypeAttribute` to Custom attribute to automatically include NooException schema, as well as properly type the `ApiResponseDTO` and handle `Ulid` so that swagger doesn't think it's an object
-- [50%] Add configurable startup to be able to start without optional components
-- [50%] Migrate all the modules
-- [50%] Add unit, integration tests
-- [ ] Consider database tests like there are no orphaned records etc
-- [50%] Add support for SMTP
-- [50%] Add versioning for API
-- [ ] Add support for planned tasks
-- [ ] Test resource usage and performance
-- [ ] Add support for caching (Redis)
-- [ ] Consider SignalR for autosave (and solve the problem with multiple server instances)
-- [ ] Add notification buses (Telegram, Browser, Apps)
+The following practices MUST be followed in the code:
+
+### Prefer performance over readability or architecture
+
+The most important thing is performance. If you can make the code more performant by sacrificing readability or architecture, do it. The code should be readable, but performance is the priority. Next comes resource usage, and only then comes architecture.
+
+### Use async/await for I/O operations
+
+Always use `async` and `await` for I/O operations, such as database queries, file operations, network requests, etc. This will help to avoid blocking the thread and improve the performance of the application. DO NOT use `Task.Run` for I/O operations, as it will not improve performance and may even degrade it. Also do not use async/await for CPU-bound operations, as it will not improve performance and may even degrade it.
+
+### Before creating a new feature, check if it is already implemented in Core
+
+If you want to create a new feature, first check if it is already implemented in the Core module. If it is, use it instead of creating a new one. This will help to avoid code duplication and improve the maintainability of the code.
+Sometimes the Core module may not have the feature you need, but it is present in some other module. In this case, abstract and move the feature in the Core so it can be reused in other modules.
+
+### Use interfaces for dependencies
+
+Always use interfaces for dependencies, especially for services and repositories. This will help to decouple the code and make it more testable. Use dependency injection to inject the dependencies into the classes that need them. Do not use concrete classes as dependencies, as it will make the code less flexible and harder to test.
+The only exception is a transient small class that is tiny and DEFINETELY not going to grow in the future. In this case, you can use a concrete class as a dependency, but it is not recommended.
+
+### Always prefer explicit over implicit
+
+For example, consider EF Core. Having a model class it can automatically create a table for it with right column and table names. However you SHOULD NOT rely on this feature. Instead, you should always use `Column` attribute to specfy the name and type of the column, and `Table` attribute to specify the name of the table. This will help to avoid confusion and make the code more explicit. The same applies to other frameworks and libraries.
+Exceptions:
+
+- `var` keyword for local variables
+- model-to-model relationships in EF Core, they will be generated automatically
+
+### Do not concentrate too much logic in one method/class
+
+If a method or class is doing too much, it is a sign that it needs to be refactored. Split the method or class into smaller ones that do one thing only. This will help to improve the readability and maintainability of the code.
+❗First think or performance. If splitting the method or class will degrade performance, do not do it.
+
+### Do not query the whole entity if you need only a few fields
+
+When querying the database, do not query the whole entity if you need only a few fields. Instead, use `Select` to select only the fields you need. This will help to reduce the amount of data transferred from the database and improve the performance of the application.
+
+### Use `NooException` and derived classes for exceptions
+
+Always use `NooException` and its derived classes (eg. `NotFoundException`) for exceptions in the Noo project. This will help to unify the exception handling and make it easier to catch and handle exceptions in a consistent way. Do not use built-in exceptions or custom exceptions that do not derive from `NooException`.
+It is used to log the errors. If a controller action throws an exception, it will be caught by the global exception handler. If it is a `NooException`, it indicated that everything is normal and the error is expected. If it is not a `NooException`, it indicates that something went wrong and the error will be automatically logged.
+
+### Use wrappers for all the third-party libraries
+
+Always use wrappers for all the third-party libraries, such as EF Core, Redis, RabbitMQ, etc. This will help to decouple the code from the third-party libraries and make it more testable. It will also help to avoid issues with the third-party libraries, such as breaking changes or bugs. The wrappers should be implemented in the Core module and used in other modules.
 
 ## Ideas
 

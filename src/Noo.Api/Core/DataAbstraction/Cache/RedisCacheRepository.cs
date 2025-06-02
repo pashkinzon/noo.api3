@@ -50,7 +50,7 @@ public class RedisCacheRepository : ICacheRepository
             // TODO: implement a non-blocking key count
         }
 
-        return Task.FromResult(totalCount);
+        return totalCount;
     }
 
     public async Task<T?> GetAsync<T>(string key)

@@ -45,9 +45,7 @@ public class CourseController : ApiController
     public async Task<IActionResult> GetCourseAsync([FromRoute] Ulid id)
     {
         var userRole = User.GetRole();
-        var course = await _courseService.GetByIdAsync(id,
-
-        );
+        var course = await _courseService.GetByIdAsync(id, false); // TODO: handle inactive parts
 
         return course is null ? NotFound() : OkResponse(course);
     }

@@ -25,10 +25,7 @@ public class CourseService : ICourseService
         _searchStrategy = searchStrategy;
     }
 
-    /// <summary>
-    /// Retrieves a course by its unique identifier, including its chapter tree if available.
-    /// </summary>
-    public async Task<CourseDTO?> GetByIdAsync(Ulid id)
+    public async Task<CourseDTO?> GetByIdAsync(Ulid id, bool includeInactive)
     {
         var course = await _unitOfWork
             .CourseRepository()
