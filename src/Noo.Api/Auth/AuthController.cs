@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Auth.DTO;
 using Noo.Api.Auth.Services;
@@ -32,6 +33,7 @@ public class AuthController : ApiController
     /// </summary>
     [HttpPost("login")]
     [MapToApiVersion(NooApiVersions.Current)]
+    [AllowAnonymous]
     [Produces(
         typeof(ApiResponseDTO<LoginResponseDTO>), StatusCodes.Status200OK,
         StatusCodes.Status400BadRequest,
@@ -51,6 +53,7 @@ public class AuthController : ApiController
     /// </summary>
     [HttpPost("register")]
     [MapToApiVersion(NooApiVersions.Current)]
+    [AllowAnonymous]
     [Produces(
         null, StatusCodes.Status204NoContent,
         StatusCodes.Status400BadRequest,
@@ -68,6 +71,7 @@ public class AuthController : ApiController
     /// </summary>
     [HttpPatch("request-password-change")]
     [MapToApiVersion(NooApiVersions.Current)]
+    [AllowAnonymous]
     [Produces(
         null, StatusCodes.Status204NoContent,
         StatusCodes.Status400BadRequest,
@@ -85,6 +89,7 @@ public class AuthController : ApiController
     /// </summary>
     [HttpPatch("confirm-password-change")]
     [MapToApiVersion(NooApiVersions.Current)]
+    [AllowAnonymous]
     [Produces(
         null, StatusCodes.Status204NoContent,
         StatusCodes.Status400BadRequest,
@@ -98,29 +103,12 @@ public class AuthController : ApiController
     }
 
     /// <summary>
-    /// Requests an email change by sending a confirmation token to the new email address.
-    /// </summary>
-    [HttpPatch("request-email-change")]
-    [MapToApiVersion(NooApiVersions.Current)]
-    [Produces(
-        null, StatusCodes.Status204NoContent,
-        StatusCodes.Status400BadRequest,
-        StatusCodes.Status401Unauthorized,
-        StatusCodes.Status409Conflict
-    )]
-    public async Task<IActionResult> RequestEmailChangeAsync([FromBody] RequestEmailChangeDTO request)
-    {
-        await _authService.RequestEmailChangeAsync(User.GetId(), request.NewEmail);
-
-        return NoContent();
-    }
-
-    /// <summary>
     /// Confirms an email change by validating the confirmation token.
     /// This endpoint is used to finalize the email change process after the user has requested it.
     /// </summary>
     [HttpPatch("confirm-email-change")]
     [MapToApiVersion(NooApiVersions.Current)]
+    [AllowAnonymous]
     [Produces(
         null, StatusCodes.Status204NoContent,
         StatusCodes.Status400BadRequest,

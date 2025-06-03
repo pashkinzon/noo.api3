@@ -3,12 +3,14 @@ using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
+using Noo.Api.Core.Utils.DI;
 using Noo.Api.Snippets.DTO;
 using Noo.Api.Snippets.Models;
 using SystemTextJsonPatch;
 
 namespace Noo.Api.Snippets.Services;
 
+[RegisterScoped(typeof(ISnippetService))]
 public class SnippetService : ISnippetService
 {
     private readonly IUnitOfWork _unitOfWork;

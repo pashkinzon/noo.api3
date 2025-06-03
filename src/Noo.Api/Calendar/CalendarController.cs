@@ -24,17 +24,40 @@ public class CalendarController : ApiController
     /// <summary>
     /// Gets the current user's calendar events.
     /// </summary>
-    [HttpGet("{userId}")]
+    [HttpGet("{userId}/{year}/{month}")]
+    [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CalendarPolicies.CanGetCalendarEvents)]
     [Produces(
         typeof(ApiResponseDTO<IEnumerable<CalendarEventDTO>>), StatusCodes.Status200OK,
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetCalendarEventsAsync([FromRoute] Ulid userId)
+    public async Task<IActionResult> GetCalendarEventsAsync(
+        [FromRoute] Ulid userId,
+        [FromRoute] int year,
+        [FromRoute] int month
+    )
     {
-        var result = await _calendarService.GetCalendarEventsAsync(userId);
+        var result = await _calendarService.GetCalendarEventsAsync(userId, year, month);
 
         return OkResponse(result);
+    }
+
+    /// <summary>
+    /// Creates a new calendar event for the current user.
+    /// </summary>
+    [HttpPost]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = CalendarPolicies.CanCreateCalendarEvent)]
+    [Produces(
+        typeof(ApiResponseDTO<IdResponseDTO>), StatusCodes.Status201Created,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
+    public async Task<IActionResult> CreateCalendarEventAsync([FromBody] CreateCalendarEventDTO dto)
+    {
+        var eventId = await _calendarService.CreateCalendarEventAsync(dto);
+        return CreatedResponse(eventId);
     }
 }

@@ -9,7 +9,7 @@ namespace Noo.Api.Media.Models;
 
 [Model("media")]
 [Index(nameof(Hash), IsUnique = false)]
-public class MediaModel : BaseModel
+public class MediaModel : OrderedModel
 {
     [Column("hash", TypeName = DbDataTypes.Varchar512)]
     public string Hash { get; set; } = string.Empty;

@@ -188,6 +188,7 @@ Rewrite of the modules is in progress.
 - [ ] Media
 - [ ] Courses
 - [ ] Calender
+- [ ] Support (only services left)
 
 **Not started:**
 
@@ -197,7 +198,14 @@ Rewrite of the modules is in progress.
 - [ ] UserSettings
 - [ ] Platform (metadata, version, etc.)
 - [ ] GoogleSheets
-- [ ] Faq
+
+## To refactor
+
+- [ ] Inject repositories directly and not use them via unit of work
+
+## Important to implement
+
+- [ ] Filters in criteria
 
 ## Ideas
 

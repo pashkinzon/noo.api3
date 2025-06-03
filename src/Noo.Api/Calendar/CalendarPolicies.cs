@@ -6,9 +6,18 @@ namespace Noo.Api.Calendar;
 public class CalendarPolicies : IPolicyRegistrar
 {
     public const string CanGetCalendarEvents = nameof(CanGetCalendarEvents);
+    public const string CanCreateCalendarEvent = nameof(CanCreateCalendarEvent);
 
     public void RegisterPolicies(AuthorizationOptions options)
     {
-        throw new NotImplementedException();
+        options.AddPolicy(CanGetCalendarEvents, policy =>
+        {
+            policy.RequireAuthenticatedUser().RequireNotBlocked();
+        });
+
+        options.AddPolicy(CanCreateCalendarEvent, policy =>
+        {
+            policy.RequireAuthenticatedUser().RequireNotBlocked();
+        });
     }
 }
