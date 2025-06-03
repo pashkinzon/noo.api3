@@ -125,6 +125,22 @@ Those are optional requirements that are needed for some features to work. All o
 
 The following practices MUST be followed in the code:
 
+### Avoid cross product problem when selecting from db
+
+It is very very important to avoid the cross product problem when selecting from the database. Example:
+A CarManufacturer has a list of Card and a list of Employees. If you select all the cars and all the employees, you will get a cross product of the two lists, which will result in a huge amount of data being transferred from the database as it returns a combination of each car with each employee (cross product). If a manufacturer has 100 cars and 100 employees, the query will return 10,000 rows. This is a very common mistake, so be careful with it.
+
+### Avoid N+1 problem when selecting from db
+
+The N+1 problem occurs when you select a list of entities and then for each entity you make a separate query to the database to get related entities. This results in N+1 queries, where N is the number of entities in the list. This can lead to performance issues and should be avoided. Instead, use `Include` to load related entities in a single query. For example, if you have a list of cars and you want to load their manufacturers, use `Include` to load the manufacturers in the same query.
+
+❗ If you are using `Include`, make sure to use it only when necessary, as it can lead to performance issues if used excessively. Use `ThenInclude` to load nested related entities. Strictly avoid cross product problem when using `Include`.
+
+### Use `IEnumerable` for immutable collections and `ICollection` for mutable collections
+
+When defining a collection in a class, use `IEnumerable<T>` for immutable collections and `ICollection<T>` for mutable collections. This will help to avoid confusion and make the code more explicit. If you need to modify the collection, use `ICollection<T>`, otherwise use `IEnumerable<T>`. This will also help to avoid issues with serialization and deserialization of the collections.
+Always use IEnumerable in DTOs as they are ment to be immutable.
+
 ### Prefer performance over readability or architecture
 
 The most important thing is performance. If you can make the code more performant by sacrificing readability or architecture, do it. The code should be readable, but performance is the priority. Next comes resource usage, and only then comes architecture.
@@ -180,6 +196,7 @@ Rewrite of the modules is in progress.
 - [x] Users (missing avatar)
 - [x] Subjects
 - [x] Snippets
+- [x] Support
 
 **In progress:**
 
@@ -187,13 +204,12 @@ Rewrite of the modules is in progress.
 - [ ] Sessions
 - [ ] Media
 - [ ] Courses
-- [ ] Calender
-- [ ] Support (only services left)
+- [ ] Calendar
+- [ ] Polls
 
 **Not started:**
 
 - [ ] Nootube
-- [ ] Polls
 - [ ] Notifications (with all the buses)
 - [ ] UserSettings
 - [ ] Platform (metadata, version, etc.)
