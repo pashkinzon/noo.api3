@@ -19,8 +19,12 @@ public class SupportArticleModel : OrderedModel
     [RichTextColumn("content")]
     public IRichTextType Content { get; set; } = default!;
 
-    [Column("is_pinned", TypeName = DbDataTypes.Boolean)]
-    public bool IsPinned { get; set; }
+    [Column("is_active", TypeName = DbDataTypes.Boolean)]
+    public bool IsActive { get; set; } = true;
+
+    [Column("category_id", TypeName = DbDataTypes.Ulid)]
+    [ForeignKey(nameof(Category))]
+    public Ulid CategoryId { get; set; }
 
     #region Navigation Properties
 

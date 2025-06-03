@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Noo.Api.AssignedWorks.Types;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
@@ -18,8 +19,13 @@ public class AssignedWorkStatusHistoryModel : BaseModel
     [Column("value", TypeName = DbDataTypes.Json)]
     public Dictionary<string, object>? Value { get; set; }
 
+    [Column("assigned_work_id", TypeName = DbDataTypes.Ulid)]
+    [ForeignKey(nameof(AssignedWork))]
+    public Ulid AssignedWorkId { get; set; }
+
     #region Navigation Properties
 
+    [DeleteBehavior(DeleteBehavior.Cascade)]
     public AssignedWorkModel AssignedWork { get; set; } = default!;
 
     #endregion

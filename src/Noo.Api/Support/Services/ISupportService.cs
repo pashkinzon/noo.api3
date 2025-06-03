@@ -12,5 +12,5 @@ public interface ISupportService
     public Task<SupportArticleDTO> UpdateArticleAsync(Ulid articleId, JsonPatchDocument<UpdateSupportArticleDTO> dto);
     public Task DeleteArticleAsync(Ulid articleId);
     public Task<IEnumerable<SupportCategoryDTO>> GetCategoryTreeAsync();
-    public Task<IEnumerable<SupportArticleDTO>> GetArticleAsync(Ulid articleId);
+    public Task<SupportArticleDTO?> GetArticleAsync(Ulid articleId);
 }

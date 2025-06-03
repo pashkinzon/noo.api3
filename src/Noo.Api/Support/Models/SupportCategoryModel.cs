@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
@@ -17,9 +18,20 @@ public class SupportCategoryModel : OrderedModel
     [Column("is_pinned", TypeName = DbDataTypes.Boolean)]
     public bool IsPinned { get; set; }
 
+    [Column("is_active", TypeName = DbDataTypes.Boolean)]
+    public bool IsActive { get; set; } = true;
+
+    [Column("parent_id", TypeName = DbDataTypes.Ulid)]
+    [ForeignKey(nameof(Parent))]
+    public Ulid? ParentId { get; set; }
+
     #region Navigation Properties
 
+    [InverseProperty(nameof(Parent))]
     public ICollection<SupportCategoryModel> Children { get; set; } = [];
+
+    [DeleteBehavior(DeleteBehavior.Cascade)]
+    public SupportCategoryModel? Parent { get; set; }
 
     public ICollection<SupportArticleModel> Articles { get; set; } = [];
 

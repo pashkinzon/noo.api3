@@ -49,10 +49,6 @@ public class AssignedWorkModel : BaseModel
     [Column("checked_at", TypeName = DbDataTypes.DateTimeWithoutTZ)]
     public DateTime? CheckedAt { get; set; }
 
-    [Column("status_history_id", TypeName = DbDataTypes.Ulid)]
-    [ForeignKey(nameof(StatusHistory))]
-    public Ulid? StatusHistoryId { get; set; }
-
     [Column("score", TypeName = DbDataTypes.SmallIntUnsigned)]
     [Range(0, 5000)]
     public int? Score { get; set; }
@@ -128,7 +124,7 @@ public class AssignedWorkModel : BaseModel
 
     public ICollection<AssignedWorkAnswerModel> Answers { get; set; } = [];
 
-    public AssignedWorkStatusHistoryModel? StatusHistory { get; set; }
+    public ICollection<AssignedWorkStatusHistoryModel> StatusHistory { get; set; } = [];
 
     #endregion
 }
