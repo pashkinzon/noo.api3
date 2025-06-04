@@ -1,3 +1,5 @@
+using AutoMapper.Internal.Mappers;
+
 namespace Noo.Api.Core.DataAbstraction;
 
 public static class DbDataTypes
@@ -46,4 +48,6 @@ public static class DbDataTypes
     /// 2-byte unsigned integer, range 0–65 535
     /// </summary>
     public const string SmallIntUnsigned = "SMALLINT UNSIGNED";
+
+    public const string UserRolesEnum = "ENUM('student', 'mentor', 'assistant', 'teacher', 'admin')";
 }

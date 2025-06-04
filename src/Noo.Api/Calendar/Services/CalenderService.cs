@@ -11,6 +11,11 @@ public class CalendarService : ICalendarService
         throw new NotImplementedException();
     }
 
+    public Task DeleteCalendarEventAsync(Ulid userId, Ulid eventId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IEnumerable<CalendarEventDTO>> GetCalendarEventsAsync(Ulid userId, int year, int month)
     {
         throw new NotImplementedException();

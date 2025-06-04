@@ -6,4 +6,5 @@ public interface ICalendarService
 {
     public Task<IEnumerable<CalendarEventDTO>> GetCalendarEventsAsync(Ulid userId, int year, int month);
     public Task<Ulid> CreateCalendarEventAsync(CreateCalendarEventDTO dto);
+    public Task DeleteCalendarEventAsync(Ulid userId, Ulid eventId);
 }

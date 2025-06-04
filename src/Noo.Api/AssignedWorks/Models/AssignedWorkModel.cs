@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.AssignedWorks.Types;
+using Noo.Api.Calendar.Models;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
@@ -21,7 +22,7 @@ public class AssignedWorkModel : BaseModel
     [Required]
     public string Title { get; set; } = default!;
 
-    [Column("type", TypeName = "ENUM()")] // TODO: Define ENUM values
+    [Column("type", TypeName = WorkEnumDbDataTypes.WorkType)]
     [Required]
     public string Type { get; set; } = default!;
 
@@ -29,7 +30,7 @@ public class AssignedWorkModel : BaseModel
     [Required]
     public int Attempt { get; set; }
 
-    [Column("solve_status", TypeName = "ENUM()")] // TODO: Define ENUM values
+    [Column("solve_status", TypeName = AssignedWorkEnumDbDataTypes.AssignedWorkSolveStatus)]
     [Required]
     public AssignedWorkSolveStatus SolveStatus { get; set; } = AssignedWorkSolveStatus.NotSolved;
 
@@ -39,7 +40,7 @@ public class AssignedWorkModel : BaseModel
     [Column("solved_at", TypeName = DbDataTypes.DateTimeWithoutTZ)]
     public DateTime? SolvedAt { get; set; }
 
-    [Column("check_status", TypeName = "ENUM()")] // TODO: Define ENUM values
+    [Column("check_status", TypeName = AssignedWorkEnumDbDataTypes.AssignedWorkCheckStatus)]
     [Required]
     public AssignedWorkCheckStatus CheckStatus { get; set; } = AssignedWorkCheckStatus.NotChecked;
 
@@ -125,6 +126,8 @@ public class AssignedWorkModel : BaseModel
     public ICollection<AssignedWorkAnswerModel> Answers { get; set; } = [];
 
     public ICollection<AssignedWorkStatusHistoryModel> StatusHistory { get; set; } = [];
+
+    public ICollection<CalendarEventModel> Events { get; set; } = [];
 
     #endregion
 }

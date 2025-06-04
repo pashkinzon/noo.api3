@@ -23,7 +23,7 @@ public class WorkModel : BaseModel
     public string Title { get; set; } = string.Empty;
 
     [Required]
-    [Column("type", TypeName = "ENUM('Test','MiniTest','Phrase','TrialWork','SecondPart')")]
+    [Column("type", TypeName = WorkEnumDbDataTypes.WorkType)]
     public WorkType Type { get; set; }
 
     [MaxLength(255)]

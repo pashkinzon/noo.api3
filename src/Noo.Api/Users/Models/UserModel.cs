@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Noo.Api.Calendar.Models;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Courses.Models;
+using Noo.Api.Polls.Models;
 using Noo.Api.Sessions.Models;
 using Noo.Api.Snippets.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
@@ -50,7 +52,7 @@ public class UserModel : BaseModel
     public string PasswordHash { get; set; } = string.Empty;
 
     [Required]
-    [Column("role", TypeName = "ENUM('student', 'mentor', 'assistant', 'teacher', 'admin')")]
+    [Column("role", TypeName = DbDataTypes.UserRolesEnum)]
     public UserRoles Role { get; set; } = UserRoles.Student;
 
     [Required]
@@ -80,6 +82,10 @@ public class UserModel : BaseModel
     public ICollection<SessionModel> Sessions { get; set; } = [];
 
     public ICollection<SnippetModel> Snippets { get; set; } = [];
+
+    public ICollection<PollParticipationModel> PollParticipations { get; set; } = [];
+
+    public ICollection<CalendarEventModel> CalendarEvents { get; set; } = [];
 
     #endregion
 }

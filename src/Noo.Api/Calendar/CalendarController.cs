@@ -29,6 +29,7 @@ public class CalendarController : ApiController
     [Authorize(Policy = CalendarPolicies.CanGetCalendarEvents)]
     [Produces(
         typeof(ApiResponseDTO<IEnumerable<CalendarEventDTO>>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
@@ -39,7 +40,6 @@ public class CalendarController : ApiController
     )
     {
         var result = await _calendarService.GetCalendarEventsAsync(userId, year, month);
-
         return OkResponse(result);
     }
 
@@ -59,5 +59,21 @@ public class CalendarController : ApiController
     {
         var eventId = await _calendarService.CreateCalendarEventAsync(dto);
         return CreatedResponse(eventId);
+    }
+
+    [HttpDelete("{id}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = CalendarPolicies.CanDeleteCalendarEvent)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
+    public async Task<IActionResult> DeleteCalendarEventAsync([FromRoute] Ulid id)
+    {
+        var userId = User.GetId();
+        await _calendarService.DeleteCalendarEventAsync(userId, id);
+        return NoContent();
     }
 }

@@ -26,11 +26,11 @@ public class WorkTaskModel : OrderedModel
     [MaxLength(16)]
     public IEnumerable<string>? RightAnswers { get; set; }
 
-    [Column("type", TypeName = "ENUM('Word','Text','Essay','FinalEssay')")]
+    [Column("type", TypeName = WorkEnumDbDataTypes.WorkTaskType)]
     [Required]
     public WorkTaskType Type { get; set; }
 
-    [Column("check_strategy", TypeName = "ENUM('Manual','Auto')")]
+    [Column("check_strategy", TypeName = WorkEnumDbDataTypes.WorkTaskCheckSteategy)]
     [Required]
     public WorkTaskCheckStrategy CheckStrategy { get; set; } = WorkTaskCheckStrategy.Manual;
 

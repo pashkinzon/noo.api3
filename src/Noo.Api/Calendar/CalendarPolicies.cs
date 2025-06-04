@@ -7,6 +7,7 @@ public class CalendarPolicies : IPolicyRegistrar
 {
     public const string CanGetCalendarEvents = nameof(CanGetCalendarEvents);
     public const string CanCreateCalendarEvent = nameof(CanCreateCalendarEvent);
+    public const string CanDeleteCalendarEvent = nameof(CanDeleteCalendarEvent);
 
     public void RegisterPolicies(AuthorizationOptions options)
     {
@@ -16,6 +17,11 @@ public class CalendarPolicies : IPolicyRegistrar
         });
 
         options.AddPolicy(CanCreateCalendarEvent, policy =>
+        {
+            policy.RequireAuthenticatedUser().RequireNotBlocked();
+        });
+
+        options.AddPolicy(CanDeleteCalendarEvent, policy =>
         {
             policy.RequireAuthenticatedUser().RequireNotBlocked();
         });
