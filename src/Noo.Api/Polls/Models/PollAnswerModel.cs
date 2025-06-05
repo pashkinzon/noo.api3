@@ -14,7 +14,7 @@ public class PollAnswerModel : BaseModel
     [Column("poll_question_id", TypeName = DbDataTypes.Ulid)]
     [Required]
     [ForeignKey(nameof(PollQuestion))]
-    public string PollQuestionId { get; set; } = string.Empty;
+    public Ulid PollQuestionId { get; set; }
 
     [Column("value", TypeName = DbDataTypes.Json)]
     [Required]

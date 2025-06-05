@@ -5,17 +5,16 @@ namespace Noo.Api.AssignedWorks;
 
 public class AssignedWorkPolicies : IPolicyRegistrar
 {
-    public const string CanGetOwnAssignedWorks = nameof(CanGetOwnAssignedWorks);
-    public const string CanGetAssignedWorksOfOthers = nameof(CanGetAssignedWorksOfOthers);
-    public const string CanViewAssignedWork = nameof(CanViewAssignedWork);
-    public const string CanSolveAssignedWork = nameof(CanSolveAssignedWork);
-    public const string CanCheckAssignedWork = nameof(CanCheckAssignedWork);
+    public const string CanGetAssignedWorks = nameof(CanGetAssignedWorks);
+    public const string CanGetAssignedWork = nameof(CanGetAssignedWork);
+    public const string CanGetAssignedWorkProgress = nameof(CanGetAssignedWorkProgress);
     public const string CanRemakeAssignedWork = nameof(CanRemakeAssignedWork);
-    public const string CanRecheckAssignedWork = nameof(CanRecheckAssignedWork);
+    public const string CanEditAssignedWork = nameof(CanEditAssignedWork);
+    public const string CanCommentAssignedWork = nameof(CanCommentAssignedWork);
 
     public void RegisterPolicies(AuthorizationOptions options)
     {
-        options.AddPolicy(CanGetOwnAssignedWorks, policy =>
+        options.AddPolicy(CanGetAssignedWorks, policy =>
         {
             policy.RequireRole(
                 nameof(UserRoles.Student),

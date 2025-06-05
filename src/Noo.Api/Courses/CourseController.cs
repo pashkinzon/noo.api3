@@ -33,7 +33,7 @@ public class CourseController : ApiController
     /// Retrieves a course by its unique identifier.
     /// </summary>
     [HttpGet("{id}")]
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CoursePolicies.CanGetCourse)]
     [Produces(
         typeof(ApiResponseDTO<CourseDTO>), StatusCodes.Status200OK,
@@ -51,7 +51,7 @@ public class CourseController : ApiController
     }
 
     [HttpGet]
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CoursePolicies.CanSearchCourses)]
     [Produces(
         typeof(ApiResponseDTO<IEnumerable<CourseModel>>), StatusCodes.Status200OK,

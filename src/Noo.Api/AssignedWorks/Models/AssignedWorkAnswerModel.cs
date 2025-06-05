@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Noo.Api.AssignedWorks.Types;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
@@ -27,6 +28,10 @@ public class AssignedWorkAnswerModel : BaseModel
     [Column("max_score", TypeName = DbDataTypes.SmallIntUnsigned)]
     [Range(0, 500)]
     public int MaxScore { get; set; }
+
+    [Column("status", TypeName = AssignedWorkEnumDbDataTypes.AssignedWorkAnswerStatus)]
+    [Required]
+    public AssignedWorkAnswerStatus Status { get; set; } = AssignedWorkAnswerStatus.NotSubmitted;
 
     [Column("detailed_score", TypeName = DbDataTypes.Json)]
     public Dictionary<string, int>? DetailedScore { get; set; }

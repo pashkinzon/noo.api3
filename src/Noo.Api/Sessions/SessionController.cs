@@ -24,7 +24,7 @@ public class SessionController : ApiController
     /// <summary>
     /// Gets the current user's list of sessions.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [HttpGet]
     [Authorize(Policy = SessionPolicies.CanGetOwnSessions)]
     [Produces(
@@ -44,7 +44,7 @@ public class SessionController : ApiController
     /// Deleted the current user session.
     /// Typically used to log out the user.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [HttpDelete]
     [Authorize(Policy = SessionPolicies.CanDeleteOwnSessions)]
     [Produces(
@@ -65,7 +65,7 @@ public class SessionController : ApiController
     /// <summary>
     /// Deletes a specific session by its ID.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [HttpDelete("{sessionId}")]
     [Authorize(Policy = SessionPolicies.CanDeleteOwnSessions)]
     [Produces(

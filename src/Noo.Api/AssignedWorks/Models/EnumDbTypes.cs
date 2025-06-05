@@ -7,4 +7,6 @@ public static class AssignedWorkEnumDbDataTypes
     public const string AssignedWorkSolveStatus = "ENUM('NotSolved', 'InProgress', 'Solved')";
 
     public const string AssignedWorkCheckStatus = "ENUM('NotChecked', 'InProgress', 'Checked')";
+
+    public const string AssignedWorkAnswerStatus = "ENUM('NotSubmitted', 'Submitted')";
 }

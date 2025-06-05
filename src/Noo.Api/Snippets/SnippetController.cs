@@ -25,7 +25,7 @@ public class SnippetController : ApiController
     /// <summary>
     /// Retrieves the snippets for the authenticated user.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [HttpGet]
     [Authorize(Policy = SnippetPolicies.CanGetOwnSnippets)]
     [Produces(
@@ -44,7 +44,7 @@ public class SnippetController : ApiController
     /// <summary>
     /// Creates a new snippet for the authenticated user.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
+    [MapToApiVersion(NooApiVersions.Current)]
     [HttpPost]
     [Authorize(Policy = SnippetPolicies.CanCreateSnippet)]
     [Produces(
@@ -65,8 +65,8 @@ public class SnippetController : ApiController
     /// <summary>
     /// Updates an existing snippet for the authenticated user.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
-    [HttpPatch("{id}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [HttpPatch("{snippetId}")]
     [Authorize(Policy = SnippetPolicies.CanEditSnippet)]
     [Produces(
         null, StatusCodes.Status204NoContent,
@@ -89,8 +89,8 @@ public class SnippetController : ApiController
     /// <summary>
     /// Deletes an existing snippet for the authenticated user.
     /// </summary>
-    [ApiVersion(NooApiVersions.Current)]
-    [HttpDelete("{id}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [HttpDelete("{snippetId}")]
     [Authorize(Policy = SnippetPolicies.CanDeleteSnippet)]
     [Produces(
         null, StatusCodes.Status204NoContent,

@@ -80,7 +80,7 @@ public class PollController : ApiController
     /// <summary>
     /// Update an existing poll.
     /// </summary>
-    [HttpPatch("{id}")]
+    [HttpPatch("{pollId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = PollPolicies.CanUpdatePoll)]
     [Produces(
@@ -96,7 +96,7 @@ public class PollController : ApiController
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{pollId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = PollPolicies.CanDeletePoll)]
     [Produces(
@@ -105,9 +105,9 @@ public class PollController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> DeletePollAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> DeletePollAsync([FromRoute] Ulid pollId)
     {
-        await _pollService.DeletePollAsync(id);
+        await _pollService.DeletePollAsync(pollId);
         return NoContent();
     }
 
