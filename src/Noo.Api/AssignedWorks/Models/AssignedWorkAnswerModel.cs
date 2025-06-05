@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AutoMapper.Configuration.Annotations;
 using Noo.Api.AssignedWorks.Types;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
@@ -33,6 +34,7 @@ public class AssignedWorkAnswerModel : BaseModel
     [Required]
     public AssignedWorkAnswerStatus Status { get; set; } = AssignedWorkAnswerStatus.NotSubmitted;
 
+    // TODO: Change to Dictionary<string, int> when EF Core supports it
     [Column("detailed_score", TypeName = DbDataTypes.Json)]
     public Dictionary<string, int>? DetailedScore { get; set; }
 

@@ -18,7 +18,7 @@ public interface IAssignedWorkService
     public Task MarkAssignedWorkAsCheckedAsync(Ulid assignedWorkId, Ulid userId);
     public Task ArchiveAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
     public Task UnarchiveAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task AddHelperMentorToAssignedWorkAsync(Ulid assignedWorkId, AddHelperMentorOptionsDTO options);
+    public Task AddHelperMentorToAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, AddHelperMentorOptionsDTO options);
     public Task ReplaceMainMentorOfAssignedWorkAsync(Ulid assignedWorkId, ReplaceMainMentorOptionsDTO options);
     public Task ShiftDeadlineOfAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, ShiftAssignedWorkDeadlineOptionsDTO options);
     public Task ReturnAssignedWorkToSolveAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);

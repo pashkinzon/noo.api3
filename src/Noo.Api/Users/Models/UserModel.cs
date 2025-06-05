@@ -6,9 +6,12 @@ using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Courses.Models;
+using Noo.Api.NooTube.Models;
+using Noo.Api.Notifications.Models;
 using Noo.Api.Polls.Models;
 using Noo.Api.Sessions.Models;
 using Noo.Api.Snippets.Models;
+using Noo.Api.UserSettings.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.Users.Models;
@@ -86,6 +89,16 @@ public class UserModel : BaseModel
     public ICollection<PollParticipationModel> PollParticipations { get; set; } = [];
 
     public ICollection<CalendarEventModel> CalendarEvents { get; set; } = [];
+
+    public ICollection<NotificationModel> Notifications { get; set; } = [];
+
+    public UserSettingsModel? Settings { get; set; }
+
+    public ICollection<NooTubeVideoModel> UploadedVideos { get; set; } = [];
+
+    public ICollection<NooTubeVideoCommentModel> NooTubeVideoComments { get; set; } = [];
+
+    public ICollection<NooTubeVideoReactionModel> NooTubeVideoReactions { get; set; } = [];
 
     #endregion
 }

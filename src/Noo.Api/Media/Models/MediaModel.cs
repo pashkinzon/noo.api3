@@ -3,6 +3,7 @@ using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Courses.Models;
+using Noo.Api.NooTube.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.Media.Models;
@@ -33,6 +34,8 @@ public class MediaModel : OrderedModel
 
     [InverseProperty(nameof(CourseModel.Thumbnail))]
     public ICollection<CourseModel> Courses { get; set; } = [];
+
+    public NooTubeVideoModel? NooTubeVideoThumbnail { get; set; }
 
     #endregion
 }

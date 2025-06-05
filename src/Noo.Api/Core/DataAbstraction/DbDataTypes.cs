@@ -49,5 +49,15 @@ public static class DbDataTypes
     /// </summary>
     public const string SmallIntUnsigned = "SMALLINT UNSIGNED";
 
+    /// <summary>
+    /// 3-byte unsigned integer, range 0–16 777 215
+    /// </summary>
+    public const string MediumIntUnsigned = "MEDIUMINT UNSIGNED";
+
+    /// <summary>
+    /// 4-byte unsigned integer, range 0–4 294 967 295
+    /// </summary>
+    public const string BigIntUnsigned = "BIGINT UNSIGNED";
+
     public const string UserRolesEnum = "ENUM('student', 'mentor', 'assistant', 'teacher', 'admin')";
 }

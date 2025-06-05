@@ -61,6 +61,9 @@ public class CalendarController : ApiController
         return CreatedResponse(eventId);
     }
 
+    /// <summary>
+    /// Deletes a calendar event by its ID.
+    /// </summary>
     [HttpDelete("{id}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CalendarPolicies.CanDeleteCalendarEvent)]

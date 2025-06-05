@@ -2,30 +2,28 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
-using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
-using Noo.Api.Core.Utils.Richtext;
 using Noo.Api.Users.Models;
 
-namespace Noo.Api.Snippets.Models;
+namespace Noo.Api.UserSettings.Models;
 
-[Model("snippet")]
-public class SnippetModel : BaseModel
+[Model("user_settings")]
+public class UserSettingsModel
 {
-    [Column("name", TypeName = DbDataTypes.Varchar63)]
-    [MaxLength(63)]
-    public string Name { get; set; } = default!;
-
-    [RichTextColumn("content")]
-    public IRichTextType? Content { get; set; }
-
     [Column("user_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(User))]
+    [Required]
     public Ulid UserId { get; set; }
+
+    [Column("theme")]
+    public string? Theme { get; set; }
+
+    [Column("font_size")]
+    public string? FontSize { get; set; }
 
     #region Navigation Properties
 
-    [InverseProperty(nameof(User.Snippets))]
+    [InverseProperty(nameof(UserModel.Settings))]
     [DeleteBehavior(DeleteBehavior.Cascade)]
     public UserModel User { get; set; } = default!;
 

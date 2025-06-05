@@ -4,5 +4,5 @@ namespace Noo.Api.Media.Services;
 
 public interface IMediaService
 {
-    public Task<UploadMediaResponseDTO> UploadAsync(IFormFile file);
+    public Task<MediaDTO> UploadAsync(IFormFile file);
 }

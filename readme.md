@@ -197,6 +197,7 @@ Rewrite of the modules is in progress.
 - [x] Subjects
 - [x] Snippets
 - [x] Support
+- [x] Platform (metadata, version, etc.)
 
 **In progress:**
 
@@ -206,18 +207,38 @@ Rewrite of the modules is in progress.
 - [ ] Courses
 - [ ] Calendar
 - [ ] Polls
+- [ ] Notifications (with all the buses)
+- [ ] UserSettings
+- [ ] Nootube
 
 **Not started:**
 
-- [ ] Nootube
-- [ ] Notifications (with all the buses)
-- [ ] UserSettings
-- [ ] Platform (metadata, version, etc.)
 - [ ] GoogleSheets
+- [ ] Statistics
+
+**Planned in the future:**
+
+- [ ] Payments
+
+## To test in `Core`
+
+- [ ] Criteria with filters
+- [ ] Health checks
+- [ ] Caching
+- [ ] Unit of work
+- [ ] Repository
+- [ ] Configs
+- [ ] Authorization and authentication
+- [ ] Emails
+- [ ] Thirdparty services (Telegram, GoogleSheets etc.)
+- [ ] Utils
+- [ ] Validation
+- [ ] Versioning (in headers)
 
 ## To refactor
 
 - [ ] Inject repositories directly and not use them via unit of work
+- [ ] Move `Core` to a separate project
 
 ## Important to implement
 
