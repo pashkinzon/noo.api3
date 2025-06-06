@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Polls.Types;
 
 namespace Noo.Api.Polls.Models;
@@ -14,7 +15,7 @@ public class PollQuestionModel : OrderedModel
     [Column("poll_id", TypeName = DbDataTypes.Ulid)]
     [Required]
     [ForeignKey(nameof(Poll))]
-    public string PollId { get; set; } = string.Empty;
+    public Ulid PollId { get; set; }
 
     [Column("title", TypeName = DbDataTypes.Varchar255)]
     [Required]
@@ -33,7 +34,7 @@ public class PollQuestionModel : OrderedModel
     [Required]
     public PollQuestionType Type { get; set; }
 
-    [Column("config", TypeName = DbDataTypes.Json)]
+    [JsonColumn("config", Converter = typeof(PollQuestionConfigConverter))]
     public PollQuestionConfig? Config { get; set; }
 
     #region Navigation Properties

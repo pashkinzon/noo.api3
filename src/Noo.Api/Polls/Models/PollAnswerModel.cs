@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Polls.Types;
 
 namespace Noo.Api.Polls.Models;
@@ -16,7 +18,7 @@ public class PollAnswerModel : BaseModel
     [ForeignKey(nameof(PollQuestion))]
     public Ulid PollQuestionId { get; set; }
 
-    [Column("value", TypeName = DbDataTypes.Json)]
+    [JsonColumn("value", Converter = typeof(PollAnswerValueConverter))]
     [Required]
     public PollAnswerValue Value { get; set; }
 

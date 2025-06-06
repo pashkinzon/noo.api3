@@ -2,13 +2,14 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
+using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Users.Models;
 
 namespace Noo.Api.UserSettings.Models;
 
 [Model("user_settings")]
-public class UserSettingsModel
+public class UserSettingsModel : BaseModel
 {
     [Column("user_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(User))]

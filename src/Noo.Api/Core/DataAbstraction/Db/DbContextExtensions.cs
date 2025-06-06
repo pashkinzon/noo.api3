@@ -1,9 +1,11 @@
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Utils;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Core.Utils.Richtext;
 using Noo.Api.Core.Utils.Richtext.Delta;
 
@@ -48,7 +50,7 @@ public static class DbContextExtensions
 
     /// <summary>
     /// Configures many-to-many tables in the database.
-    /// Makes readable jsoin table names and configures ON DELETE CASCADE.
+    /// Makes readable many-to-many table names and configures ON DELETE CASCADE.
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>
     public static void ConfigureManyToManyTables(this ModelBuilder modelBuilder)
@@ -123,5 +125,87 @@ public static class DbContextExtensions
                 .HasCharSet(richTextAttribute.Charset)
                 .UseCollation(richTextAttribute.Collation);
         }
+    }
+
+    public static void UseJsonDictionaryColumns(this ModelBuilder modelBuilder)
+    {
+        var jsonProperties = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseModel)))
+            .SelectMany(t => t.GetProperties())
+            .Where(p => p?.GetCustomAttribute<JsonColumnAttribute>() != null);
+
+        var serializationOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        foreach (var property in jsonProperties)
+        {
+            var jsonAttribute = property.GetCustomAttribute<JsonColumnAttribute>()!;
+
+            if (jsonAttribute.Converter != null)
+            {
+                modelBuilder.Entity(property.DeclaringType!)
+                    .Property(property.Name)
+                    .HasColumnName(jsonAttribute.Name)
+                    .HasConversion(jsonAttribute.Converter)
+                    .HasColumnType("json");
+
+                continue;
+            }
+
+            // assume it is a Dictionary with primitive types
+
+            var propertyType = property.PropertyType;
+            if (!propertyType.IsGenericType || propertyType.GetGenericTypeDefinition() != typeof(Dictionary<,>))
+                continue;
+
+            var typeArgs = propertyType.GetGenericArguments();
+            if (typeArgs.Length != 2)
+            {
+                throw new InvalidOperationException(
+                    $"JsonDictionaryColumnAttribute on {property.DeclaringType!.Name}.{property.Name} must have exactly two type arguments (Dictionary)."
+                );
+            }
+
+            var keyType = typeArgs[0];
+            if (keyType != typeof(string))
+            {
+                throw new InvalidOperationException(
+                    $"JsonDictionaryColumnAttribute on {property.DeclaringType!.Name}.{property.Name} must have a key type of string."
+                );
+            }
+
+            var valueType = typeArgs[1];
+            if (!IsPrimitiveType(valueType) && !IsNullablePrimitiveType(valueType))
+            {
+                throw new InvalidOperationException(
+                    $"JsonDictionaryColumnAttribute on {property.DeclaringType!.Name}.{property.Name} must have a primitive value type."
+                );
+            }
+
+            var converterType = typeof(JsonDictionaryConverter<>).MakeGenericType(valueType);
+            var converter = (ValueConverter?)Activator.CreateInstance(converterType) ?? throw new InvalidCastException($"Failed creating ValuConverter for {property.DeclaringType!.Name}.{property.Name}");
+
+            modelBuilder.Entity(property.DeclaringType!)
+                .Property(property.Name)
+                .HasColumnName(jsonAttribute.Name)
+                .HasConversion(converter)
+                .HasColumnType("json");
+        }
+    }
+
+    private static bool IsPrimitiveType(Type type)
+    {
+        return type.IsPrimitive || type == typeof(decimal) || type == typeof(string) || type == typeof(DateTime);
+    }
+
+    private static bool IsNullablePrimitiveType(Type type)
+    {
+        if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+            return false;
+
+        var underlyingType = Nullable.GetUnderlyingType(type)!;
+        return IsPrimitiveType(underlyingType);
     }
 }

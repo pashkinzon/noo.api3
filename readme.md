@@ -210,11 +210,10 @@ Rewrite of the modules is in progress.
 - [ ] Notifications (with all the buses)
 - [ ] UserSettings
 - [ ] Nootube
-
-**Not started:**
-
 - [ ] GoogleSheets
 - [ ] Statistics
+
+**Not started:**
 
 **Planned in the future:**
 

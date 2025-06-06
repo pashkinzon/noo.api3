@@ -9,6 +9,9 @@ public class NooTubePolicies : IPolicyRegistrar
 
     public void RegisterPolicies(AuthorizationOptions options)
     {
-        throw new NotImplementedException();
+        options.AddPolicy(CanGetNooTubeVideos, policy =>
+        {
+            policy.RequireAuthenticatedUser().RequireNotBlocked();
+        });
     }
 }

@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Polls.Types;
 using Noo.Api.Users.Models;
 
@@ -25,8 +27,8 @@ public class PollParticipationModel : BaseModel
     [MaxLength(255)]
     public string? UserExternalIdentifier { get; set; }
 
-    [Column("user_external_data", TypeName = DbDataTypes.Json)]
-    public object? UserExternalData { get; set; }
+    [JsonColumn("user_external_data", Converter = typeof(PollUserExternalDataConverter))]
+    public PollUserExternalData? UserExternalData { get; set; }
 
     [Column("user_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(User))]

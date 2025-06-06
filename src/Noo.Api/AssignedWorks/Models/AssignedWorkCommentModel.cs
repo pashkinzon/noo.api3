@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Core.Utils.Richtext;
@@ -12,7 +14,15 @@ public class AssignedWorkCommentModel : BaseModel
 
     #region Navigation Properties
 
-    public AssignedWorkModel? AssignedWork { get; set; }
+    [InverseProperty(nameof(AssignedWorkModel.MainMentorComment))]
+    public AssignedWorkModel? AssignedWorkAsMainMentor { get; set; }
+
+    [InverseProperty(nameof(AssignedWorkModel.HelperMentorComment))]
+    public AssignedWorkModel? AssignedWorkAsHelperMentor { get; set; }
+
+    [InverseProperty(nameof(AssignedWorkModel.StudentComment))]
+    public AssignedWorkModel? AssignedWorkAsStudent { get; set; }
+
 
     #endregion
 }

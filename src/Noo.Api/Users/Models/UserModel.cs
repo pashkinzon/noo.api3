@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Noo.Api.AssignedWorks.Models;
 using Noo.Api.Calendar.Models;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
@@ -99,6 +100,8 @@ public class UserModel : BaseModel
     public ICollection<NooTubeVideoCommentModel> NooTubeVideoComments { get; set; } = [];
 
     public ICollection<NooTubeVideoReactionModel> NooTubeVideoReactions { get; set; } = [];
+
+    public ICollection<AssignedWorkStatusHistoryModel> AssignedWorkHistoryChanges { get; set; } = [];
 
     #endregion
 }

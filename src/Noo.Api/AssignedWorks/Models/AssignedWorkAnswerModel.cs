@@ -5,6 +5,7 @@ using Noo.Api.AssignedWorks.Types;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Core.Utils.Richtext;
 using Noo.Api.Works.Models;
 
@@ -34,8 +35,7 @@ public class AssignedWorkAnswerModel : BaseModel
     [Required]
     public AssignedWorkAnswerStatus Status { get; set; } = AssignedWorkAnswerStatus.NotSubmitted;
 
-    // TODO: Change to Dictionary<string, int> when EF Core supports it
-    [Column("detailed_score", TypeName = DbDataTypes.Json)]
+    [JsonColumn("detailed_score")]
     public Dictionary<string, int>? DetailedScore { get; set; }
 
     [Column("task_id", TypeName = DbDataTypes.Ulid)]

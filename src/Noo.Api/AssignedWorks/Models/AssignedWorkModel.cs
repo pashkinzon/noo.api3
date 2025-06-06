@@ -98,17 +98,17 @@ public class AssignedWorkModel : BaseModel
 
     [Column("work_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(Work))]
-    public Ulid WorkId { get; set; }
+    public Ulid? WorkId { get; set; }
 
     #region Navigation Properties
 
     [DeleteBehavior(DeleteBehavior.SetNull)]
-    public WorkModel Work { get; set; } = default!;
+    public WorkModel? Work { get; set; }
 
-    [DeleteBehavior(DeleteBehavior.SetNull)]
+    [DeleteBehavior(DeleteBehavior.NoAction)]
     public UserModel Student { get; set; } = default!;
 
-    [DeleteBehavior(DeleteBehavior.SetNull)]
+    [DeleteBehavior(DeleteBehavior.NoAction)]
     public UserModel MainMentor { get; set; } = default!;
 
     [DeleteBehavior(DeleteBehavior.SetNull)]

@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Noo.Api.Media;
 
 namespace Noo.Api.Polls.Types;
 
-public record PollQuestionConfig
+public struct PollQuestionConfig
 {
     [JsonPropertyName("type")]
     [Required]
@@ -51,4 +52,14 @@ public record PollQuestionConfig
     [JsonPropertyName("maxFileCount")]
     [Range(1, 10)]
     public int? MaxFileCount { get; set; }
+
+    internal static PollQuestionConfig Deserialize(string v)
+    {
+        return JsonSerializer.Deserialize<PollQuestionConfig>(v);
+    }
+
+    internal string Serialize()
+    {
+        return JsonSerializer.Serialize(this);
+    }
 }

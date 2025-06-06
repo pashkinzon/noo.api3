@@ -55,9 +55,8 @@ public class NooTubeVideoModel : BaseModel
     public DateTime? PublishedAt { get; set; }
 
     [Column("uploaded_by_id", TypeName = DbDataTypes.Ulid)]
-    [Required]
     [ForeignKey(nameof(UploadedByUser))]
-    public Ulid UploadedById { get; set; }
+    public Ulid? UploadedById { get; set; }
 
     #region Navigation Properties
 
