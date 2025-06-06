@@ -67,15 +67,15 @@ namespace Noo.Api.Migrations
                 columns: table => new
                 {
                     id = table.Column<byte[]>(type: "BINARY(16)", nullable: false),
-                    hash = table.Column<string>(type: "VARCHAR(512)", nullable: false, collation: "utf8mb4_general_ci")
+                    hash = table.Column<string>(type: "VARCHAR(512)", maxLength: 512, nullable: false, collation: "utf8mb4_general_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    path = table.Column<string>(type: "VARCHAR(255)", nullable: false, collation: "utf8mb4_general_ci")
+                    path = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: false, collation: "utf8mb4_general_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    name = table.Column<string>(type: "VARCHAR(255)", nullable: false, collation: "utf8mb4_general_ci")
+                    name = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: false, collation: "utf8mb4_general_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    actual_name = table.Column<string>(type: "VARCHAR(255)", nullable: false, collation: "utf8mb4_general_ci")
+                    actual_name = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: false, collation: "utf8mb4_general_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    extension = table.Column<string>(type: "VARCHAR(127)", nullable: false, collation: "utf8mb4_general_ci")
+                    extension = table.Column<string>(type: "VARCHAR(15)", maxLength: 15, nullable: false, collation: "utf8mb4_general_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     size = table.Column<int>(type: "INT(11)", nullable: false),
                     created_at = table.Column<DateTime>(type: "TIMESTAMP(6)", nullable: false)
@@ -517,6 +517,40 @@ namespace Noo.Api.Migrations
                     table.PrimaryKey("PK_snippet", x => x.id);
                     table.ForeignKey(
                         name: "FK_snippet_user_user_id",
+                        column: x => x.user_id,
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4")
+                .Annotation("Relational:Collation", "utf8mb4_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "user_avatar",
+                columns: table => new
+                {
+                    id = table.Column<byte[]>(type: "BINARY(16)", nullable: false),
+                    avatar_type = table.Column<string>(type: "ENUM('None', 'Custom', 'Telegram')", nullable: false, collation: "utf8mb4_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    avatar_url = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: false, collation: "utf8mb4_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    media_id = table.Column<byte[]>(type: "BINARY(16)", nullable: true),
+                    user_id = table.Column<byte[]>(type: "BINARY(16)", nullable: false),
+                    created_at = table.Column<DateTime>(type: "TIMESTAMP(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    updated_at = table.Column<DateTime>(type: "TIMESTAMP(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_avatar", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_avatar_media_media_id",
+                        column: x => x.media_id,
+                        principalTable: "media",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_user_avatar_user_user_id",
                         column: x => x.user_id,
                         principalTable: "user",
                         principalColumn: "id",
@@ -1396,6 +1430,18 @@ namespace Noo.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_avatar_media_id",
+                table: "user_avatar",
+                column: "media_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_avatar_user_id",
+                table: "user_avatar",
+                column: "user_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_user_settings_user_id",
                 table: "user_settings",
                 column: "user_id",
@@ -1472,6 +1518,9 @@ namespace Noo.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "support_article");
+
+            migrationBuilder.DropTable(
+                name: "user_avatar");
 
             migrationBuilder.DropTable(
                 name: "user_settings");

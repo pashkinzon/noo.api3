@@ -75,6 +75,8 @@ public class UserModel : BaseModel
     // Many-to-many relationship on other side
     public ICollection<CourseModel> CoursesAsEditor { get; set; } = [];
 
+    public UserAvatarModel? Avatar { get; set; }
+
     [InverseProperty(nameof(CourseMembershipModel.Student))]
     public ICollection<CourseMembershipModel> CoursesAsMember { get; set; } = [];
 

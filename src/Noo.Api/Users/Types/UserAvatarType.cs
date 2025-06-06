@@ -1,6 +1,6 @@
 namespace Noo.Api.Users.Types;
 
-public enum AvatarType
+public enum UserAvatarType
 {
     None,
     Custom,

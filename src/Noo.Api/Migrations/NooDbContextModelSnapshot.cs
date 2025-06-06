@@ -771,6 +771,7 @@ namespace Noo.Api.Migrations
 
                     b.Property<string>("ActualName")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("actual_name");
 
@@ -783,16 +784,19 @@ namespace Noo.Api.Migrations
 
                     b.Property<string>("Extension")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(127)")
+                        .HasMaxLength(15)
+                        .HasColumnType("VARCHAR(15)")
                         .HasColumnName("extension");
 
                     b.Property<string>("Hash")
                         .IsRequired()
+                        .HasMaxLength(512)
                         .HasColumnType("VARCHAR(512)")
                         .HasColumnName("hash");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("name");
 
@@ -802,6 +806,7 @@ namespace Noo.Api.Migrations
 
                     b.Property<string>("Path")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("path");
 
@@ -1559,6 +1564,55 @@ namespace Noo.Api.Migrations
                     b.ToTable("mentor_assignment");
                 });
 
+            modelBuilder.Entity("Noo.Api.Users.Models.UserAvatarModel", b =>
+                {
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("BINARY(16)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AvatarType")
+                        .IsRequired()
+                        .HasColumnType("ENUM('None', 'Custom', 'Telegram')")
+                        .HasColumnName("avatar_type");
+
+                    b.Property<string>("AvatarUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("VARCHAR(255)")
+                        .HasColumnName("avatar_url");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TIMESTAMP(6)")
+                        .HasColumnName("created_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedAt"));
+
+                    b.Property<byte[]>("MediaId")
+                        .HasColumnType("BINARY(16)")
+                        .HasColumnName("media_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("TIMESTAMP(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<byte[]>("UserId")
+                        .IsRequired()
+                        .HasColumnType("BINARY(16)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MediaId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("user_avatar");
+                });
+
             modelBuilder.Entity("Noo.Api.Users.Models.UserModel", b =>
                 {
                     b.Property<byte[]>("Id")
@@ -2198,6 +2252,24 @@ namespace Noo.Api.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("Noo.Api.Users.Models.UserAvatarModel", b =>
+                {
+                    b.HasOne("Noo.Api.Media.Models.MediaModel", "Media")
+                        .WithOne("UserAvatar")
+                        .HasForeignKey("Noo.Api.Users.Models.UserAvatarModel", "MediaId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Noo.Api.Users.Models.UserModel", "User")
+                        .WithOne("Avatar")
+                        .HasForeignKey("Noo.Api.Users.Models.UserAvatarModel", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Media");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Noo.Api.Works.Models.WorkModel", b =>
                 {
                     b.HasOne("Noo.Api.Subjects.Models.SubjectModel", "Subject")
@@ -2267,6 +2339,8 @@ namespace Noo.Api.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("NooTubeVideoThumbnail");
+
+                    b.Navigation("UserAvatar");
                 });
 
             modelBuilder.Entity("Noo.Api.NooTube.Models.NooTubeVideoModel", b =>
@@ -2310,6 +2384,8 @@ namespace Noo.Api.Migrations
             modelBuilder.Entity("Noo.Api.Users.Models.UserModel", b =>
                 {
                     b.Navigation("AssignedWorkHistoryChanges");
+
+                    b.Navigation("Avatar");
 
                     b.Navigation("CalendarEvents");
 

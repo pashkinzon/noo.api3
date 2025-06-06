@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Courses.Models;
 using Noo.Api.NooTube.Models;
+using Noo.Api.Users.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.Media.Models;
@@ -13,18 +15,26 @@ namespace Noo.Api.Media.Models;
 public class MediaModel : OrderedModel
 {
     [Column("hash", TypeName = DbDataTypes.Varchar512)]
+    [MaxLength(512)]
     public string Hash { get; set; } = string.Empty;
 
     [Column("path", TypeName = DbDataTypes.Varchar255)]
+    [MaxLength(255)]
+    [Required]
     public string Path { get; set; } = string.Empty;
 
     [Column("name", TypeName = DbDataTypes.Varchar255)]
+    [MaxLength(255)]
+    [Required]
     public string Name { get; set; } = string.Empty;
 
     [Column("actual_name", TypeName = DbDataTypes.Varchar255)]
+    [MaxLength(255)]
     public string ActualName { get; set; } = string.Empty;
 
-    [Column("extension", TypeName = DbDataTypes.Varchar127)]
+    [Column("extension", TypeName = DbDataTypes.Varchar15)]
+    [MaxLength(15)]
+    [Required]
     public string Extension { get; set; } = string.Empty;
 
     [Column("size", TypeName = DbDataTypes.Int)]
@@ -32,10 +42,11 @@ public class MediaModel : OrderedModel
 
     #region Navigation Properties
 
-    [InverseProperty(nameof(CourseModel.Thumbnail))]
     public ICollection<CourseModel> Courses { get; set; } = [];
 
     public NooTubeVideoModel? NooTubeVideoThumbnail { get; set; }
+
+    public UserAvatarModel? UserAvatar { get; set; }
 
     #endregion
 }
