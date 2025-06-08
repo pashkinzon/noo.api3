@@ -5,7 +5,7 @@ using Noo.Api.Works.Types;
 
 namespace Noo.Api.Works.DTO;
 
-public record WorkTaskResponseDTO
+public record WorkTaskDTO
 {
     [JsonPropertyName("id")]
     [JsonConverter(typeof(UlidJsonConverter))]

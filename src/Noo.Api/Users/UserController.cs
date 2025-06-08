@@ -148,11 +148,30 @@ public class UserController : ApiController
         return NoContent();
     }
 
+    [MapToApiVersion(NooApiVersions.Current)]
+    [HttpPatch("me/avatar")]
+    [Authorize(Policy = UserPolicies.CanPatchSelf)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
+    public async Task<IActionResult> UpdateAvatarAsync([FromForm] UpdateAvatarDTO updateAvatarDTO)
+    {
+        var userId = User.GetId();
+
+        await _userService.UpdateAvatarAsync(userId, updateAvatarDTO);
+
+        return NoContent();
+    }
+
     /// <summary>
     /// Retrieves a list of users based on the provided search criteria.
     /// </summary>
-    [HttpGet]
     [MapToApiVersion(NooApiVersions.Current)]
+    [HttpGet]
     [Authorize(Policy = UserPolicies.CanSearchUsers)]
     [Produces(
         typeof(ApiResponseDTO<IEnumerable<UserDTO>>), StatusCodes.Status200OK,

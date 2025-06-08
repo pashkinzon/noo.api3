@@ -16,7 +16,14 @@ public class CourseModel : BaseModel
 {
     [Required]
     [Column("name", TypeName = DbDataTypes.Varchar255)]
+    [MaxLength(255)]
     public string Name { get; set; } = string.Empty;
+
+    [Column("start_date", TypeName = DbDataTypes.DateTimeWithoutTZ)]
+    public DateTime StartDate { get; set; }
+
+    [Column("end_date", TypeName = DbDataTypes.DateTimeWithoutTZ)]
+    public DateTime Duration { get; set; }
 
     [Column("description", TypeName = DbDataTypes.Text)]
     [MaxLength(500)]

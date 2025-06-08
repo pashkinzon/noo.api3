@@ -1,0 +1,30 @@
+using AutoMapper;
+using Noo.Api.Core.Utils.AutoMapper;
+using Noo.Api.Courses.DTO;
+
+namespace Noo.Api.Courses.Models;
+
+[AutoMapperProfile]
+public class CourseMapperProfile : Profile
+{
+    public CourseMapperProfile()
+    {
+        CreateMap<CreateCourseDTO, CourseModel>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Chapters, opt => opt.Ignore())
+            .ForMember(dest => dest.Editors, opt => opt.Ignore())
+            .ForMember(dest => dest.Authors, opt => opt.Ignore())
+            .ForMember(dest => dest.Memberships, opt => opt.Ignore());
+
+        CreateMap<CourseModel, CourseDTO>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.ThumbnailId, opt => opt.MapFrom(src => src.ThumbnailId))
+            .ForMember(dest => dest.Chapters, opt => opt.MapFrom(src => src.Chapters));
+    }
+}

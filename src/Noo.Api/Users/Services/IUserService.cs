@@ -22,4 +22,5 @@ public interface IUserService
     public Task BlockUserAsync(Ulid id);
     public Task UnblockUserAsync(Ulid id);
     public Task DeleteUserAsync(Ulid id);
+    public Task UpdateAvatarAsync(Ulid userId, UpdateAvatarDTO updateAvatarDTO);
 }

@@ -22,6 +22,10 @@ public class PollModel : BaseModel
     [Required]
     public bool IsActive { get; set; } = true;
 
+    [Column("is_auth_required", TypeName = DbDataTypes.Boolean)]
+    [Required]
+    public bool IsAuthRequired { get; set; } = true;
+
     #region Navigation Properties
 
     public ICollection<PollQuestionModel> Questions { get; set; } = [];

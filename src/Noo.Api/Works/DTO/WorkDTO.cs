@@ -3,7 +3,7 @@ using Noo.Api.Subjects.DTO;
 
 namespace Noo.Api.Works.DTO;
 
-public record WorkResponseDTO
+public record WorkDTO
 {
     [JsonPropertyName("id")]
     public Ulid Id { get; init; }
@@ -24,5 +24,6 @@ public record WorkResponseDTO
     public SubjectDTO? Subject { get; init; }
 
     [JsonPropertyName("tasks")]
-    public ICollection<WorkTaskResponseDTO> Tasks { get; init; } = [];
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ICollection<WorkTaskDTO> Tasks { get; init; } = [];
 }

@@ -8,9 +8,9 @@ namespace Noo.Api.Works.Services;
 
 public interface IWorkService
 {
-    public Task<WorkResponseDTO?> GetWorkAsync(Ulid id);
+    public Task<WorkDTO?> GetWorkAsync(Ulid id);
 
-    public Task<(IEnumerable<WorkResponseDTO>, int)> GetWorksAsync(Criteria<WorkModel> criteria);
+    public Task<(IEnumerable<WorkDTO>, int)> GetWorksAsync(Criteria<WorkModel> criteria);
 
     public Task<Ulid> CreateWorkAsync(CreateWorkDTO work);
 

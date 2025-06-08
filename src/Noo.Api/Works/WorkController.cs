@@ -31,7 +31,7 @@ public class WorkController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = WorkPolicies.CanSearchWorks)]
     [Produces(
-        typeof(ApiResponseDTO<IEnumerable<WorkResponseDTO>>), StatusCodes.Status200OK,
+        typeof(ApiResponseDTO<IEnumerable<WorkDTO>>), StatusCodes.Status200OK,
         StatusCodes.Status400BadRequest,
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
@@ -50,7 +50,7 @@ public class WorkController : ApiController
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = WorkPolicies.CanGetWork)]
     [Produces(
-        typeof(ApiResponseDTO<WorkResponseDTO>), StatusCodes.Status200OK,
+        typeof(ApiResponseDTO<WorkDTO>), StatusCodes.Status200OK,
         StatusCodes.Status400BadRequest,
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden,

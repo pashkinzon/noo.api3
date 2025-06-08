@@ -11,9 +11,9 @@ using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.Courses;
 
+[ApiVersion(NooApiVersions.Current)]
 [ApiController]
 [Route("course")]
-[ApiVersion(NooApiVersions.Current)]
 public class CourseController : ApiController
 {
     private readonly ICourseService _courseService;
@@ -30,9 +30,9 @@ public class CourseController : ApiController
     }
 
     /// <summary>
-    /// Retrieves a course by its unique identifier.
+    /// Retrieves a course and its chapter/material tree by its unique identifier.
     /// </summary>
-    [HttpGet("{id}")]
+    [HttpGet("{courseId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CoursePolicies.CanGetCourse)]
     [Produces(
@@ -42,14 +42,23 @@ public class CourseController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> GetCourseAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> GetCourseAsync([FromRoute] Ulid courseId)
     {
-        var userRole = User.GetRole();
-        var course = await _courseService.GetByIdAsync(id, false); // TODO: handle inactive parts
+        var userId = User.GetId();
 
-        return course is null ? NotFound() : OkResponse(course);
+        if (await _courseMembershipService.HasAccessAsync(courseId, userId))
+        {
+            var course = await _courseService.GetByIdAsync(courseId, false);
+
+            return course is null ? NotFound() : OkResponse(course);
+        }
+
+        return Forbid();
     }
 
+    /// <summary>
+    /// Search courses
+    /// </summary>
     [HttpGet]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = CoursePolicies.CanSearchCourses)]
@@ -61,8 +70,8 @@ public class CourseController : ApiController
     )]
     public async Task<IActionResult> GetCoursesAsync([FromQuery] Criteria<CourseModel> criteria)
     {
-        var (courses, total) = await _courseService.SearchAsync(criteria);
+        var result = await _courseService.SearchAsync(criteria);
 
-        return OkResponse((courses, total));
+        return OkResponse(result);
     }
 }

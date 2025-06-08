@@ -10,7 +10,7 @@ public class WorkMapperProfile : Profile
     public WorkMapperProfile()
     {
         // work task
-        CreateMap<WorkTaskModel, WorkTaskResponseDTO>();
+        CreateMap<WorkTaskModel, WorkTaskDTO>();
 
         CreateMap<CreateWorkTaskDTO, WorkTaskModel>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -31,7 +31,7 @@ public class WorkMapperProfile : Profile
         // work
         CreateMap<WorkModel, UpdateWorkDTO>();
 
-        CreateMap<WorkModel, WorkResponseDTO>();
+        CreateMap<WorkModel, WorkDTO>();
 
         CreateMap<UpdateWorkDTO, WorkModel>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())

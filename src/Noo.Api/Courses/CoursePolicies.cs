@@ -22,7 +22,8 @@ public class CoursePolicies : IPolicyRegistrar
                 nameof(UserRoles.Admin),
                 nameof(UserRoles.Teacher),
                 nameof(UserRoles.Assistant),
-                nameof(UserRoles.Mentor)
+                nameof(UserRoles.Mentor),
+                nameof(UserRoles.Student)
             ).RequireNotBlocked());
 
         options.AddPolicy(CanPatchCourse, policy =>

@@ -16,4 +16,6 @@ public class MediaController : ApiController
     {
         _mediaService = mediaService;
     }
+
+    // TODO: Implement media upload endpoint
 }

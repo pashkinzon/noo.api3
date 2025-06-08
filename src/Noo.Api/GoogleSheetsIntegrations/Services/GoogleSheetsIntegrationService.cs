@@ -28,4 +28,3 @@ public class GoogleSheetsIntegrationService : IGoogleSheetsIntegrationService
         throw new NotImplementedException();
     }
 }
-

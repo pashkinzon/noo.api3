@@ -10,6 +10,12 @@ public record CourseDTO
     [JsonPropertyName("name")]
     public string Name { get; init; } = string.Empty;
 
+    [JsonPropertyName("startDate")]
+    public DateTime StartDate { get; set; }
+
+    [JsonPropertyName("endDate")]
+    public DateTime Duration { get; set; }
+
     [JsonPropertyName("description")]
     public string? Description { get; init; }
 
@@ -19,4 +25,8 @@ public record CourseDTO
     [JsonPropertyName("memberCount")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? MemberCount { get; init; }
+
+    [JsonPropertyName("chapters")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IEnumerable<CourseChapterDTO> Chapters = [];
 }
