@@ -5,6 +5,7 @@ using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Media.Models;
+using Noo.Api.Subjects.Models;
 using Noo.Api.Users.Models;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
@@ -23,7 +24,7 @@ public class CourseModel : BaseModel
     public DateTime StartDate { get; set; }
 
     [Column("end_date", TypeName = DbDataTypes.DateTimeWithoutTZ)]
-    public DateTime Duration { get; set; }
+    public DateTime EndDate { get; set; }
 
     [Column("description", TypeName = DbDataTypes.Text)]
     [MaxLength(500)]
@@ -32,6 +33,10 @@ public class CourseModel : BaseModel
     [Column("thumbnail_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(Thumbnail))]
     public Ulid? ThumbnailId { get; set; }
+
+    [Column("subject_id", TypeName = DbDataTypes.Ulid)]
+    [ForeignKey(nameof(Subject))]
+    public Ulid? SubjectId { get; set; }
 
     #region Navigation Properties
 
@@ -50,6 +55,10 @@ public class CourseModel : BaseModel
 
     [InverseProperty(nameof(CourseMembershipModel.Course))]
     public ICollection<CourseMembershipModel> Memberships { get; set; } = [];
+
+    [InverseProperty(nameof(SubjectModel.Courses))]
+    [DeleteBehavior(DeleteBehavior.SetNull)]
+    public SubjectModel? Subject { get; set; }
 
     #endregion
 }

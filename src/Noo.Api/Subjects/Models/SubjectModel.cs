@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Courses.Models;
 using Noo.Api.Users.Models;
 using Noo.Api.Works.Models;
 
@@ -30,6 +31,9 @@ public class SubjectModel : BaseModel
 
     [InverseProperty(nameof(WorkModel.Subject))]
     public ICollection<WorkModel> Works { get; set; } = [];
+
+    [InverseProperty(nameof(CourseModel.Subject))]
+    public ICollection<CourseModel> Courses { get; set; } = [];
 
     #endregion
 }

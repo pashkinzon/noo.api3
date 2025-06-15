@@ -12,7 +12,7 @@ using Noo.Api.Core.DataAbstraction.Db;
 namespace Noo.Api.Migrations
 {
     [DbContext(typeof(NooDbContext))]
-    [Migration("20250606210734_Schema")]
+    [Migration("20250615202247_Schema")]
     partial class Schema
     {
         /// <inheritdoc />
@@ -384,7 +384,7 @@ namespace Noo.Api.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("Enum('Custom', 'AssignedWorkCheckDeadline', 'AssignedWorkSolveDeadline', 'AssignedWorkCheked', 'AssignedWorkSolved')")
+                        .HasColumnType("Enum('Custom', 'AssignedWorkCheckDeadline', 'AssignedWorkSolveDeadline', 'AssignedWorkChecked', 'AssignedWorkSolved')")
                         .HasColumnName("type");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -415,7 +415,6 @@ namespace Noo.Api.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Color")
-                        .IsRequired()
                         .HasMaxLength(63)
                         .HasColumnType("VARCHAR(63)")
                         .HasColumnName("color");
@@ -685,10 +684,23 @@ namespace Noo.Api.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("description");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("DATETIME(0)")
+                        .HasColumnName("end_date");
+
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("name");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("DATETIME(0)")
+                        .HasColumnName("start_date");
+
+                    b.Property<byte[]>("SubjectId")
+                        .HasColumnType("BINARY(16)")
+                        .HasColumnName("subject_id");
 
                     b.Property<byte[]>("ThumbnailId")
                         .HasColumnType("BINARY(16)")
@@ -702,6 +714,8 @@ namespace Noo.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name");
+
+                    b.HasIndex("SubjectId");
 
                     b.HasIndex("ThumbnailId");
 
@@ -1123,6 +1137,10 @@ namespace Noo.Api.Migrations
                         .HasColumnType("TINYINT(1)")
                         .HasColumnName("is_active");
 
+                    b.Property<bool>("IsAuthRequired")
+                        .HasColumnType("TINYINT(1)")
+                        .HasColumnName("is_auth_required");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -1498,11 +1516,11 @@ namespace Noo.Api.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedAt"));
 
                     b.Property<string>("FontSize")
-                        .HasColumnType("longtext")
+                        .HasColumnType("ENUM('small', 'normal', 'large')")
                         .HasColumnName("font_size");
 
                     b.Property<string>("Theme")
-                        .HasColumnType("longtext")
+                        .HasColumnType("ENUM('light', 'dark', 'system')")
                         .HasColumnName("theme");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -2057,10 +2075,17 @@ namespace Noo.Api.Migrations
 
             modelBuilder.Entity("Noo.Api.Courses.Models.CourseModel", b =>
                 {
+                    b.HasOne("Noo.Api.Subjects.Models.SubjectModel", "Subject")
+                        .WithMany("Courses")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Noo.Api.Media.Models.MediaModel", "Thumbnail")
                         .WithMany("Courses")
                         .HasForeignKey("ThumbnailId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Subject");
 
                     b.Navigation("Thumbnail");
                 });
@@ -2372,6 +2397,8 @@ namespace Noo.Api.Migrations
 
             modelBuilder.Entity("Noo.Api.Subjects.Models.SubjectModel", b =>
                 {
+                    b.Navigation("Courses");
+
                     b.Navigation("MentorAssignments");
 
                     b.Navigation("Works");

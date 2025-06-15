@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
@@ -19,6 +20,7 @@ public class CourseMaterialContentModel : BaseModel
     public Ulid? WorkId { get; set; }
 
     [Column("is_work_available", TypeName = DbDataTypes.Boolean)]
+    [Required]
     public bool IsWorkAvailable { get; set; }
 
     [Column("work_solve_deadline_at", TypeName = DbDataTypes.DateTimeWithoutTZ)]

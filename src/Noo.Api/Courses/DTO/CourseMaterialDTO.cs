@@ -11,7 +11,7 @@ public record CourseMaterialDTO
     public string TItleColor { get; init; } = string.Empty;
 
     [JsonPropertyName("isActive")]
-    public bool IsACtive { get; init; }
+    public bool IsActive { get; init; }
 
     [JsonPropertyName("publishAt")]
     public DateTime PublishAt { get; init; }

@@ -117,6 +117,11 @@ public class UserService : IUserService
             .UnblockUserAsync(id);
     }
 
+    public Task UpdateAvatarAsync(Ulid userId, UpdateAvatarDTO updateAvatarDTO)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task UpdateTelegramAsync(Ulid id, UpdateTelegramDTO updateTelegramDTO)
     {
         var user = await _unitOfWork

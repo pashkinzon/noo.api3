@@ -16,10 +16,10 @@ public class UserSettingsModel : BaseModel
     [Required]
     public Ulid UserId { get; set; }
 
-    [Column("theme")]
+    [Column("theme", TypeName = UserSettingsEnumDbTypes.UserTheme)]
     public string? Theme { get; set; }
 
-    [Column("font_size")]
+    [Column("font_size", TypeName = UserSettingsEnumDbTypes.FontSize)]
     public string? FontSize { get; set; }
 
     #region Navigation Properties

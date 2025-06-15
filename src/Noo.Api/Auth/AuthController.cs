@@ -67,6 +67,25 @@ public class AuthController : ApiController
     }
 
     /// <summary>
+    /// Checks if the username is already taken.
+    /// Returns true if the username is free, otherwise false
+    /// </summary>
+    [MapToApiVersion(NooApiVersions.Current)]
+    [HttpGet("username-check/{username}")]
+    [AllowAnonymous]
+    [Produces(
+        typeof(ApiResponseDTO<bool>), StatusCodes.Status200OK
+    )]
+    public async Task<IActionResult> CheckUsernameAsync(
+        [FromRoute] string username
+    )
+    {
+        bool isUsernameFree = await _authService.CheckUsernameAsync(username);
+
+        return OkResponse(isUsernameFree);
+    }
+
+    /// <summary>
     /// Requests a password change by sending a reset token to the user's email address.
     /// </summary>
     [HttpPatch("request-password-change")]

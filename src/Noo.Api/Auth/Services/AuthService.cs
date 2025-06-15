@@ -218,6 +218,12 @@ public class AuthService : IAuthService
         await _userService.UpdateUserEmailAsync(user.Id, newEmail);
     }
 
+    public async Task<bool> CheckUsernameAsync(string username)
+    {
+        var usernameIsTaken = await _userService.UserExistsAsync(username, null);
+        return !usernameIsTaken;
+    }
+
     private bool VerifyPassword(string passwordToCheck, string passwordHash)
     {
         if (string.IsNullOrEmpty(passwordToCheck) || string.IsNullOrEmpty(passwordHash))

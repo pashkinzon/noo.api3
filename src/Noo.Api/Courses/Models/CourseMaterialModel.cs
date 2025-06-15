@@ -24,16 +24,19 @@ public class CourseMaterialModel : OrderedModel
     public string? TitleColor { get; set; }
 
     [Column("is_active", TypeName = DbDataTypes.Boolean)]
+    [Required]
     public bool IsActive { get; set; }
 
     [Column("publish_at", TypeName = DbDataTypes.DateTimeWithoutTZ)]
     public DateTime? PublishAt { get; set; }
 
     [Column("chapter_id", TypeName = DbDataTypes.Ulid)]
+    [Required]
     [ForeignKey(nameof(Chapter))]
     public Ulid ChapterId { get; set; }
 
     [Column("content_id", TypeName = DbDataTypes.Ulid)]
+    [Required]
     [ForeignKey(nameof(Content))]
     public Ulid ContentId { get; set; }
 

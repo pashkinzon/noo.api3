@@ -12,4 +12,10 @@ public record SubjectDTO
 
     [JsonPropertyName("color")]
     public string Color { get; set; } = string.Empty;
+
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; set; }
+
+    [JsonPropertyName("updatedAt")]
+    public DateTime UpdatedAt { get; set; }
 }

@@ -18,12 +18,14 @@ public class CourseChapterModel : OrderedModel
 
     [Column("color", TypeName = DbDataTypes.Varchar63)]
     [MaxLength(63)]
-    public string Color { get; set; } = default!;
+    public string? Color { get; set; }
 
     [Column("is_active", TypeName = DbDataTypes.Boolean)]
+    [Required]
     public bool IsActive { get; set; }
 
     [Column("course_id", TypeName = DbDataTypes.Ulid)]
+    [Required]
     [ForeignKey(nameof(Course))]
     public Ulid CourseId { get; set; }
 

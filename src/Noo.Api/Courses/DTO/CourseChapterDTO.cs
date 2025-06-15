@@ -11,7 +11,7 @@ public record CourseChapterDTO
     public string Title { get; init; } = string.Empty;
 
     [JsonPropertyName("color")]
-    public string Color { get; set; } = string.Empty;
+    public string? Color { get; set; }
 
     [JsonPropertyName("isActive")]
     public bool IsActive { get; init; }
