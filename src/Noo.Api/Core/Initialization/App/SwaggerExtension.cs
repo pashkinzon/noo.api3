@@ -1,4 +1,4 @@
-using System.Reflection;
+using Scalar.AspNetCore;
 using Noo.Api.Core.Config;
 using Noo.Api.Core.Config.Env;
 using Noo.Api.Core.Initialization.Configuration;
@@ -7,19 +7,22 @@ namespace Noo.Api.Core.Initialization.App;
 
 public static class SwaggerExtension
 {
-    public static void UseNooSwagger(this IApplicationBuilder app, IConfiguration configuration)
+    public static void UseNooSwagger(this WebApplication app, IConfiguration configuration)
     {
         var appConfig = configuration.GetSection(AppConfig.SectionName).GetOrThrow<AppConfig>();
 
         var swaggerConfig = configuration.GetSection(SwaggerConfig.SectionName).GetOrThrow<SwaggerConfig>();
 
-        if (appConfig.Mode == ApplicationMode.Development)
+        if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            app.UseSwagger(options =>
             {
-                options.SwaggerEndpoint(swaggerConfig.Endpoint, swaggerConfig.Title);
-                options.RoutePrefix = swaggerConfig.RoutePrefix;
+                options.RouteTemplate = "/openapi/{documentName}.json";
+            });
+
+            app.MapScalarApiReference(swaggerConfig.RoutePrefix, options =>
+            {
+                options.Title = swaggerConfig.Title;
             });
         }
     }

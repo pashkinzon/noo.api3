@@ -12,40 +12,40 @@ namespace Noo.Api.UnitTests.Courses;
 
 public class CourseControllerTests
 {
-    private readonly Mock<ICourseService> _courseServiceMock;
-    private readonly Mock<ICourseMembershipService> _courseMembershipServiceMock;
-    private readonly CourseController _controller;
+	private readonly Mock<ICourseService> _courseServiceMock;
+	private readonly Mock<ICourseMembershipService> _courseMembershipServiceMock;
+	private readonly CourseController _controller;
 
-    public CourseControllerTests()
-    {
-        _courseServiceMock = new Mock<ICourseService>();
-        _courseMembershipServiceMock = new Mock<ICourseMembershipService>();
-        _controller = new CourseController(_courseServiceMock.Object, _courseMembershipServiceMock.Object);
-    }
+	public CourseControllerTests()
+	{
+		_courseServiceMock = new Mock<ICourseService>();
+		_courseMembershipServiceMock = new Mock<ICourseMembershipService>();
+		_controller = new CourseController(_courseServiceMock.Object, _courseMembershipServiceMock.Object);
+	}
 
-    [Fact]
-    public async Task GetCourseAsync_WhenCourseExists_ReturnsOkWithCourse()
-    {
-        var courseId = Ulid.NewUlid();
-        var expectedCourse = new CourseDTO();
-        _courseServiceMock.Setup(x => x.GetByIdAsync(courseId))
-            .ReturnsAsync(expectedCourse);
-        var result = await _controller.GetCourseAsync(courseId);
+	[Fact]
+	public async Task GetCourseAsync_WhenCourseExists_ReturnsOkWithCourse()
+	{
+		var courseId = Ulid.NewUlid();
+		var expectedCourse = new CourseDTO();
+		_courseServiceMock.Setup(x => x.GetByIdAsync(courseId, true))
+			.ReturnsAsync(expectedCourse);
+		var result = await _controller.GetCourseAsync(courseId);
 
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var response = Assert.IsType<ApiResponseDTO<CourseDTO>>(okResult.Value);
-        Assert.Equal(expectedCourse, response.Data);
-    }
+		var okResult = Assert.IsType<OkObjectResult>(result);
+		var response = Assert.IsType<ApiResponseDTO<CourseDTO>>(okResult.Value);
+		Assert.Equal(expectedCourse, response.Data);
+	}
 
-    [Fact]
-    public async Task GetCourseAsync_WhenCourseDoesNotExist_ReturnsNotFound()
-    {
-        var courseId = Ulid.NewUlid();
-        _courseServiceMock.Setup(x => x.GetByIdAsync(courseId))
-            .ReturnsAsync((CourseDTO?)null);
+	[Fact]
+	public async Task GetCourseAsync_WhenCourseDoesNotExist_ReturnsNotFound()
+	{
+		var courseId = Ulid.NewUlid();
+		_courseServiceMock.Setup(x => x.GetByIdAsync(courseId, true))
+			.ReturnsAsync((CourseDTO?)null);
 
-        var result = await _controller.GetCourseAsync(courseId);
+		var result = await _controller.GetCourseAsync(courseId);
 
-        Assert.IsType<NotFoundResult>(result);
-    }
-} 
+		Assert.IsType<NotFoundResult>(result);
+	}
+}

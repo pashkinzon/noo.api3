@@ -7,8 +7,6 @@ public class AppConfig : IConfig
 {
     public static string SectionName => "App";
 
-    public required ApplicationMode Mode { get; set; }
-
     [Required]
     public required string Location { get; set; }
 

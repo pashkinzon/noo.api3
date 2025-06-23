@@ -5,24 +5,24 @@ namespace Noo.Api.AssignedWorks.DTO;
 
 public record AssignedWorkProgressDTO
 {
-    [JsonPropertyName("id")]
-    public Ulid Id { get; init; }
+    [JsonPropertyName("assignedWorkId")]
+    public Ulid AssignedWorkId { get; init; }
 
-    [JsonPropertyName("solve_status")]
+    [JsonPropertyName("solveStatus")]
     public AssignedWorkSolveStatus? SolveStatus { get; init; }
 
-    [JsonPropertyName("solved_at")]
+    [JsonPropertyName("solvedAt")]
     public DateTime? SolvedAt { get; init; }
 
-    [JsonPropertyName("check_status")]
+    [JsonPropertyName("checkStatus")]
     public AssignedWorkCheckStatus? CheckStatus { get; init; }
 
-    [JsonPropertyName("checked_at")]
+    [JsonPropertyName("checkedAt")]
     public DateTime? CheckedAt { get; init; }
 
     [JsonPropertyName("score")]
     public int? Score { get; init; }
 
-    [JsonPropertyName("max_score")]
+    [JsonPropertyName("maxScore")]
     public int? MaxScore { get; init; }
 }

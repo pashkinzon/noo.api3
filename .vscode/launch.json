@@ -1,7 +1,41 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-	"version": "0.2.0",
-	"configurations": []
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Dev (Debug)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Noo.Api/bin/Debug/net9.0/Noo.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Noo.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/src/Noo.Api/Views"
+      }
+    },
+    {
+      "name": "Launch Prod (Release)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Noo.Api/bin/Release/net9.0/Noo.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Noo.Api",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/src/Noo.Api/Views"
+      }
+    }
+  ]
 }

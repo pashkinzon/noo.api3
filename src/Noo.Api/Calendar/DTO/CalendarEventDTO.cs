@@ -20,8 +20,11 @@ public record CalendarEventDTO
     [JsonPropertyName("description")]
     public string? Description { get; init; }
 
-    [JsonPropertyName("dateTime")]
-    public DateTime DateTime { get; init; }
+    [JsonPropertyName("startDateTime")]
+    public DateTime StartDateTime { get; init; }
+
+    [JsonPropertyName("endDateTime")]
+    public DateTime? EndDateTime { get; init; }
 
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; init; }

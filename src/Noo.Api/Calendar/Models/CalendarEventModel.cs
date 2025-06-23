@@ -12,7 +12,7 @@ using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 namespace Noo.Api.Calendar.Models;
 
 [Model("calendar_event")]
-[Index(nameof(DateTime), IsUnique = false)]
+[Index(nameof(StartDateTime), IsUnique = false)]
 public class CalendarEventModel : BaseModel
 {
     [Column("user_id", TypeName = DbDataTypes.Ulid)]
@@ -37,9 +37,12 @@ public class CalendarEventModel : BaseModel
     [MaxLength(512)]
     public string? Description { get; set; }
 
-    [Column("datetime", TypeName = DbDataTypes.DateTimeWithoutTZ)]
+    [Column("start_datetime", TypeName = DbDataTypes.DateTimeWithoutTZ)]
     [Required]
-    public DateTime DateTime { get; set; }
+    public DateTime StartDateTime { get; set; }
+
+    [Column("end_datetime", TypeName = DbDataTypes.DateTimeWithoutTZ)]
+    public DateTime? EndDateTime { get; set; }
 
     #region Navigation Properties
 

@@ -5,39 +5,35 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Noo.Api.Courses.DTO;
 using Noo.Api.Courses.Models;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Response;
-using Cysharp.Serialization.Json;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Noo.Api.IntegrationTests.Courses;
 
 // for testing purposes, need to change to the actual DTO
 public record CreateCourseDTO
 {
-    [Required]
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = default!;
-    
-    [Required]
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = default!;
+	[Required]
+	[JsonPropertyName("name")]
+	public string Name { get; set; } = default!;
+
+	[Required]
+	[JsonPropertyName("description")]
+	public string Description { get; set; } = default!;
 }
 
 // for testing purposes, need to change to the actual DTO
 public record CourseDTO
 {
-    [JsonPropertyName("id")]
-    public Ulid Id { get; set; }
+	[JsonPropertyName("id")]
+	public Ulid Id { get; set; }
 
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = default!;
+	[JsonPropertyName("name")]
+	public string Name { get; set; } = default!;
 
-    [JsonPropertyName("description")]
-    public string? Description { get; set; }
+	[JsonPropertyName("description")]
+	public string? Description { get; set; }
 }
 
 public class CourseControllerIntegrationTests : IClassFixture<NooWebApplicationFactory>
