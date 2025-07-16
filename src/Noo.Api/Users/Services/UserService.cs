@@ -20,7 +20,7 @@ public class UserService : IUserService
 
     private readonly IMapper _mapper;
 
-    private readonly UserSearchStrategy _userSearchStrategy;
+    private readonly ISearchStrategy<UserModel> _userSearchStrategy;
 
     public UserService(
         IUnitOfWork unitOfWork,

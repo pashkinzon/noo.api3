@@ -9,19 +9,19 @@ public interface IAssignedWorkService
 {
     public Task<(IEnumerable<AssignedWorkDTO>, int)> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria);
     public Task<(IEnumerable<AssignedWorkDTO>, int)> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria);
-    public Task<AssignedWorkDTO?> GetAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task<AssignedWorkProgressDTO> GetAssignedWorkProgressAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task<Ulid> RemakeAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, RemakeAssignedWorkOptionsDTO options);
-    public Task<Ulid> SaveAnswerAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, UpsertAssignedWorkAnswerDTO answer);
-    public Task<Ulid> SaveCommentAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, UpsertAssignedWorkCommentDTO comment);
-    public Task MarkAssignedWorkAsSolvedAsync(Ulid assignedWorkId, Ulid userId);
-    public Task MarkAssignedWorkAsCheckedAsync(Ulid assignedWorkId, Ulid userId);
-    public Task ArchiveAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task UnarchiveAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task AddHelperMentorToAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, AddHelperMentorOptionsDTO options);
+    public Task<AssignedWorkDTO?> GetAssignedWorkAsync(Ulid assignedWorkId);
+    public Task<AssignedWorkProgressDTO> GetAssignedWorkProgressAsync(Ulid assignedWorkId);
+    public Task<Ulid> RemakeAssignedWorkAsync(Ulid assignedWorkId, RemakeAssignedWorkOptionsDTO options);
+    public Task<Ulid> SaveAnswerAsync(Ulid assignedWorkId, UpsertAssignedWorkAnswerDTO answer);
+    public Task<Ulid> SaveCommentAsync(Ulid assignedWorkId, UpsertAssignedWorkCommentDTO comment);
+    public Task MarkAssignedWorkAsSolvedAsync(Ulid assignedWorkId);
+    public Task MarkAssignedWorkAsCheckedAsync(Ulid assignedWorkId);
+    public Task ArchiveAssignedWorkAsync(Ulid assignedWorkId);
+    public Task UnarchiveAssignedWorkAsync(Ulid assignedWorkId);
+    public Task AddHelperMentorToAssignedWorkAsync(Ulid assignedWorkId, AddHelperMentorOptionsDTO options);
     public Task ReplaceMainMentorOfAssignedWorkAsync(Ulid assignedWorkId, ReplaceMainMentorOptionsDTO options);
-    public Task ShiftDeadlineOfAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, ShiftAssignedWorkDeadlineOptionsDTO options);
-    public Task ReturnAssignedWorkToSolveAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task ReturnAssignedWorkToCheckAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
-    public Task DeleteAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole);
+    public Task ShiftDeadlineOfAssignedWorkAsync(Ulid assignedWorkId, ShiftAssignedWorkDeadlineOptionsDTO options);
+    public Task ReturnAssignedWorkToSolveAsync(Ulid assignedWorkId);
+    public Task ReturnAssignedWorkToCheckAsync(Ulid assignedWorkId);
+    public Task DeleteAssignedWorkAsync(Ulid assignedWorkId);
 }

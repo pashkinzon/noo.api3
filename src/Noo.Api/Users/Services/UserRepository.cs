@@ -1,6 +1,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction.Db;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Users.DTO;
 using Noo.Api.Users.Models;
 
@@ -66,6 +67,15 @@ public class UserRepository : Repository<UserModel>, IUserRepository
         await repository
             .Where(x => x.Id == id)
             .ExecuteUpdateAsync(x => x.SetProperty(y => y.IsBlocked, false));
+    }
+
+    public Task<bool> MentorExistsAsync(Ulid mentorId)
+    {
+        var repository = Context.GetDbSet<UserModel>();
+
+        return repository
+            .Where(x => x.Id == mentorId && x.Role == UserRoles.Mentor)
+            .AnyAsync();
     }
 }
 

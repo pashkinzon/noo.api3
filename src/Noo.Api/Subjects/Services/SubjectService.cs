@@ -20,7 +20,7 @@ public class SubjectService : ISubjectService
 
     private readonly IMapper _mapper;
 
-    public SubjectService(IUnitOfWork unitOfWork, ISearchStrategy<SubjectModel> searchStrategy, IMapper mapper)
+    public SubjectService(IUnitOfWork unitOfWork, SubjectSearchStrategy searchStrategy, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _searchStrategy = searchStrategy;

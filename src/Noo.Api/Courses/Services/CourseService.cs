@@ -12,7 +12,7 @@ public class CourseService : ICourseService
 {
     protected readonly IUnitOfWork _unitOfWork;
     protected readonly IMapper _mapper;
-    protected readonly CourseSearchStrategy _searchStrategy;
+    protected readonly ISearchStrategy<CourseModel> _searchStrategy;
 
     public CourseService(
         IUnitOfWork unitOfWork,

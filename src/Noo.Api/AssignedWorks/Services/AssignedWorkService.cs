@@ -1,35 +1,84 @@
+using AutoMapper;
 using Noo.Api.AssignedWorks.DTO;
 using Noo.Api.AssignedWorks.Models;
 using Noo.Api.Core.DataAbstraction.Criteria;
+using Noo.Api.Core.DataAbstraction.Db;
+using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
+using Noo.Api.Users.Services;
 
 namespace Noo.Api.AssignedWorks.Services;
 
 [RegisterScoped(typeof(IAssignedWorkService))]
 public class AssignedWorkService : IAssignedWorkService
 {
-    public Task AddHelperMentorToAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, AddHelperMentorOptionsDTO options)
+    private readonly IUnitOfWork _unitOfWork;
+
+    private readonly IMapper _mapper;
+
+    private readonly ISearchStrategy<AssignedWorkModel> _searchStrategy;
+
+    private readonly IAssignedWorkRepository _assignedWorkRepository;
+
+    private readonly IUserRepository _userRepository;
+
+    public AssignedWorkService(IUnitOfWork unitOfWork, IMapper mapper, ISearchStrategy<AssignedWorkModel> searchStrategy)
+    {
+        _mapper = mapper;
+        _searchStrategy = searchStrategy;
+        _unitOfWork = unitOfWork;
+        _assignedWorkRepository = _unitOfWork.AssignedWorkRepository();
+        _userRepository = _unitOfWork.UserRepository();
+    }
+
+    public async Task AddHelperMentorToAssignedWorkAsync(Ulid assignedWorkId, AddHelperMentorOptionsDTO options)
+    {
+        var assignedWork = await _assignedWorkRepository.GetByIdAsync(assignedWorkId);
+
+        if (assignedWork == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var mentorExists = await _userRepository.MentorExistsAsync(options.MentorId);
+
+        if (!mentorExists)
+        {
+            throw new NotFoundException();
+        }
+
+        assignedWork.HelperMentorId = options.MentorId;
+
+        if (options.NotifyStudent)
+        {
+            // TODO: notify student about the new helper mentor
+        }
+
+        if (options.NotifyMentor)
+        {
+            // TODO: notify mentor about being added as a helper mentor
+        }
+
+        await _unitOfWork.CommitAsync();
+    }
+
+    public Task ArchiveAssignedWorkAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task ArchiveAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
+    public Task DeleteAssignedWorkAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
+    public Task<AssignedWorkDTO?> GetAssignedWorkAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<AssignedWorkDTO?> GetAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<AssignedWorkProgressDTO> GetAssignedWorkProgressAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
+    public Task<AssignedWorkProgressDTO> GetAssignedWorkProgressAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
@@ -44,17 +93,17 @@ public class AssignedWorkService : IAssignedWorkService
         throw new NotImplementedException();
     }
 
-    public Task MarkAssignedWorkAsCheckedAsync(Ulid assignedWorkId, Ulid userId)
+    public Task MarkAssignedWorkAsCheckedAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task MarkAssignedWorkAsSolvedAsync(Ulid assignedWorkId, Ulid userId)
+    public Task MarkAssignedWorkAsSolvedAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Ulid> RemakeAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, RemakeAssignedWorkOptionsDTO options)
+    public Task<Ulid> RemakeAssignedWorkAsync(Ulid assignedWorkId, RemakeAssignedWorkOptionsDTO options)
     {
         throw new NotImplementedException();
     }
@@ -64,32 +113,32 @@ public class AssignedWorkService : IAssignedWorkService
         throw new NotImplementedException();
     }
 
-    public Task ReturnAssignedWorkToCheckAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
+    public Task ReturnAssignedWorkToCheckAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task ReturnAssignedWorkToSolveAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
+    public Task ReturnAssignedWorkToSolveAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Ulid> SaveAnswerAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, UpsertAssignedWorkAnswerDTO answer)
+    public Task<Ulid> SaveAnswerAsync(Ulid assignedWorkId, UpsertAssignedWorkAnswerDTO answer)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Ulid> SaveCommentAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, UpsertAssignedWorkCommentDTO comment)
+    public Task<Ulid> SaveCommentAsync(Ulid assignedWorkId, UpsertAssignedWorkCommentDTO comment)
     {
         throw new NotImplementedException();
     }
 
-    public Task ShiftDeadlineOfAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole, ShiftAssignedWorkDeadlineOptionsDTO options)
+    public Task ShiftDeadlineOfAssignedWorkAsync(Ulid assignedWorkId, ShiftAssignedWorkDeadlineOptionsDTO options)
     {
         throw new NotImplementedException();
     }
 
-    public Task UnarchiveAssignedWorkAsync(Ulid assignedWorkId, Ulid userId, UserRoles userRole)
+    public Task UnarchiveAssignedWorkAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }

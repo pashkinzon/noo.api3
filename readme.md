@@ -234,6 +234,7 @@ Rewrite of the modules is in progress.
 
 ## To refactor
 
+- [ ] Do not return dtos from services, return models instead. Create a separate layer for mapping from models to dtos and vice versa.
 - [ ] Inject repositories directly and not use them via unit of work or as extension bullshit
 - [ ] Add an alias for `AddFilter` in criteria to use linq expressions
 - [ ] Move `Core` to a separate project

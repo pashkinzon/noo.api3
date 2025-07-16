@@ -15,7 +15,7 @@ public class MentorService : IMentorService
 
     private readonly IMapper _mapper;
 
-    private readonly MentorAssignmentSearchStrategy _mentorAssignmentSearchStrategy;
+    private readonly ISearchStrategy<MentorAssignmentModel> _mentorAssignmentSearchStrategy;
 
     public MentorService(IUnitOfWork unitOfWork, IMapper mapper, MentorAssignmentSearchStrategy mentorAssignmentSearchStrategy)
     {

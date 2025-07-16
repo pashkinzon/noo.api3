@@ -24,9 +24,9 @@ public class PollService : IPollService
 
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly PollSearchStrategy _pollSearchStrategy;
+    private readonly ISearchStrategy<PollModel> _pollSearchStrategy;
 
-    private readonly PollParticipationSearchStrategy _pollParticipationSearchStrategy;
+    private readonly ISearchStrategy<PollParticipationModel> _pollParticipationSearchStrategy;
 
     private readonly IPollAnswerRepository _pollAnswerRepository;
 

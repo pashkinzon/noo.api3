@@ -77,10 +77,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        var result = await _assignedWorkService.GetAssignedWorkAsync(assignedWorkId, userId, userRole);
+        var result = await _assignedWorkService.GetAssignedWorkAsync(assignedWorkId);
 
         return result is null ? NotFound() : OkResponse(result);
     }
@@ -103,10 +100,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        var result = await _assignedWorkService.GetAssignedWorkProgressAsync(assignedWorkId, userId, userRole);
+        var result = await _assignedWorkService.GetAssignedWorkProgressAsync(assignedWorkId);
 
         return result is null ? NotFound() : OkResponse(result);
     }
@@ -130,10 +124,7 @@ public class AssignedWorkController : ApiController
         [FromBody] RemakeAssignedWorkOptionsDTO options
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        var id = await _assignedWorkService.RemakeAssignedWorkAsync(assignedWorkId, userId, userRole, options);
+        var id = await _assignedWorkService.RemakeAssignedWorkAsync(assignedWorkId, options);
 
         return CreatedResponse(id);
     }
@@ -163,10 +154,7 @@ public class AssignedWorkController : ApiController
         [FromBody] UpsertAssignedWorkAnswerDTO answer
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        var id = await _assignedWorkService.SaveAnswerAsync(assignedWorkId, userId, userRole, answer);
+        var id = await _assignedWorkService.SaveAnswerAsync(assignedWorkId, answer);
 
         return OkResponse(id);
     }
@@ -195,10 +183,7 @@ public class AssignedWorkController : ApiController
         [FromBody] UpsertAssignedWorkCommentDTO comment
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        var id = await _assignedWorkService.SaveCommentAsync(assignedWorkId, userId, userRole, comment);
+        var id = await _assignedWorkService.SaveCommentAsync(assignedWorkId, comment);
 
         return OkResponse(id);
     }
@@ -220,8 +205,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        await _assignedWorkService.MarkAssignedWorkAsSolvedAsync(assignedWorkId, userId);
+        await _assignedWorkService.MarkAssignedWorkAsSolvedAsync(assignedWorkId);
 
         return NoContent();
     }
@@ -243,8 +227,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        await _assignedWorkService.MarkAssignedWorkAsCheckedAsync(assignedWorkId, userId);
+        await _assignedWorkService.MarkAssignedWorkAsCheckedAsync(assignedWorkId);
 
         return NoContent();
     }
@@ -270,10 +253,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        await _assignedWorkService.ArchiveAssignedWorkAsync(assignedWorkId, userId, userRole);
+        await _assignedWorkService.ArchiveAssignedWorkAsync(assignedWorkId);
 
         return NoContent();
     }
@@ -299,10 +279,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        await _assignedWorkService.UnarchiveAssignedWorkAsync(assignedWorkId, userId, userRole);
+        await _assignedWorkService.UnarchiveAssignedWorkAsync(assignedWorkId);
 
         return NoContent();
     }
@@ -325,9 +302,7 @@ public class AssignedWorkController : ApiController
         [FromBody] AddHelperMentorOptionsDTO options
     )
     {
-        var userId = User.GetId();
-
-        await _assignedWorkService.AddHelperMentorToAssignedWorkAsync(assignedWorkId, userId, options);
+        await _assignedWorkService.AddHelperMentorToAssignedWorkAsync(assignedWorkId, options);
 
         return NoContent();
     }
@@ -373,10 +348,7 @@ public class AssignedWorkController : ApiController
         [FromBody] ShiftAssignedWorkDeadlineOptionsDTO options
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        await _assignedWorkService.ShiftDeadlineOfAssignedWorkAsync(assignedWorkId, userId, userRole, options);
+        await _assignedWorkService.ShiftDeadlineOfAssignedWorkAsync(assignedWorkId, options);
 
         return NoContent();
     }
@@ -399,10 +371,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        await _assignedWorkService.ReturnAssignedWorkToSolveAsync(assignedWorkId, userId, userRole);
+        await _assignedWorkService.ReturnAssignedWorkToSolveAsync(assignedWorkId);
 
         return NoContent();
     }
@@ -425,10 +394,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        await _assignedWorkService.ReturnAssignedWorkToCheckAsync(assignedWorkId, userId, userRole);
+        await _assignedWorkService.ReturnAssignedWorkToCheckAsync(assignedWorkId);
 
         return NoContent();
     }
@@ -454,10 +420,7 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var userId = User.GetId();
-        var userRole = User.GetRole();
-
-        await _assignedWorkService.DeleteAssignedWorkAsync(assignedWorkId, userId, userRole);
+        await _assignedWorkService.DeleteAssignedWorkAsync(assignedWorkId);
 
         return NoContent();
     }

@@ -17,6 +17,11 @@ public class CourseSearchStrategy : ISearchStrategy<CourseModel>
         var lowerNeedle = needle.ToLowerInvariant();
 
         return query.Where(course =>
-            course.Name.ToLowerInvariant().Contains(lowerNeedle));
+            course.Name.Contains(lowerNeedle, StringComparison.OrdinalIgnoreCase)
+            || course.Description!.Contains(lowerNeedle, StringComparison.OrdinalIgnoreCase)
+            || course.Authors.Any(author =>
+                author.Name.Contains(lowerNeedle, StringComparison.OrdinalIgnoreCase)
+            )
+        );
     }
 }
