@@ -192,28 +192,26 @@ Rewrite of the modules is in progress.
 **Basic functionality ready:**
 
 - [x] Works
-- [x] Auth
+- [x] Auth (test email templates)
 - [x] Users (missing avatar)
 - [x] Subjects
 - [x] Snippets
 - [x] Support
 - [x] Platform (metadata, version, etc.)
+- [x] UserSettings
+- [x] Polls
+- [x] Calendar
 
 **In progress:**
 
 - [ ] AssignedWorks
+- [ ] Courses
 - [ ] Sessions
 - [ ] Media
-- [ ] Courses
-- [ ] Calendar
-- [ ] Polls
-- [ ] Notifications (with all the buses)
-- [ ] UserSettings
 - [ ] Nootube
 - [ ] GoogleSheets
 - [ ] Statistics
-
-**Not started:**
+- [ ] Notifications (with all the buses)
 
 **Planned in the future:**
 
@@ -236,7 +234,8 @@ Rewrite of the modules is in progress.
 
 ## To refactor
 
-- [ ] Inject repositories directly and not use them via unit of work
+- [ ] Inject repositories directly and not use them via unit of work or as extension bullshit
+- [ ] Add an alias for `AddFilter` in criteria to use linq expressions
 - [ ] Move `Core` to a separate project
 
 ## Important to implement

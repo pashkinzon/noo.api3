@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
+using Noo.Api.Core.Utils.DI;
 using Noo.Api.Core.Utils.Json;
 using Noo.Api.Subjects.DTO;
 using Noo.Api.Subjects.Models;
@@ -10,6 +11,7 @@ using SystemTextJsonPatch;
 
 namespace Noo.Api.Subjects.Services;
 
+[RegisterScoped(typeof(ISubjectService))]
 public class SubjectService : ISubjectService
 {
     private readonly IUnitOfWork _unitOfWork;

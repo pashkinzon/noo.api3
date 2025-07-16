@@ -22,6 +22,8 @@ public class UserSettingsModel : BaseModel
     [Column("font_size", TypeName = UserSettingsEnumDbTypes.FontSize)]
     public string? FontSize { get; set; }
 
+    // TODO: Add background image
+
     #region Navigation Properties
 
     [InverseProperty(nameof(UserModel.Settings))]

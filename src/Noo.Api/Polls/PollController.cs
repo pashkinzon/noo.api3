@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.DataAbstraction.Criteria;
+using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
@@ -44,7 +45,7 @@ public class PollController : ApiController
     /// <summary>
     /// Get a specific poll by its ID.
     /// </summary>
-    [HttpGet("{id}")]
+    [HttpGet("{pollId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = PollPolicies.CanGetPoll)]
     [Produces(
@@ -53,9 +54,9 @@ public class PollController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> GetPollAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> GetPollAsync([FromRoute] Ulid pollId)
     {
-        var result = await _pollService.GetPollAsync(id);
+        var result = await _pollService.GetPollAsync(pollId);
         return OkResponse(result);
     }
 
@@ -96,6 +97,9 @@ public class PollController : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Delete a poll by its ID.
+    /// </summary>
     [HttpDelete("{pollId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = PollPolicies.CanDeletePoll)]
@@ -111,5 +115,84 @@ public class PollController : ApiController
         return NoContent();
     }
 
-    // TODO: Implement voting functionality
+    /// <summary>
+    /// Get the results of a specific poll.
+    /// </summary>
+    [HttpGet("{pollId}/participation")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = PollPolicies.CanGetPollResults)]
+    [Produces(
+        typeof(ApiResponseDTO<IEnumerable<PollParticipationDTO>>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
+    public async Task<IActionResult> GetPollParticipationsAsync([FromRoute] Ulid pollId, [FromQuery] Criteria<PollParticipationModel> criteria)
+    {
+        var result = await _pollService.GetPollParticipationsAsync(pollId, criteria);
+        return OkResponse(result);
+    }
+
+    /// <summary>
+    /// Get poll participation result by participation ID.
+    /// </summary>
+    [HttpGet("participation/{participationId}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = PollPolicies.CanGetPollResult)]
+    [Produces(
+        typeof(ApiResponseDTO<PollParticipationDTO>), StatusCodes.Status200OK,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
+    public async Task<IActionResult> GetPollParticipationAsync([FromRoute] Ulid participationId)
+    {
+        var result = await _pollService.GetPollParticipationAsync(participationId);
+
+        if (result == null)
+        {
+            throw new NotFoundException();
+        }
+
+        return OkResponse(result);
+    }
+
+    /// <summary>
+    /// Create a participation in a poll.
+    /// </summary>
+    [HttpPost("{pollId}/participate")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = PollPolicies.CanParticipateInPoll)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
+    public async Task<IActionResult> ParticipateInPollAsync([FromRoute] Ulid pollId, [FromBody] PollParticipationDTO participationDto)
+    {
+        await _pollService.ParticipateAsync(pollId, participationDto);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Update a poll answer
+    /// </summary>
+    [HttpPatch("answer/{answerId}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = PollPolicies.CanUpdateAnswer)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden,
+        StatusCodes.Status404NotFound
+    )]
+    public async Task<IActionResult> UpdatePollAnswerAsync([FromRoute] Ulid answerId, [FromBody] JsonPatchDocument<UpdatePollAnswerDTO> updateAnswerDto)
+    {
+        await _pollService.UpdatePollAnswerAsync(answerId, updateAnswerDto, ModelState);
+        return NoContent();
+    }
 }

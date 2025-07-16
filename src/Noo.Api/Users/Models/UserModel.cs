@@ -47,6 +47,7 @@ public class UserModel : BaseModel
     public string? TelegramId { get; set; }
 
     [Column("telegram_username", TypeName = DbDataTypes.Varchar255)]
+    [MaxLength(255)]
     public string? TelegramUsername { get; set; }
 
     [Required]

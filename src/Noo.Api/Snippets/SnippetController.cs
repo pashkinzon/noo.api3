@@ -81,7 +81,7 @@ public class SnippetController : ApiController
     )
     {
         var userId = User.GetId();
-        await _snippetService.UpdateSnippetAsync(userId, snippetId, snippetUpdateDto);
+        await _snippetService.UpdateSnippetAsync(userId, snippetId, snippetUpdateDto, ModelState);
 
         return NoContent();
     }

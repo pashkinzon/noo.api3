@@ -57,7 +57,8 @@ public class CalendarController : ApiController
     )]
     public async Task<IActionResult> CreateCalendarEventAsync([FromBody] CreateCalendarEventDTO dto)
     {
-        var eventId = await _calendarService.CreateCalendarEventAsync(dto);
+        var userId = User.GetId();
+        var eventId = await _calendarService.CreateCalendarEventAsync(userId, dto);
         return CreatedResponse(eventId);
     }
 

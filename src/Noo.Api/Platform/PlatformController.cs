@@ -4,6 +4,7 @@ using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Platform.DTO;
+using Noo.Api.Platform.Services;
 using Noo.Api.Platform.Types;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -14,6 +15,13 @@ namespace Noo.Api.Platform;
 [Route("platform")]
 public class PlatformController : ApiController
 {
+    private readonly IPlatformService _platformService;
+
+    public PlatformController(IPlatformService platformService)
+    {
+        _platformService = platformService;
+    }
+
     /// <summary>
     /// Gets the current platform version.
     /// </summary>
@@ -28,7 +36,8 @@ public class PlatformController : ApiController
     )]
     public IActionResult GetPlatformVersion()
     {
-        return OkResponse(NooApiVersions.Current);
+        var version = _platformService.GetPlatformVersion();
+        return OkResponse(version);
     }
 
     /// <summary>
@@ -45,39 +54,8 @@ public class PlatformController : ApiController
     )]
     public IActionResult GetChangelog()
     {
-        // TODO: Replace with actual changelog retrieval logic
-        var changeLog = new ChangeLogDTO
-        {
-            Version = NooApiVersions.Current,
-            Date = DateTime.UtcNow,
-            Changes = [
-                new PlatformChange
-                {
-                    Type = ChangeType.Feature,
-                    Author = "Noo Team",
-                    Description = "Initial release of the Noo API platform."
-                },
-                new PlatformChange
-                {
-                    Type = ChangeType.BugFix,
-                    Author = "Noo Team",
-                    Description = "Updated API documentation and versioning."
-                },
-                new PlatformChange
-                {
-                    Type = ChangeType.Optimization,
-                    Author = "Noo Team",
-                    Description = "Deprecated old endpoints in favor of new ones."
-                },
-                new PlatformChange
-                {
-                    Type = ChangeType.Refactor,
-                    Author = "Noo Team",
-                    Description = "Refactored API controllers for better maintainability."
-                }
-            ]
-        };
+        var changeLog = _platformService.GetChangelog();
 
-        return OkResponse(([changeLog], 1));
+        return OkResponse(changeLog);
     }
 }

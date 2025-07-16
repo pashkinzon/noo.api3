@@ -11,6 +11,7 @@ using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Users.DTO;
 using Noo.Api.Users.Models;
 using Noo.Api.Users.Services;
+using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.Users;
@@ -24,147 +25,13 @@ public class UserController : ApiController
 
     private readonly IMentorService _mentorService;
 
-    private readonly IAuthService _authService;
-
     public UserController(
         IUserService userService,
-        IMentorService mentorService,
-        IAuthService authService
+        IMentorService mentorService
     )
     {
         _userService = userService;
         _mentorService = mentorService;
-        _authService = authService;
-    }
-
-    /// <summary>
-    /// Retrieves the current user's information based on the authenticated user's ID.
-    /// </summary>
-    [HttpGet("me")]
-    [MapToApiVersion(NooApiVersions.Current)]
-    [Authorize(Policy = UserPolicies.CanGetSelf)]
-    [Produces(
-        typeof(ApiResponseDTO<UserDTO>), StatusCodes.Status200OK,
-        StatusCodes.Status400BadRequest,
-        StatusCodes.Status401Unauthorized,
-        StatusCodes.Status403Forbidden,
-        StatusCodes.Status404NotFound
-    )]
-    public async Task<IActionResult> GetMeAsync()
-    {
-        var result = await _userService.GetUserByIdAsync(User.GetId());
-
-        if (result is null)
-        {
-            throw new NotFoundException();
-        }
-
-        return OkResponse(result);
-    }
-
-    /// <summary>
-    /// Deletes the current user's account.
-    /// It won't delete the user from the database, but mark it as deleted and remove all personal data.
-    /// </summary>
-    [HttpDelete("me")]
-    [MapToApiVersion(NooApiVersions.Current)]
-    [Authorize(Policy = UserPolicies.CanDeleteSelf)]
-    [Produces(
-        null, StatusCodes.Status204NoContent,
-        StatusCodes.Status401Unauthorized
-    )]
-    public async Task<IActionResult> DeleteMeAsync()
-    {
-        var userId = User.GetId();
-
-        await _userService.DeleteUserAsync(userId);
-
-        return NoContent();
-    }
-
-    /// <summary>
-    /// Updates the current user's email address.
-    /// </summary>
-    [HttpPatch("me/email")]
-    [MapToApiVersion(NooApiVersions.Current)]
-    [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [Produces(
-        null, StatusCodes.Status204NoContent,
-        StatusCodes.Status400BadRequest,
-        StatusCodes.Status401Unauthorized,
-        StatusCodes.Status403Forbidden,
-        StatusCodes.Status404NotFound,
-        StatusCodes.Status409Conflict
-    )]
-    public async Task<IActionResult> UpdateMyEmailAsync([FromBody] UpdateEmailDTO dto)
-    {
-        await _authService.RequestEmailChangeAsync(User.GetId(), dto.Email);
-
-        return NoContent();
-    }
-
-    /// <summary>
-    /// Updates the current user's password.
-    /// </summary>
-    [HttpPatch("me/password")]
-    [MapToApiVersion(NooApiVersions.Current)]
-    [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [Produces(
-        null, StatusCodes.Status204NoContent,
-        StatusCodes.Status400BadRequest,
-        StatusCodes.Status401Unauthorized,
-        StatusCodes.Status403Forbidden,
-        StatusCodes.Status404NotFound
-    )]
-    public async Task<IActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordDTO dto)
-    {
-        var userId = User.GetId();
-
-        await _userService.UpdateUserPasswordAsync(userId, dto.Password);
-
-        return NoContent();
-    }
-
-    /// <summary>
-    /// Updates the current user's Telegram data like username, avatar and telegram ID
-    /// </summary>
-    [HttpPatch("me/telegram")]
-    [MapToApiVersion(NooApiVersions.Current)]
-    [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [Produces(
-        null, StatusCodes.Status204NoContent,
-        StatusCodes.Status400BadRequest,
-        StatusCodes.Status401Unauthorized,
-        StatusCodes.Status403Forbidden,
-        StatusCodes.Status404NotFound,
-        StatusCodes.Status409Conflict
-    )]
-    public async Task<IActionResult> UpdateTelegramAsync([FromBody] UpdateTelegramDTO updateTelegramDTO)
-    {
-        var userId = User.GetId();
-
-        await _userService.UpdateTelegramAsync(userId, updateTelegramDTO);
-
-        return NoContent();
-    }
-
-    [MapToApiVersion(NooApiVersions.Current)]
-    [HttpPatch("me/avatar")]
-    [Authorize(Policy = UserPolicies.CanPatchSelf)]
-    [Produces(
-        null, StatusCodes.Status204NoContent,
-        StatusCodes.Status400BadRequest,
-        StatusCodes.Status401Unauthorized,
-        StatusCodes.Status403Forbidden,
-        StatusCodes.Status404NotFound
-    )]
-    public async Task<IActionResult> UpdateAvatarAsync([FromForm] UpdateAvatarDTO updateAvatarDTO)
-    {
-        var userId = User.GetId();
-
-        await _userService.UpdateAvatarAsync(userId, updateAvatarDTO);
-
-        return NoContent();
     }
 
     /// <summary>
@@ -189,7 +56,7 @@ public class UserController : ApiController
     /// <summary>
     /// Retrieves a user by their unique username
     /// </summary>
-    [HttpGet("{username}")]
+    [HttpGet("{id}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
     [Produces(
@@ -199,9 +66,9 @@ public class UserController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> GetUserByUsernameAsync([FromRoute] string username)
+    public async Task<IActionResult> GetUserByIdAsync([FromRoute] Ulid id)
     {
-        var result = await _userService.GetUserByUsernameOrEmailAsync(username);
+        var result = await _userService.GetUserByIdAsync(id);
 
         if (result is null)
         {
@@ -212,9 +79,32 @@ public class UserController : ApiController
     }
 
     /// <summary>
+    /// Patches a user by their unique identifier.
+    /// </summary>
+    [HttpPatch("{id}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = UserPolicies.CanPatchUser)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
+    public async Task<IActionResult> PatchUserAsync([FromRoute] Ulid id, [FromBody] JsonPatchDocument<UpdateUserDTO> patchUser)
+    {
+        await _userService.UpdateUserAsync(id, patchUser, ModelState);
+
+        return NoContent();
+    }
+
+
+    /// <summary>
     /// Changes the role of a user by their unique identifier.
     /// Only possible to change role if the user is a student, otherwise it will throw a conflict error.
     /// </summary>
+    /// <remarks>
+    /// After role change, all the user sessions will be invalidated, the user will be logged out.
+    /// </remarks>
     [HttpPatch("{id}/role")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanChangeRole)]
@@ -338,7 +228,10 @@ public class UserController : ApiController
     /// <summary>
     /// Assigns a mentor to a student for a specific subject.
     /// </summary>
-    [HttpPatch("{id}/assignment-mentor")]
+    /// <remarks>
+    /// If a user already has a mentor assigned for the subject, it will be unassigned and a new one will be assigned.
+    /// </remarks>
+    [HttpPatch("{id}/assign-mentor")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanAssignMentor)]
     [Produces(
@@ -373,6 +266,24 @@ public class UserController : ApiController
     {
         await _mentorService.UnassignMentorAsync(id);
 
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Deletes a user by their unique identifier.
+    /// </summary>
+    [HttpDelete("{id}")]
+    [MapToApiVersion(NooApiVersions.Current)]
+    [Authorize(Policy = UserPolicies.CanDeleteUser)]
+    [Produces(
+        null, StatusCodes.Status204NoContent,
+        StatusCodes.Status400BadRequest,
+        StatusCodes.Status401Unauthorized,
+        StatusCodes.Status403Forbidden
+    )]
+    public async Task<IActionResult> DeleteUserAsync([FromRoute] Ulid id)
+    {
+        await _userService.DeleteUserAsync(id);
         return NoContent();
     }
 }

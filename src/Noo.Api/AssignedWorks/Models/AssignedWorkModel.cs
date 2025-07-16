@@ -8,6 +8,7 @@ using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
 using Noo.Api.Users.Models;
 using Noo.Api.Works.Models;
+using Noo.Api.Works.Types;
 using IndexAttribute = Microsoft.EntityFrameworkCore.IndexAttribute;
 
 namespace Noo.Api.AssignedWorks.Models;
@@ -24,7 +25,7 @@ public class AssignedWorkModel : BaseModel
 
     [Column("type", TypeName = WorkEnumDbDataTypes.WorkType)]
     [Required]
-    public string Type { get; set; } = default!;
+    public WorkType Type { get; set; } = default!;
 
     [Column("attempt", TypeName = DbDataTypes.TinyIntUnsigned)]
     [Required]

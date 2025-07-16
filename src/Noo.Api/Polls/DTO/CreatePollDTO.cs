@@ -18,6 +18,10 @@ public record CreatePollDTO
     [Required]
     public bool? IsActive { get; init; }
 
+    [JsonPropertyName("isAuthRequired")]
+    [Required]
+    public bool? IsAuthRequired { get; init; }
+
     [JsonPropertyName("questions")]
     [Required]
     [MinLength(1)]

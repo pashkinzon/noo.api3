@@ -15,4 +15,7 @@ public record UpdatePollDTO
 
     [JsonPropertyName("isActive")]
     public bool? IsActive { get; init; }
+
+    [JsonPropertyName("isAuthRequired")]
+    public bool? IsAuthRequired { get; init; }
 }

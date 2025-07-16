@@ -16,6 +16,9 @@ public record PollDTO
     [JsonPropertyName("isActive")]
     public bool IsActive { get; init; }
 
+    [JsonPropertyName("isAuthRequired")]
+    public bool IsAuthRequired { get; init; }
+
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; init; }
 

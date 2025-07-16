@@ -10,4 +10,6 @@ public record UserSettingsUpdateDTO
 
     [JsonPropertyName("fontSize")]
     public FontSize? FontSize { get; init; }
+
+    // TODO: Update background image
 }

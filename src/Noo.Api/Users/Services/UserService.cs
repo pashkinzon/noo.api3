@@ -1,12 +1,15 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Users.DTO;
 using Noo.Api.Users.Models;
 using Noo.Api.Users.Types;
+using SystemTextJsonPatch;
 
 namespace Noo.Api.Users.Services;
 
@@ -117,33 +120,32 @@ public class UserService : IUserService
             .UnblockUserAsync(id);
     }
 
-    public Task UpdateAvatarAsync(Ulid userId, UpdateAvatarDTO updateAvatarDTO)
+    public async Task UpdateUserAsync(Ulid id, JsonPatchDocument<UpdateUserDTO> patchUser, ModelStateDictionary? modelState = null)
     {
-        throw new NotImplementedException();
-    }
+        var repository = _unitOfWork
+            .UserRepository();
 
-    public async Task UpdateTelegramAsync(Ulid id, UpdateTelegramDTO updateTelegramDTO)
-    {
-        var user = await _unitOfWork
-            .UserRepository()
-            .GetByIdAsync(id);
+        var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException();
 
-        if (user is null)
+        if (model == null)
         {
             throw new NotFoundException();
         }
 
-        if (user.IsBlocked)
+        var dto = _mapper.Map<UpdateUserDTO>(model);
+
+        modelState ??= new ModelStateDictionary();
+
+        patchUser.ApplyToAndValidate(dto, modelState);
+
+        if (!modelState.IsValid)
         {
-            throw new UserIsBlockedException();
+            throw new BadRequestException();
         }
 
-        // TODO: add telegram service, validate payload and enable notifications
+        _mapper.Map(dto, model);
 
-        user.TelegramId = updateTelegramDTO.TelegramId;
-        user.TelegramUsername = updateTelegramDTO.TelegramUsername;
-
-        _unitOfWork.UserRepository().Update(user);
+        repository.Update(model);
         await _unitOfWork.CommitAsync();
     }
 

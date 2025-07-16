@@ -6,17 +6,17 @@ namespace Noo.Api.Users;
 public class UserPolicies : IPolicyRegistrar
 {
     public const string CanGetUser = nameof(CanGetUser);
+    public const string CanPatchUser = nameof(CanPatchUser);
     public const string CanSearchUsers = nameof(CanSearchUsers);
-    public const string CanGetSelf = nameof(CanGetSelf);
-    public const string CanPatchSelf = nameof(CanPatchSelf);
-    public const string CanDeleteSelf = nameof(CanDeleteSelf);
     public const string CanBlockUser = nameof(CanBlockUser);
     public const string CanChangeRole = nameof(CanChangeRole);
     public const string CanVerifyUser = nameof(CanVerifyUser);
     public const string CanAssignMentor = nameof(CanAssignMentor);
+    public const string CanDeleteUser = nameof(CanDeleteUser);
 
     public void RegisterPolicies(AuthorizationOptions options)
     {
+        // TODO: Change so that every user can get their own data
         options.AddPolicy(CanGetUser, policy =>
         {
             policy.RequireRole(
@@ -25,6 +25,12 @@ public class UserPolicies : IPolicyRegistrar
                 nameof(UserRoles.Mentor),
                 nameof(UserRoles.Assistant)
             ).RequireNotBlocked();
+        });
+
+        // TODO: Change so that every user can patch only own data
+        options.AddPolicy(CanPatchUser, policy =>
+        {
+            policy.RequireAuthenticatedUser().RequireNotBlocked();
         });
 
         options.AddPolicy(CanSearchUsers, policy =>
@@ -36,12 +42,6 @@ public class UserPolicies : IPolicyRegistrar
                 nameof(UserRoles.Assistant)
             ).RequireNotBlocked();
         });
-
-        options.AddPolicy(CanGetSelf, policy => policy.RequireAuthenticatedUser().RequireNotBlocked());
-
-        options.AddPolicy(CanPatchSelf, policy => policy.RequireAuthenticatedUser().RequireNotBlocked());
-
-        options.AddPolicy(CanDeleteSelf, policy => policy.RequireAuthenticatedUser());
 
         options.AddPolicy(CanBlockUser, policy =>
         {
@@ -72,6 +72,14 @@ public class UserPolicies : IPolicyRegistrar
         {
             policy.RequireRole(
                 nameof(UserRoles.Teacher),
+                nameof(UserRoles.Admin)
+            ).RequireNotBlocked();
+        });
+
+        // TODO: Add also an options for a user to delete their own account
+        options.AddPolicy(CanDeleteUser, policy =>
+        {
+            policy.RequireRole(
                 nameof(UserRoles.Admin)
             ).RequireNotBlocked();
         });

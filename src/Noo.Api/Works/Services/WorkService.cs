@@ -14,46 +14,46 @@ namespace Noo.Api.Works.Services;
 [RegisterScoped(typeof(IWorkService))]
 public class WorkService : IWorkService
 {
-    protected readonly IUnitOfWork UnitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    protected readonly ISearchStrategy<WorkModel> SearchStrategy;
+    private readonly ISearchStrategy<WorkModel> _searchStrategy;
 
-    protected readonly IMapper Mapper;
+    private readonly IMapper _mapper;
 
     public WorkService(IUnitOfWork unitOfWork, IMapper mapper, WorkSearchStrategy searchStrategy)
     {
-        UnitOfWork = unitOfWork;
-        SearchStrategy = searchStrategy;
-        Mapper = mapper;
+        _unitOfWork = unitOfWork;
+        _searchStrategy = searchStrategy;
+        _mapper = mapper;
     }
 
     public async Task<Ulid> CreateWorkAsync(CreateWorkDTO work)
     {
-        var model = Mapper.Map<WorkModel>(work);
+        var model = _mapper.Map<WorkModel>(work);
 
-        UnitOfWork.WorkRepository().Add(model);
-        await UnitOfWork.CommitAsync();
+        _unitOfWork.WorkRepository().Add(model);
+        await _unitOfWork.CommitAsync();
 
         return model.Id;
     }
 
     public async Task<WorkDTO?> GetWorkAsync(Ulid id)
     {
-        var model = await UnitOfWork.WorkRepository().GetWithTasksAsync(id);
+        var model = await _unitOfWork.WorkRepository().GetWithTasksAsync(id);
 
-        return Mapper.Map<WorkDTO?>(model);
+        return _mapper.Map<WorkDTO?>(model);
     }
 
     public async Task<(IEnumerable<WorkDTO>, int)> GetWorksAsync(Criteria<WorkModel> criteria)
     {
-        var (items, total) = await UnitOfWork.WorkRepository().SearchAsync<WorkDTO>(criteria, SearchStrategy, Mapper.ConfigurationProvider);
+        var (items, total) = await _unitOfWork.WorkRepository().SearchAsync<WorkDTO>(criteria, _searchStrategy, _mapper.ConfigurationProvider);
 
         return (items, total);
     }
 
-    public async Task UpdateWorkAsync(Ulid id, JsonPatchDocument<UpdateWorkDTO> workUpdatePayload, ModelStateDictionary? modelState = null)
+    public async Task UpdateWorkAsync(Ulid id, JsonPatchDocument<UpdateWorkDTO> updateWorkDto, ModelStateDictionary? modelState = null)
     {
-        var repository = UnitOfWork.WorkRepository();
+        var repository = _unitOfWork.WorkRepository();
         var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException();
 
         if (model == null)
@@ -61,27 +61,27 @@ public class WorkService : IWorkService
             throw new NotFoundException();
         }
 
-        var dto = Mapper.Map<UpdateWorkDTO>(model);
+        var dto = _mapper.Map<UpdateWorkDTO>(model);
 
         modelState ??= new ModelStateDictionary();
 
-        workUpdatePayload.ApplyToAndValidate(dto, modelState);
+        updateWorkDto.ApplyToAndValidate(dto, modelState);
 
         if (!modelState.IsValid)
         {
             throw new BadRequestException();
         }
 
-        Mapper.Map(dto, model);
+        _mapper.Map(dto, model);
 
         repository.Update(model);
-        await UnitOfWork.CommitAsync();
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task DeleteWorkAsync(Ulid id)
     {
-        UnitOfWork.WorkRepository().DeleteById(id);
+        _unitOfWork.WorkRepository().DeleteById(id);
 
-        await UnitOfWork.CommitAsync();
+        await _unitOfWork.CommitAsync();
     }
 }

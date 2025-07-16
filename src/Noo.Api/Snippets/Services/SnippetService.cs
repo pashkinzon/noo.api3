@@ -1,9 +1,11 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.DI;
+using Noo.Api.Core.Utils.Json;
 using Noo.Api.Snippets.DTO;
 using Noo.Api.Snippets.Models;
 using SystemTextJsonPatch;
@@ -60,8 +62,30 @@ public class SnippetService : ISnippetService
         return (result.Items, result.Total);
     }
 
-    public Task UpdateSnippetAsync(Ulid userId, Ulid snippetId, JsonPatchDocument<UpdateSnippetDTO> updateSnippetDto)
+    public async Task UpdateSnippetAsync(Ulid userId, Ulid snippetId, JsonPatchDocument<UpdateSnippetDTO> updateSnippetDto, ModelStateDictionary? modelState = null)
     {
-        throw new NotImplementedException();
+        var repository = _unitOfWork.SnippetRepository();
+        var model = await repository.GetByIdAsync(snippetId) ?? throw new NotFoundException();
+
+        if (model == null || model.UserId != userId)
+        {
+            throw new NotFoundException();
+        }
+
+        var dto = _mapper.Map<UpdateSnippetDTO>(model);
+
+        modelState ??= new ModelStateDictionary();
+
+        updateSnippetDto.ApplyToAndValidate(dto, modelState);
+
+        if (!modelState.IsValid)
+        {
+            throw new BadRequestException();
+        }
+
+        _mapper.Map(dto, model);
+
+        repository.Update(model);
+        await _unitOfWork.CommitAsync();
     }
 }

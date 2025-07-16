@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Users.DTO;
 using Noo.Api.Users.Models;
 using Noo.Api.Users.Types;
+using SystemTextJsonPatch;
 
 namespace Noo.Api.Users.Services;
 
@@ -16,11 +18,10 @@ public interface IUserService
     public Task ChangeRoleAsync(Ulid id, UserRoles newRole);
     public Task UpdateUserPasswordAsync(Ulid id, string newPasswordHash);
     public Task UpdateUserEmailAsync(Ulid id, string newEmail);
-    public Task UpdateTelegramAsync(Ulid id, UpdateTelegramDTO updateTelegramDTO);
     public Task<bool> IsBlockedAsync(Ulid id);
     public Task VerifyUserAsync(Ulid id);
     public Task BlockUserAsync(Ulid id);
     public Task UnblockUserAsync(Ulid id);
     public Task DeleteUserAsync(Ulid id);
-    public Task UpdateAvatarAsync(Ulid userId, UpdateAvatarDTO updateAvatarDTO);
+    public Task UpdateUserAsync(Ulid id, JsonPatchDocument<UpdateUserDTO> patchUser, ModelStateDictionary? modelState = null);
 }

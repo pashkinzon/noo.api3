@@ -23,7 +23,7 @@ public class SessionModel : BaseModel
     [MaxLength(255)]
     public string? Device { get; set; }
 
-    [Column("device_type", TypeName = "ENUM('desktop', 'mobile', 'tablet', 'unknown')")]
+    [Column("device_type", TypeName = SessionEnumDbDataTypes.DeviceType)]
     public DeviceType DeviceType { get; set; } = DeviceType.Unknown;
 
     [Column("os", TypeName = DbDataTypes.Varchar255)]
