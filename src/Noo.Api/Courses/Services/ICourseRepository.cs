@@ -5,5 +5,5 @@ namespace Noo.Api.Courses.Services;
 
 public interface ICourseRepository : IRepository<CourseModel>
 {
-    public Task<CourseModel?> GetWithChapterTreeAsync(CourseModel course, int maxDepth = 2);
+    public Task<CourseModel?> GetWithChapterTreeAsync(Ulid courseId, int maxDepth = 2);
 }

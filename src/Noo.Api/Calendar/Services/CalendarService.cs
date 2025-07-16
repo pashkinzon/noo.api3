@@ -48,7 +48,7 @@ public class CalendarService : ICalendarService
         await _unitOfWork.CommitAsync();
     }
 
-    public Task<SearchResult<CalendarEventDTO>> GetCalendarEventsAsync(Ulid userId, int year, int month)
+    public Task<SearchResult<CalendarEventModel>> GetCalendarEventsAsync(Ulid userId, int year, int month)
     {
         var criteria = new Criteria<CalendarEventModel>();
 
@@ -58,7 +58,6 @@ public class CalendarService : ICalendarService
             new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59)
         );
 
-        return _calendarEventRepository
-            .GetManyAsync<CalendarEventDTO>(criteria, _mapper.ConfigurationProvider);
+        return _calendarEventRepository.GetManyAsync(criteria);
     }
 }

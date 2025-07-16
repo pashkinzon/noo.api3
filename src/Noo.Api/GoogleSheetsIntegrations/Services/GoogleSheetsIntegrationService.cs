@@ -1,4 +1,5 @@
 using Noo.Api.Core.DataAbstraction.Criteria;
+using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.GoogleSheetsIntegrations.DTO;
 using Noo.Api.GoogleSheetsIntegrations.Models;
@@ -18,7 +19,7 @@ public class GoogleSheetsIntegrationService : IGoogleSheetsIntegrationService
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<GoogleSheetsIntegrationDTO>, int)> GetIntegrationsAsync(Criteria<GoogleSheetsInegrationModel> criteria)
+    public Task<SearchResult<GoogleSheetsIntegrationModel>> GetIntegrationsAsync(Criteria<GoogleSheetsIntegrationModel> criteria)
     {
         throw new NotImplementedException();
     }

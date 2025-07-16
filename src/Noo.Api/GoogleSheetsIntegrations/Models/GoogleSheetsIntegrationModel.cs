@@ -9,7 +9,7 @@ using Noo.Api.GoogleSheetsIntegrations.Types;
 namespace Noo.Api.GoogleSheetsIntegrations.Models;
 
 [Model("google_sheets_integration")]
-public class GoogleSheetsInegrationModel : BaseModel
+public class GoogleSheetsIntegrationModel : BaseModel
 {
     [Column("name", TypeName = DbDataTypes.Varchar255)]
     [Required]

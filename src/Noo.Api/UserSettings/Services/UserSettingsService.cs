@@ -2,6 +2,7 @@ using AutoMapper;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.UserSettings.DTO;
+using Noo.Api.UserSettings.Models;
 
 namespace Noo.Api.UserSettings.Services;
 
@@ -21,13 +22,9 @@ public class UserSettingsService : IUserSettingsService
         _mapper = mapper;
     }
 
-    public Task<UserSettingsDTO> GetUserSettingsAsync(Ulid userId)
+    public Task<UserSettingsModel> GetUserSettingsAsync(Ulid userId)
     {
-        return _userSettingsRepository.GetOrCreateAsync(userId).ContinueWith(task =>
-        {
-            var userSettings = task.Result;
-            return _mapper.Map<UserSettingsDTO>(userSettings);
-        });
+        return _userSettingsRepository.GetOrCreateAsync(userId);
     }
 
     public async Task UpdateUserSettingsAsync(Ulid userId, UserSettingsUpdateDTO userSettings)

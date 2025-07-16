@@ -83,27 +83,21 @@ public class UserService : IUserService
         await _unitOfWork.CommitAsync();
     }
 
-    public Task<UserDTO?> GetUserByIdAsync(Ulid id)
+    public Task<UserModel?> GetUserByIdAsync(Ulid id)
+    {
+        return _unitOfWork.UserRepository().GetByIdAsync(id);
+    }
+
+    public Task<UserModel?> GetUserByUsernameOrEmailAsync(string usernameOrEmail)
+    {
+        return _unitOfWork.UserRepository().GetByUsernameOrEmailAsync(usernameOrEmail);
+    }
+
+    public Task<SearchResult<UserModel>> GetUsersAsync(Criteria<UserModel> criteria)
     {
         return _unitOfWork
             .UserRepository()
-            .GetByIdAsync<UserDTO>(id, _mapper.ConfigurationProvider);
-    }
-
-    public Task<UserDTO?> GetUserByUsernameOrEmailAsync(string usernameOrEmail)
-    {
-        return _unitOfWork
-            .UserRepository()
-            .GetByUsernameOrEmailAsync(usernameOrEmail, _mapper.ConfigurationProvider);
-    }
-
-    public async Task<(IEnumerable<UserDTO>, int)> GetUsersAsync(Criteria<UserModel> criteria)
-    {
-        var (items, total) = await _unitOfWork
-            .UserRepository()
-            .SearchAsync<UserDTO>(criteria, _userSearchStrategy, _mapper.ConfigurationProvider);
-
-        return (items, total);
+            .SearchAsync(criteria, _userSearchStrategy);
     }
 
     public Task<bool> IsBlockedAsync(Ulid id)

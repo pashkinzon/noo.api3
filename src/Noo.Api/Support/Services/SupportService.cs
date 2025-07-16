@@ -57,24 +57,23 @@ public class SupportService : ISupportService
         await _unitOfWork.CommitAsync();
     }
 
-    public Task<SupportArticleDTO?> GetArticleAsync(Ulid articleId)
+    public Task<SupportArticleModel?> GetArticleAsync(Ulid articleId)
     {
         return _articleRepository
-            .GetByIdAsync<SupportArticleDTO>(articleId, _mapper.ConfigurationProvider);
+            .GetByIdAsync(articleId);
     }
 
-    public async Task<IEnumerable<SupportCategoryDTO>> GetCategoryTreeAsync()
+    public Task<IEnumerable<SupportCategoryModel>> GetCategoryTreeAsync()
     {
-        var categories = await _categoryRepository.GetCategoryTreeAsync(includeInactive: false);
-        return _mapper.Map<IEnumerable<SupportCategoryDTO>>(categories);
+        return _categoryRepository.GetCategoryTreeAsync(false);
     }
 
-    public Task<SupportArticleDTO> UpdateArticleAsync(Ulid articleId, JsonPatchDocument<UpdateSupportArticleDTO> dto)
+    public Task<SupportArticleModel> UpdateArticleAsync(Ulid articleId, JsonPatchDocument<UpdateSupportArticleDTO> dto)
     {
         throw new NotImplementedException();
     }
 
-    public Task<SupportCategoryDTO> UpdateCategoryAsync(Ulid categoryId, JsonPatchDocument<UpdateSupportCategoryDTO> dto)
+    public Task<SupportCategoryModel> UpdateCategoryAsync(Ulid categoryId, JsonPatchDocument<UpdateSupportCategoryDTO> dto)
     {
         throw new NotImplementedException();
     }

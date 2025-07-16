@@ -4,7 +4,6 @@ using Noo.Api.AssignedWorks.Models;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
-using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Users.Services;
 
@@ -73,7 +72,7 @@ public class AssignedWorkService : IAssignedWorkService
         throw new NotImplementedException();
     }
 
-    public Task<AssignedWorkDTO?> GetAssignedWorkAsync(Ulid assignedWorkId)
+    public Task<AssignedWorkModel?> GetAssignedWorkAsync(Ulid assignedWorkId)
     {
         throw new NotImplementedException();
     }
@@ -83,12 +82,12 @@ public class AssignedWorkService : IAssignedWorkService
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<AssignedWorkDTO>, int)> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria)
+    public Task<SearchResult<AssignedWorkDTO>> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria)
     {
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<AssignedWorkDTO>, int)> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria)
+    public Task<SearchResult<AssignedWorkDTO>> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria)
     {
         throw new NotImplementedException();
     }

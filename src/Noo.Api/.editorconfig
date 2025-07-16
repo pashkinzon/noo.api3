@@ -15,6 +15,9 @@ dotnet_diagnostic.IDE0008.severity = none  # Use explicit type instead of 'var'
 dotnet_diagnostic.RCS1047.severity = error # Do not use Async suffix in non-assync method name
 dotnet_diagnostic.RCS1194.severity = none  # Implement exception constructors
 
+# Report any unnecessary using directives (IDE0005) as a error
+dotnet_diagnostic.IDE0005.severity = error
+
 # Coding Style
 charset = utf-8
 indent_size = 4

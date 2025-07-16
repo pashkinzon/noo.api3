@@ -4,7 +4,6 @@ using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
-using Noo.Api.Sessions.DTO;
 using Noo.Api.Sessions.Models;
 using Noo.Api.Sessions.Utils;
 
@@ -56,13 +55,13 @@ public class SessionService : ISessionService
         return _unitOfWork.CommitAsync();
     }
 
-    public async Task<IEnumerable<SessionDTO>> GetSessionsAsync(Ulid userId)
+    public async Task<IEnumerable<SessionModel>> GetSessionsAsync(Ulid userId)
     {
         var criteria = new Criteria<SessionModel>();
 
-        criteria.AddFilter(nameof(SessionModel.UserId), FilterType.Equals, userId);
+        criteria.AddFilter("UserId", FilterType.Equals, userId);
 
-        var result = await _sessionRepository.GetManyAsync<SessionDTO>(criteria, _mapper.ConfigurationProvider);
+        var result = await _sessionRepository.GetManyAsync(criteria);
 
         return result.Items;
     }

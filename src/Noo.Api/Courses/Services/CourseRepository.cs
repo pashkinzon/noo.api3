@@ -6,14 +6,16 @@ namespace Noo.Api.Courses.Services;
 
 public class CourseRepository : Repository<CourseModel>, ICourseRepository
 {
-    public async Task<CourseModel?> GetWithChapterTreeAsync(CourseModel course, int maxDepth = 2)
+    public async Task<CourseModel?> GetWithChapterTreeAsync(Ulid courseId, int maxDepth = 2)
     {
-        var courseId = course.Id;
-
         var chapters = await Context.GetDbSet<CourseChapterModel>()
             .Where(c => c.CourseId == courseId)
             .Include(c => c.Materials)
             .ToListAsync();
+
+        var course = await Context.GetDbSet<CourseModel>()
+            .Where(c => c.Id == courseId)
+            .FirstOrDefaultAsync();
 
         return BuildTree(course, chapters, maxDepth);
     }

@@ -17,12 +17,15 @@ public class SnippetService : ISnippetService
 {
     private readonly IUnitOfWork _unitOfWork;
 
+    private readonly ISnippetRepository _snippetRepository;
+
     private readonly IMapper _mapper;
 
     public SnippetService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _snippetRepository = unitOfWork.SnippetRepository();
+        _mapper = mapper;
     }
 
     public async Task CreateSnippetAsync(Ulid userId, CreateSnippetDTO createSnippetDto)
@@ -30,7 +33,7 @@ public class SnippetService : ISnippetService
         var model = _mapper.Map<SnippetModel>(createSnippetDto);
         model.UserId = userId;
 
-        _unitOfWork.SnippetRepository().Add(model);
+        _snippetRepository.Add(model);
         await _unitOfWork.CommitAsync();
     }
 
@@ -44,22 +47,19 @@ public class SnippetService : ISnippetService
             throw new NotFoundException();
         }
 
-        _unitOfWork.SnippetRepository().Delete(snippet);
+        _snippetRepository.Delete(snippet);
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task<(IEnumerable<SnippetDTO>, int)> GetSnippetsAsync(Ulid userId)
+    public Task<SearchResult<SnippetModel>> GetSnippetsAsync(Ulid userId)
     {
         var criteria = new Criteria<SnippetModel>();
 
-        criteria.AddFilter(nameof(SnippetModel.UserId), FilterType.Equals, userId);
+        criteria.AddFilter("UserId", FilterType.Equals, userId);
         criteria.Page = 1;
         criteria.Limit = SnippetConfig.MaxSnippetsPerUser;
 
-        var result = await _unitOfWork.SnippetRepository()
-            .GetManyAsync<SnippetDTO>(criteria, _mapper.ConfigurationProvider);
-
-        return (result.Items, result.Total);
+        return _snippetRepository.GetManyAsync(criteria);
     }
 
     public async Task UpdateSnippetAsync(Ulid userId, Ulid snippetId, JsonPatchDocument<UpdateSnippetDTO> updateSnippetDto, ModelStateDictionary? modelState = null)

@@ -37,18 +37,14 @@ public class WorkService : IWorkService
         return model.Id;
     }
 
-    public async Task<WorkDTO?> GetWorkAsync(Ulid id)
+    public Task<WorkModel?> GetWorkAsync(Ulid id)
     {
-        var model = await _unitOfWork.WorkRepository().GetWithTasksAsync(id);
-
-        return _mapper.Map<WorkDTO?>(model);
+        return _unitOfWork.WorkRepository().GetWithTasksAsync(id);
     }
 
-    public async Task<(IEnumerable<WorkDTO>, int)> GetWorksAsync(Criteria<WorkModel> criteria)
+    public Task<SearchResult<WorkModel>> GetWorksAsync(Criteria<WorkModel> criteria)
     {
-        var (items, total) = await _unitOfWork.WorkRepository().SearchAsync<WorkDTO>(criteria, _searchStrategy, _mapper.ConfigurationProvider);
-
-        return (items, total);
+        return _unitOfWork.WorkRepository().SearchAsync(criteria, _searchStrategy);
     }
 
     public async Task UpdateWorkAsync(Ulid id, JsonPatchDocument<UpdateWorkDTO> updateWorkDto, ModelStateDictionary? modelState = null)

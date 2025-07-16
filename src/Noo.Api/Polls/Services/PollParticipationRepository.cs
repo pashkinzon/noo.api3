@@ -6,14 +6,12 @@ namespace Noo.Api.Polls.Services;
 
 public class PollParticipationRepository : Repository<PollParticipationModel>, IPollParticipationRepository
 {
-    public async Task<bool> ParticipationExistsAsync(Ulid pollId, Ulid? userId, string? userExternalIdentifier)
+    public Task<bool> ParticipationExistsAsync(Ulid pollId, Ulid? userId, string? userExternalIdentifier)
     {
-        var participation = await Context.Set<PollParticipationModel>()
+        return Context.Set<PollParticipationModel>()
             .Where(p => p.PollId == pollId &&
                         (p.UserId == userId || p.UserExternalIdentifier == userExternalIdentifier))
-            .FirstOrDefaultAsync();
-
-        return participation != null;
+            .AnyAsync();
     }
 }
 

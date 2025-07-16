@@ -2,7 +2,6 @@ using AutoMapper;
 using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
-using Noo.Api.Courses.DTO;
 using Noo.Api.Courses.Models;
 
 namespace Noo.Api.Courses.Services;
@@ -10,9 +9,13 @@ namespace Noo.Api.Courses.Services;
 [RegisterScoped(typeof(ICourseService))]
 public class CourseService : ICourseService
 {
-    protected readonly IUnitOfWork _unitOfWork;
-    protected readonly IMapper _mapper;
-    protected readonly ISearchStrategy<CourseModel> _searchStrategy;
+    private readonly IUnitOfWork _unitOfWork;
+
+    private readonly ICourseRepository _courseRepository;
+
+    private readonly IMapper _mapper;
+
+    private readonly ISearchStrategy<CourseModel> _searchStrategy;
 
     public CourseService(
         IUnitOfWork unitOfWork,
@@ -21,25 +24,18 @@ public class CourseService : ICourseService
     )
     {
         _unitOfWork = unitOfWork;
+        _courseRepository = unitOfWork.CourseRepository();
         _mapper = mapper;
         _searchStrategy = searchStrategy;
     }
 
-    public async Task<CourseDTO?> GetByIdAsync(Ulid id, bool includeInactive)
+    public Task<CourseModel?> GetByIdAsync(Ulid id, bool includeInactive)
     {
-        var course = await _unitOfWork
-            .CourseRepository()
-            .GetWithChapterTreeAsync(new CourseModel { Id = id });
-
-        return course is null ? null : _mapper.Map<CourseDTO>(course);
+        return _courseRepository.GetWithChapterTreeAsync(id);
     }
 
-    public async Task<(IEnumerable<CourseDTO> courses, int total)> SearchAsync(Criteria<CourseModel> criteria)
+    public Task<SearchResult<CourseModel>> SearchAsync(Criteria<CourseModel> criteria)
     {
-        var (courses, total) = await _unitOfWork
-            .CourseRepository()
-            .SearchAsync<CourseDTO>(criteria, _searchStrategy, _mapper.ConfigurationProvider);
-
-        return (courses, total);
+        return _courseRepository.SearchAsync(criteria, _searchStrategy);
     }
 }

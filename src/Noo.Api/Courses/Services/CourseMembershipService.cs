@@ -1,13 +1,13 @@
 
 using Noo.Api.Core.Utils.DI;
-using Noo.Api.Courses.DTO;
+using Noo.Api.Courses.Models;
 
 namespace Noo.Api.Courses.Services;
 
 [RegisterScoped(typeof(ICourseMembershipService))]
 public class CourseMembershipService : ICourseMembershipService
 {
-    public Task<CourseMembershipDTO?> GetMembershipAsync(Ulid courseId, Ulid userId)
+    public Task<CourseMembershipModel?> GetMembershipAsync(Ulid courseId, Ulid userId)
     {
         throw new NotImplementedException();
     }

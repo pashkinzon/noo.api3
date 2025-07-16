@@ -1,15 +1,15 @@
 using Noo.Api.AssignedWorks.DTO;
 using Noo.Api.AssignedWorks.Models;
 using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.Security.Authorization;
+using Noo.Api.Core.DataAbstraction.Db;
 
 namespace Noo.Api.AssignedWorks.Services;
 
 public interface IAssignedWorkService
 {
-    public Task<(IEnumerable<AssignedWorkDTO>, int)> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria);
-    public Task<(IEnumerable<AssignedWorkDTO>, int)> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria);
-    public Task<AssignedWorkDTO?> GetAssignedWorkAsync(Ulid assignedWorkId);
+    public Task<SearchResult<AssignedWorkDTO>> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria);
+    public Task<SearchResult<AssignedWorkDTO>> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria);
+    public Task<AssignedWorkModel?> GetAssignedWorkAsync(Ulid assignedWorkId);
     public Task<AssignedWorkProgressDTO> GetAssignedWorkProgressAsync(Ulid assignedWorkId);
     public Task<Ulid> RemakeAssignedWorkAsync(Ulid assignedWorkId, RemakeAssignedWorkOptionsDTO options);
     public Task<Ulid> SaveAnswerAsync(Ulid assignedWorkId, UpsertAssignedWorkAnswerDTO answer);

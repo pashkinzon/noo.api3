@@ -1,4 +1,5 @@
 using Noo.Api.Core.DataAbstraction.Criteria;
+using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Notifications.DTO;
 using Noo.Api.Notifications.Models;
@@ -18,7 +19,7 @@ public class NotificationService : INotificationService
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<NotificationDTO>, int)> GetNotificationsAsync(Ulid userId, Criteria<NotificationModel> criteria)
+    public Task<SearchResult<NotificationModel>> GetNotificationsAsync(Ulid userId, Criteria<NotificationModel> criteria)
     {
         throw new NotImplementedException();
     }

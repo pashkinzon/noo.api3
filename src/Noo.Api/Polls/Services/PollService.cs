@@ -56,25 +56,25 @@ public class PollService : IPollService
         return _unitOfWork.CommitAsync();
     }
 
-    public Task<PollDTO?> GetPollAsync(Ulid id)
+    public Task<PollModel?> GetPollAsync(Ulid id)
     {
-        return _pollRepository.GetByIdAsync<PollDTO>(id, _mapper.ConfigurationProvider);
+        return _pollRepository.GetByIdAsync(id);
     }
 
-    public Task<PollParticipationDTO?> GetPollParticipationAsync(Ulid participationId)
+    public Task<PollParticipationModel?> GetPollParticipationAsync(Ulid participationId)
     {
-        return _pollParticipationRepository.GetByIdAsync<PollParticipationDTO>(participationId, _mapper.ConfigurationProvider);
+        return _pollParticipationRepository.GetByIdAsync(participationId);
     }
 
-    public Task<SearchResult<PollParticipationDTO>> GetPollParticipationsAsync(Ulid pollId, Criteria<PollParticipationModel> criteria)
+    public Task<SearchResult<PollParticipationModel>> GetPollParticipationsAsync(Ulid pollId, Criteria<PollParticipationModel> criteria)
     {
-        criteria.AddFilter("pollId", FilterType.Equals, pollId);
-        return _pollParticipationRepository.SearchAsync<PollParticipationDTO>(criteria, _pollParticipationSearchStrategy, _mapper.ConfigurationProvider);
+        criteria.AddFilter("PollId", FilterType.Equals, pollId);
+        return _pollParticipationRepository.SearchAsync(criteria, _pollParticipationSearchStrategy);
     }
 
-    public Task<SearchResult<PollDTO>> GetPollsAsync(Criteria<PollModel> criteria)
+    public Task<SearchResult<PollModel>> GetPollsAsync(Criteria<PollModel> criteria)
     {
-        return _pollRepository.SearchAsync<PollDTO>(criteria, _pollSearchStrategy, _mapper.ConfigurationProvider);
+        return _pollRepository.SearchAsync(criteria, _pollSearchStrategy);
     }
 
     public async Task ParticipateAsync(Ulid pollId, PollParticipationDTO participationDto)

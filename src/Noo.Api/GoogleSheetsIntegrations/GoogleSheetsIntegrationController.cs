@@ -36,7 +36,7 @@ public class GoogleSheetsIntegrationController : ApiController
         StatusCodes.Status403Forbidden
     )]
     public async Task<IActionResult> GetIntegrationsAsync(
-        [FromQuery] Criteria<GoogleSheetsInegrationModel> criteria
+        [FromQuery] Criteria<GoogleSheetsIntegrationModel> criteria
     )
     {
         var result = await _googleSheetsIntegrationService.GetIntegrationsAsync(criteria);

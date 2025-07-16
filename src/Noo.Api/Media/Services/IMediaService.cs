@@ -1,8 +1,8 @@
-using Noo.Api.Media.DTO;
+using Noo.Api.Media.Models;
 
 namespace Noo.Api.Media.Services;
 
 public interface IMediaService
 {
-    public Task<MediaDTO> UploadAsync(IFormFile file);
+    public Task<MediaModel> UploadAsync(IFormFile file);
 }

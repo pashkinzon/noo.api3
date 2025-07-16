@@ -9,13 +9,12 @@ namespace Noo.Api.Users.Services;
 
 public class UserRepository : Repository<UserModel>, IUserRepository
 {
-    public Task<UserDTO?> GetByUsernameOrEmailAsync(string usernameOrEmail, AutoMapper.IConfigurationProvider configurationProvider)
+    public Task<UserModel?> GetByUsernameOrEmailAsync(string usernameOrEmail)
     {
         var repository = Context.GetDbSet<UserModel>();
 
         return repository
             .Where(x => x.Username == usernameOrEmail || x.Email == usernameOrEmail)
-            .ProjectTo<UserDTO>(configurationProvider)
             .FirstOrDefaultAsync();
     }
 
