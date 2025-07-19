@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Works.DTO;
-using Noo.Api.Works.Models;
 using Noo.Api.Works.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 using SystemTextJsonPatch;
+using Noo.Api.Works.Filters;
 
 namespace Noo.Api.Works;
 
@@ -36,10 +35,10 @@ public class WorkController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetWorksAsync([FromQuery] Criteria<WorkModel> criteria)
+    public async Task<IActionResult> GetWorksAsync([FromQuery] WorkFilter filter)
     {
-        var (results, count) = await _workService.GetWorksAsync(criteria);
-        return OkResponse((results, count));
+        var result = await _workService.GetWorksAsync(filter);
+        return OkResponse(result);
     }
 
     /// <summary>

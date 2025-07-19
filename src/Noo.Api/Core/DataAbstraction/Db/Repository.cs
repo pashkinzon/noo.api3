@@ -1,7 +1,12 @@
-using AutoMapper.QueryableExtensions;
+using AutoFilterer.Abstractions;
+using AutoFilterer.Extensions;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Model;
+using Noo.Api.Core.Exceptions.Http;
+using Noo.Api.Core.Utils.Json;
+using SystemTextJsonPatch;
 
 namespace Noo.Api.Core.DataAbstraction.Db;
 
@@ -44,33 +49,56 @@ public class Repository<T> : IRepository<T> where T : BaseModel, new()
         Context.GetDbSet<T>().Remove(new() { Id = id });
     }
 
-    public async Task<SearchResult<T>> SearchAsync(Criteria<T> criteria, ISearchStrategy<T> searchStrategy)
+    public async Task<SearchResult<T>> SearchAsync(IPaginationFilter filter)
     {
         var query = Context.GetDbSet<T>().AsQueryable();
 
         var total = await query
-            .AddCountingCriteria(criteria, searchStrategy)
+            .ApplyFilterWithoutPagination(filter)
             .CountAsync();
 
         var results = await query
-            .AddCriteria(criteria, searchStrategy)
+            .ApplyFilter(filter)
             .ToListAsync();
 
         return new SearchResult<T>(results, total);
     }
 
-    public async Task<SearchResult<T>> GetManyAsync(Criteria<T> criteria)
+    public async Task<SearchResult<T>> GetManyAsync(IPaginationFilter filter)
     {
         var query = Context.GetDbSet<T>().AsQueryable();
 
         var total = await query
-            .AddCountingCriteria(criteria)
+            .ApplyFilterWithoutPagination(filter)
             .CountAsync();
 
         var results = await query
-            .AddCriteria(criteria)
+            .ApplyFilter(filter)
             .ToListAsync();
 
         return new SearchResult<T>(results, total);
+    }
+
+    public async Task UpdateWithJsonPatchAsync<TDto>(Ulid id, JsonPatchDocument<TDto> updateDto, IMapper mapper, ModelStateDictionary? modelState = null) where TDto : class
+    {
+        var model = await GetByIdAsync(id) ?? throw new NotFoundException();
+
+        if (model == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var dto = mapper.Map<TDto>(model);
+
+        modelState ??= new ModelStateDictionary();
+
+        updateDto.ApplyToAndValidate(dto, modelState);
+
+        if (!modelState.IsValid)
+        {
+            throw new BadRequestException();
+        }
+
+        mapper.Map(dto, model);
     }
 }

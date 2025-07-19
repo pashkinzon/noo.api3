@@ -1,14 +1,14 @@
 using Noo.Api.AssignedWorks.DTO;
+using Noo.Api.AssignedWorks.Filters;
 using Noo.Api.AssignedWorks.Models;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 
 namespace Noo.Api.AssignedWorks.Services;
 
 public interface IAssignedWorkService
 {
-    public Task<SearchResult<AssignedWorkDTO>> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria);
-    public Task<SearchResult<AssignedWorkDTO>> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria);
+    public Task<SearchResult<AssignedWorkDTO>> GetStudentAssignedWorksAsync(Ulid studentId, AssignedWorkFilter filter);
+    public Task<SearchResult<AssignedWorkDTO>> GetMentorAssignedWorksAsync(Ulid mentorId, AssignedWorkFilter filter);
     public Task<AssignedWorkModel?> GetAssignedWorkAsync(Ulid assignedWorkId);
     public Task<AssignedWorkProgressDTO> GetAssignedWorkProgressAsync(Ulid assignedWorkId);
     public Task<Ulid> RemakeAssignedWorkAsync(Ulid assignedWorkId, RemakeAssignedWorkOptionsDTO options);

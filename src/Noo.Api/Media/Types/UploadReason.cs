@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.Exceptions.Http;
-using Noo.Api.Core.Security.Authorization;
 
 namespace Noo.Api.Media.Types;
 

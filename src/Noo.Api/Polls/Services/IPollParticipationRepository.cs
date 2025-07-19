@@ -7,4 +7,3 @@ public interface IPollParticipationRepository : IRepository<PollParticipationMod
 {
     public Task<bool> ParticipationExistsAsync(Ulid pollId, Ulid? userId, string? userExternalIdentifier);
 }
-

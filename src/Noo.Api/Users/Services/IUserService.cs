@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Users.DTO;
+using Noo.Api.Users.Filters;
 using Noo.Api.Users.Models;
 using Noo.Api.Users.Types;
 using SystemTextJsonPatch;
@@ -15,7 +15,7 @@ public interface IUserService
     public Task<Ulid> CreateUserAsync(UserCreationPayload payload);
     public Task<UserModel?> GetUserByIdAsync(Ulid id);
     public Task<UserModel?> GetUserByUsernameOrEmailAsync(string usernameOrEmail);
-    public Task<SearchResult<UserModel>> GetUsersAsync(Criteria<UserModel> criteria);
+    public Task<SearchResult<UserModel>> GetUsersAsync(UserFilter filter);
     public Task ChangeRoleAsync(Ulid id, UserRoles newRole);
     public Task UpdateUserPasswordAsync(Ulid id, string newPasswordHash);
     public Task UpdateUserEmailAsync(Ulid id, string newEmail);

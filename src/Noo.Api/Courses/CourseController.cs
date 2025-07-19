@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Courses.DTO;
+using Noo.Api.Courses.Filters;
 using Noo.Api.Courses.Models;
 using Noo.Api.Courses.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -68,9 +68,9 @@ public class CourseController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetCoursesAsync([FromQuery] Criteria<CourseModel> criteria)
+    public async Task<IActionResult> GetCoursesAsync([FromQuery] CourseFilter filter)
     {
-        var result = await _courseService.SearchAsync(criteria);
+        var result = await _courseService.SearchAsync(filter);
 
         return OkResponse(result);
     }

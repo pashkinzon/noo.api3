@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Polls.DTO;
-using Noo.Api.Polls.Models;
+using Noo.Api.Polls.Filters;
 using Noo.Api.Polls.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -36,9 +35,9 @@ public class PollController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetPollsAsync([FromQuery] Criteria<PollModel> criteria)
+    public async Task<IActionResult> GetPollsAsync([FromQuery] PollFilter filter)
     {
-        var result = await _pollService.GetPollsAsync(criteria);
+        var result = await _pollService.GetPollsAsync(filter);
         return OkResponse(result);
     }
 
@@ -128,9 +127,9 @@ public class PollController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> GetPollParticipationsAsync([FromRoute] Ulid pollId, [FromQuery] Criteria<PollParticipationModel> criteria)
+    public async Task<IActionResult> GetPollParticipationsAsync([FromRoute] Ulid pollId, [FromQuery] PollParticipationFilter filter)
     {
-        var result = await _pollService.GetPollParticipationsAsync(pollId, criteria);
+        var result = await _pollService.GetPollParticipationsAsync(pollId, filter);
         return OkResponse(result);
     }
 

@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.AssignedWorks.DTO;
-using Noo.Api.AssignedWorks.Models;
+using Noo.Api.AssignedWorks.Filters;
 using Noo.Api.AssignedWorks.Services;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Security.Authorization;
@@ -37,7 +36,7 @@ public class AssignedWorkController : ApiController
         StatusCodes.Status403Forbidden
     )]
     public async Task<IActionResult> GetAssignedWorksAsync(
-        [FromQuery] Criteria<AssignedWorkModel> criteria,
+        [FromQuery] AssignedWorkFilter filter,
         [FromRoute] Ulid? userId = null
     )
     {
@@ -46,13 +45,13 @@ public class AssignedWorkController : ApiController
 
         if (userRole == UserRoles.Student)
         {
-            var result = await _assignedWorkService.GetStudentAssignedWorksAsync(neededUserId, criteria);
+            var result = await _assignedWorkService.GetStudentAssignedWorksAsync(neededUserId, filter);
 
             return OkResponse(result);
         }
         else if (userRole == UserRoles.Mentor)
         {
-            var result = await _assignedWorkService.GetMentorAssignedWorksAsync(neededUserId, criteria);
+            var result = await _assignedWorkService.GetMentorAssignedWorksAsync(neededUserId, filter);
 
             return OkResponse(result);
         }

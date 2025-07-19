@@ -1,13 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
-using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
-using Noo.Api.NooTube.DTO;
-using Noo.Api.NooTube.Models;
 using Noo.Api.NooTube.Services;
-using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.NooTube;
 
@@ -26,7 +20,7 @@ public class NootubeController : ApiController
         _videoAccessService = videoAccessService;
     }
 
-    [MapToApiVersion(NooApiVersions.Current)]
+    /* [MapToApiVersion(NooApiVersions.Current)]
     [HttpGet]
     [Authorize(Policy = NooTubePolicies.CanGetNooTubeVideos)]
     [Produces(
@@ -36,7 +30,7 @@ public class NootubeController : ApiController
         StatusCodes.Status403Forbidden
     )]
     public async Task<IActionResult> GetVideosAsync(
-        [FromQuery] Criteria<NooTubeVideoModel> criteria
+        [FromQuery] NooTubeVideoFilter filter
     )
     {
         var userId = User.GetId();
@@ -46,8 +40,8 @@ public class NootubeController : ApiController
             userId, userRole
         );
 
-        var result = await _nootubeService.GetVideosAsync(criteria, selector);
+        var result = await _nootubeService.GetVideosAsync(filter, selector);
 
         return OkResponse(result);
-    }
+    } */
 }

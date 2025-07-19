@@ -107,5 +107,8 @@ dotnet_diagnostic.RCS1018.severity = error  # Add accessibility modifiers
 dotnet_diagnostic.RCS1029.severity = warning  # Format binary operator on next line
 
 # Ignore all analyzers in migrations folder
-[./Migrations/**/*.cs]
-dotnet_analyzer_diagnostic.severity = none
+[Migrations/**/*.cs]
+generated_code = true 
+dotnet_diagnostic.IDE0005.severity = none
+# dotnet_analyzer_diagnostic.severity = none
+# dotnet_diagnostic.severity = none

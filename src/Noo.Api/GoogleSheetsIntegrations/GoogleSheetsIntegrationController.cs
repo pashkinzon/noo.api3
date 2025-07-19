@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.GoogleSheetsIntegrations.DTO;
-using Noo.Api.GoogleSheetsIntegrations.Models;
+using Noo.Api.GoogleSheetsIntegrations.Filters;
 using Noo.Api.GoogleSheetsIntegrations.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -36,10 +35,10 @@ public class GoogleSheetsIntegrationController : ApiController
         StatusCodes.Status403Forbidden
     )]
     public async Task<IActionResult> GetIntegrationsAsync(
-        [FromQuery] Criteria<GoogleSheetsIntegrationModel> criteria
+        [FromQuery] GoogleSheetsIntegrationFilter filter
     )
     {
-        var result = await _googleSheetsIntegrationService.GetIntegrationsAsync(criteria);
+        var result = await _googleSheetsIntegrationService.GetIntegrationsAsync(filter);
         return OkResponse(result);
     }
 

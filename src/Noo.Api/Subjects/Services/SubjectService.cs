@@ -1,11 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
-using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.DI;
-using Noo.Api.Core.Utils.Json;
 using Noo.Api.Subjects.DTO;
+using Noo.Api.Subjects.Filters;
 using Noo.Api.Subjects.Models;
 using SystemTextJsonPatch;
 
@@ -18,15 +16,12 @@ public class SubjectService : ISubjectService
 
     private readonly ISubjectRepository _subjectRepository;
 
-    private readonly ISearchStrategy<SubjectModel> _searchStrategy;
-
     private readonly IMapper _mapper;
 
-    public SubjectService(IUnitOfWork unitOfWork, SubjectSearchStrategy searchStrategy, IMapper mapper)
+    public SubjectService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _subjectRepository = unitOfWork.SubjectRepository();
-        _searchStrategy = searchStrategy;
         _mapper = mapper;
     }
 
@@ -51,34 +46,14 @@ public class SubjectService : ISubjectService
         return _subjectRepository.GetByIdAsync(id);
     }
 
-    public Task<SearchResult<SubjectModel>> GetSubjectsAsync(Criteria<SubjectModel> criteria)
+    public Task<SearchResult<SubjectModel>> GetSubjectsAsync(SubjectFilter filter)
     {
-        return _subjectRepository.SearchAsync(criteria, _searchStrategy);
+        return _subjectRepository.SearchAsync(filter);
     }
 
-    public async Task UpdateSubjectAsync(Ulid id, JsonPatchDocument<SubjectUpdateDTO> subject, ModelStateDictionary? modelState = null)
+    public async Task UpdateSubjectAsync(Ulid id, JsonPatchDocument<SubjectUpdateDTO> updateSubjectDto, ModelStateDictionary? modelState = null)
     {
-        var model = await _subjectRepository.GetByIdAsync(id);
-
-        if (model == null)
-        {
-            throw new NotFoundException();
-        }
-
-        var dto = _mapper.Map<SubjectUpdateDTO>(model);
-
-        modelState ??= new ModelStateDictionary();
-
-        subject.ApplyToAndValidate(dto, modelState);
-
-        if (!modelState.IsValid)
-        {
-            throw new BadRequestException();
-        }
-
-        _mapper.Map(dto, model);
-
-        _subjectRepository.Update(model);
+        await _subjectRepository.UpdateWithJsonPatchAsync(id, updateSubjectDto, _mapper, modelState);
 
         await _unitOfWork.CommitAsync();
     }

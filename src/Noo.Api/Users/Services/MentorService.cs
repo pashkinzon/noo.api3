@@ -1,7 +1,6 @@
-using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
+using Noo.Api.Users.Filters;
 using Noo.Api.Users.Models;
 
 namespace Noo.Api.Users.Services;
@@ -11,17 +10,17 @@ public class MentorService : IMentorService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly ISearchStrategy<MentorAssignmentModel> _mentorAssignmentSearchStrategy;
+    private readonly IMentorAssignmentRepository _mentorAssignmentRepository;
 
-    public MentorService(IUnitOfWork unitOfWork, MentorAssignmentSearchStrategy mentorAssignmentSearchStrategy)
+    public MentorService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _mentorAssignmentSearchStrategy = mentorAssignmentSearchStrategy;
+        _mentorAssignmentRepository = unitOfWork.MentorAssignmentRepository();
     }
 
     public async Task<Ulid> AssignMentorAsync(Ulid studentId, Ulid mentorId, Ulid subjectId)
     {
-        var existingAssignment = await _unitOfWork.MentorAssignmentRepository().GetAsync(studentId, mentorId, subjectId);
+        var existingAssignment = await _mentorAssignmentRepository.GetAsync(studentId, mentorId, subjectId);
 
         if (existingAssignment == null)
         {
@@ -32,7 +31,7 @@ public class MentorService : IMentorService
                 SubjectId = subjectId
             };
 
-            _unitOfWork.MentorAssignmentRepository().Update(existingAssignment);
+            _mentorAssignmentRepository.Update(existingAssignment);
             await _unitOfWork.CommitAsync();
         }
 
@@ -41,23 +40,21 @@ public class MentorService : IMentorService
 
     public Task UnassignMentorAsync(Ulid assignmentId)
     {
-        _unitOfWork.MentorAssignmentRepository().DeleteById(assignmentId);
+        _mentorAssignmentRepository.DeleteById(assignmentId);
         return _unitOfWork.CommitAsync();
     }
 
-    public Task<SearchResult<MentorAssignmentModel>> GetMentorAssignmentsAsync(Ulid studentId, Criteria<MentorAssignmentModel> criteria)
+    public Task<SearchResult<MentorAssignmentModel>> GetMentorAssignmentsAsync(Ulid studentId, MentorAssignmentFilter filter)
     {
-        criteria.AddFilter("StudentId", FilterType.Equals, studentId);
+        filter.StudentId = studentId;
 
-        return _unitOfWork.MentorAssignmentRepository()
-            .SearchAsync(criteria, _mentorAssignmentSearchStrategy);
+        return _mentorAssignmentRepository.SearchAsync(filter);
     }
 
-    public Task<SearchResult<MentorAssignmentModel>> GetStudentAssignmentsAsync(Ulid mentorId, Criteria<MentorAssignmentModel> criteria)
+    public Task<SearchResult<MentorAssignmentModel>> GetStudentAssignmentsAsync(Ulid mentorId, MentorAssignmentFilter filter)
     {
-        criteria.AddFilter("MentorId", FilterType.Equals, mentorId);
+        filter.MentorId = mentorId;
 
-        return _unitOfWork.MentorAssignmentRepository()
-            .SearchAsync(criteria, _mentorAssignmentSearchStrategy);
+        return _mentorAssignmentRepository.SearchAsync(filter);
     }
 }

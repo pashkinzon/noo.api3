@@ -1,5 +1,8 @@
-using Noo.Api.Core.DataAbstraction.Criteria;
+using AutoFilterer.Abstractions;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Model;
+using SystemTextJsonPatch;
 
 namespace Noo.Api.Core.DataAbstraction.Db;
 
@@ -9,9 +12,9 @@ public interface IRepository<T> where T : BaseModel
 
     public Task<T?> GetByIdAsync(Ulid id);
 
-    public Task<SearchResult<T>> SearchAsync(Criteria<T> criteria, ISearchStrategy<T> searchStrategy);
+    public Task<SearchResult<T>> SearchAsync(IPaginationFilter filter);
 
-    public Task<SearchResult<T>> GetManyAsync(Criteria<T> criteria);
+    public Task<SearchResult<T>> GetManyAsync(IPaginationFilter filter);
 
     public Task<bool> ExistsAsync(Ulid id);
 
@@ -22,4 +25,6 @@ public interface IRepository<T> where T : BaseModel
     public void Delete(T entity);
 
     public void DeleteById(Ulid id);
+
+    public Task UpdateWithJsonPatchAsync<TDto>(Ulid id, JsonPatchDocument<TDto> updateDto, IMapper mapper, ModelStateDictionary? modelState) where TDto : class;
 }

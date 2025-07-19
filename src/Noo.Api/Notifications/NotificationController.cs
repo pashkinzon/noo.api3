@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.Documentation;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Notifications.DTO;
-using Noo.Api.Notifications.Models;
+using Noo.Api.Notifications.Filters;
 using Noo.Api.Notifications.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -37,11 +35,11 @@ public class NotificationController : ApiController
         StatusCodes.Status403Forbidden
     )]
     public async Task<IActionResult> GetNotificationsAsync(
-        [FromQuery] Criteria<NotificationModel> criteria
+        [FromQuery] NotificationFilter filter
     )
     {
         var userId = User.GetId();
-        var result = await _notificationService.GetNotificationsAsync(userId, criteria);
+        var result = await _notificationService.GetNotificationsAsync(userId, filter);
         return OkResponse(result);
     }
 

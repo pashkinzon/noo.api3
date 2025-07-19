@@ -1,12 +1,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Core.Utils.Json;
 using Noo.Api.Users.DTO;
+using Noo.Api.Users.Filters;
 using Noo.Api.Users.Models;
 using Noo.Api.Users.Types;
 using SystemTextJsonPatch;
@@ -18,33 +18,28 @@ public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
 
-    private readonly ISearchStrategy<UserModel> _userSearchStrategy;
+    private readonly IMapper _mapper;
 
     public UserService(
         IUnitOfWork unitOfWork,
-        IMapper mapper,
-        UserSearchStrategy userSearchStrategy
+        IMapper mapper
     )
     {
         _unitOfWork = unitOfWork;
+        _userRepository = unitOfWork.UserRepository();
         _mapper = mapper;
-        _userSearchStrategy = userSearchStrategy;
     }
 
     public async Task BlockUserAsync(Ulid id)
     {
-        await _unitOfWork
-            .UserRepository()
-            .BlockUserAsync(id);
+        await _userRepository.BlockUserAsync(id);
     }
 
     public async Task ChangeRoleAsync(Ulid id, UserRoles newRole)
     {
-        var user = await _unitOfWork
-            .UserRepository()
-            .GetByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null)
         {
@@ -63,7 +58,7 @@ public class UserService : IUserService
 
         user.Role = newRole;
 
-        _unitOfWork.UserRepository().Update(user);
+        _userRepository.Update(user);
         await _unitOfWork.CommitAsync();
     }
 
@@ -71,7 +66,7 @@ public class UserService : IUserService
     {
         var model = _mapper.Map<UserModel>(payload);
 
-        _unitOfWork.UserRepository().Add(model);
+        _userRepository.Add(model);
         await _unitOfWork.CommitAsync();
 
         return model.Id;
@@ -79,47 +74,38 @@ public class UserService : IUserService
 
     public async Task DeleteUserAsync(Ulid id)
     {
-        _unitOfWork.UserRepository().DeleteById(id);
+        _userRepository.DeleteById(id);
         await _unitOfWork.CommitAsync();
     }
 
     public Task<UserModel?> GetUserByIdAsync(Ulid id)
     {
-        return _unitOfWork.UserRepository().GetByIdAsync(id);
+        return _userRepository.GetByIdAsync(id);
     }
 
     public Task<UserModel?> GetUserByUsernameOrEmailAsync(string usernameOrEmail)
     {
-        return _unitOfWork.UserRepository().GetByUsernameOrEmailAsync(usernameOrEmail);
+        return _userRepository.GetByUsernameOrEmailAsync(usernameOrEmail);
     }
 
-    public Task<SearchResult<UserModel>> GetUsersAsync(Criteria<UserModel> criteria)
+    public Task<SearchResult<UserModel>> GetUsersAsync(UserFilter filter)
     {
-        return _unitOfWork
-            .UserRepository()
-            .SearchAsync(criteria, _userSearchStrategy);
+        return _userRepository.SearchAsync(filter);
     }
 
     public Task<bool> IsBlockedAsync(Ulid id)
     {
-        return _unitOfWork
-            .UserRepository()
-            .IsBlockedAsync(id);
+        return _userRepository.IsBlockedAsync(id);
     }
 
     public Task UnblockUserAsync(Ulid id)
     {
-        return _unitOfWork
-            .UserRepository()
-            .UnblockUserAsync(id);
+        return _userRepository.UnblockUserAsync(id);
     }
 
     public async Task UpdateUserAsync(Ulid id, JsonPatchDocument<UpdateUserDTO> patchUser, ModelStateDictionary? modelState = null)
     {
-        var repository = _unitOfWork
-            .UserRepository();
-
-        var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException();
+        var model = await _userRepository.GetByIdAsync(id) ?? throw new NotFoundException();
 
         if (model == null)
         {
@@ -139,15 +125,13 @@ public class UserService : IUserService
 
         _mapper.Map(dto, model);
 
-        repository.Update(model);
+        _userRepository.Update(model);
         await _unitOfWork.CommitAsync();
     }
 
     public async Task UpdateUserEmailAsync(Ulid id, string newEmail)
     {
-        var user = await _unitOfWork
-            .UserRepository()
-            .GetByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null)
         {
@@ -156,15 +140,13 @@ public class UserService : IUserService
 
         user.Email = newEmail;
 
-        _unitOfWork.UserRepository().Update(user);
+        _userRepository.Update(user);
         await _unitOfWork.CommitAsync();
     }
 
     public async Task UpdateUserPasswordAsync(Ulid id, string newPasswordHash)
     {
-        var user = await _unitOfWork
-            .UserRepository()
-            .GetByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null)
         {
@@ -173,7 +155,7 @@ public class UserService : IUserService
 
         user.PasswordHash = newPasswordHash;
 
-        _unitOfWork.UserRepository().Update(user);
+        _userRepository.Update(user);
         await _unitOfWork.CommitAsync();
     }
 
@@ -184,16 +166,12 @@ public class UserService : IUserService
             throw new ArgumentException("Username or email must be provided");
         }
 
-        return _unitOfWork
-            .UserRepository()
-            .ExistsByUsernameOrEmailAsync(username, email);
+        return _userRepository.ExistsByUsernameOrEmailAsync(username, email);
     }
 
     public async Task VerifyUserAsync(Ulid id)
     {
-        var user = await _unitOfWork
-            .UserRepository()
-            .GetByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null)
         {
@@ -207,7 +185,7 @@ public class UserService : IUserService
 
         user.IsVerified = true;
 
-        _unitOfWork.UserRepository().Update(user);
+        _userRepository.Update(user);
         await _unitOfWork.CommitAsync();
     }
 }

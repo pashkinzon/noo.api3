@@ -5,7 +5,6 @@ using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Platform.DTO;
 using Noo.Api.Platform.Services;
-using Noo.Api.Platform.Types;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
 namespace Noo.Api.Platform;

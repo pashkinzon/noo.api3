@@ -1,8 +1,8 @@
+using AutoFilterer.Types;
 using AutoMapper;
 using Noo.Api.Calendar.DTO;
+using Noo.Api.Calendar.Filters;
 using Noo.Api.Calendar.Models;
-using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.DI;
@@ -50,14 +50,15 @@ public class CalendarService : ICalendarService
 
     public Task<SearchResult<CalendarEventModel>> GetCalendarEventsAsync(Ulid userId, int year, int month)
     {
-        var criteria = new Criteria<CalendarEventModel>();
+        var filter = new CalendarEventFilter()
+        {
+            UserId = userId,
+            StartDateTime = new Range<DateTime>(
+                new DateTime(year, month, 1),
+                new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59)
+            )
+        };
 
-        criteria.AddFilter("UserId", FilterType.Equals, userId);
-        criteria.AddFilter("StartDateTime", FilterType.Range,
-            new DateTime(year, month, 1),
-            new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59)
-        );
-
-        return _calendarEventRepository.GetManyAsync(criteria);
+        return _calendarEventRepository.GetManyAsync(filter);
     }
 }

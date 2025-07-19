@@ -1,8 +1,6 @@
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Security.Authorization;
-using Noo.Api.Users.DTO;
 using Noo.Api.Users.Models;
 
 namespace Noo.Api.Users.Services;

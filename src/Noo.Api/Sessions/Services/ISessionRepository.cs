@@ -7,4 +7,5 @@ public interface ISessionRepository : IRepository<SessionModel>
 {
     public Task DeleteAllSessionsAsync(Ulid userId);
     public Task DeleteSessionAsync(Ulid sessionId, Ulid userId);
+    public Task<IEnumerable<SessionModel>> GetManyOfUserAsync(Ulid userId);
 }

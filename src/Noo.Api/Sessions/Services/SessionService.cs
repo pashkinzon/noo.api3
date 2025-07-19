@@ -1,7 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Sessions.Models;
@@ -55,14 +53,8 @@ public class SessionService : ISessionService
         return _unitOfWork.CommitAsync();
     }
 
-    public async Task<IEnumerable<SessionModel>> GetSessionsAsync(Ulid userId)
+    public Task<IEnumerable<SessionModel>> GetSessionsAsync(Ulid userId)
     {
-        var criteria = new Criteria<SessionModel>();
-
-        criteria.AddFilter("UserId", FilterType.Equals, userId);
-
-        var result = await _sessionRepository.GetManyAsync(criteria);
-
-        return result.Items;
+        return _sessionRepository.GetManyOfUserAsync(userId);
     }
 }

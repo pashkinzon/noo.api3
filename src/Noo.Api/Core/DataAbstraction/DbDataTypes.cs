@@ -1,5 +1,3 @@
-using AutoMapper.Internal.Mappers;
-
 namespace Noo.Api.Core.DataAbstraction;
 
 public static class DbDataTypes

@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Subjects.DTO;
-using Noo.Api.Subjects.Models;
+using Noo.Api.Subjects.Filters;
 using Noo.Api.Subjects.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -35,10 +34,10 @@ public class SubjectController : ApiController
         StatusCodes.Status400BadRequest,
         StatusCodes.Status401Unauthorized
     )]
-    public async Task<IActionResult> GetSubjectsAsync([FromQuery] Criteria<SubjectModel> criteria)
+    public async Task<IActionResult> GetSubjectsAsync([FromQuery] SubjectFilter filter)
     {
-        var (items, total) = await _subjectService.GetSubjectsAsync(criteria);
-        return OkResponse((items, total));
+        var result = await _subjectService.GetSubjectsAsync(filter);
+        return OkResponse(result);
     }
 
     /// <summary>

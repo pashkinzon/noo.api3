@@ -1,13 +1,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Core.Utils.Json;
 using Noo.Api.Polls.DTO;
 using Noo.Api.Polls.Exceptions;
+using Noo.Api.Polls.Filters;
 using Noo.Api.Polls.Models;
 using SystemTextJsonPatch;
 
@@ -16,7 +15,7 @@ namespace Noo.Api.Polls.Services;
 [RegisterScoped(typeof(IPollService))]
 public class PollService : IPollService
 {
-    private readonly Mapper _mapper;
+    private readonly IMapper _mapper;
 
     private readonly IPollRepository _pollRepository;
 
@@ -24,21 +23,15 @@ public class PollService : IPollService
 
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly ISearchStrategy<PollModel> _pollSearchStrategy;
-
-    private readonly ISearchStrategy<PollParticipationModel> _pollParticipationSearchStrategy;
-
     private readonly IPollAnswerRepository _pollAnswerRepository;
 
-    public PollService(Mapper mapper, IUnitOfWork unitOfWork, PollSearchStrategy pollSearchStrategy, PollParticipationSearchStrategy pollParticipationSearchStrategy)
+    public PollService(IMapper mapper, IUnitOfWork unitOfWork)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _pollRepository = unitOfWork.PollRepository();
         _pollParticipationRepository = unitOfWork.PollParticipationRepository();
         _pollAnswerRepository = unitOfWork.PollAnswerRepository();
-        _pollSearchStrategy = pollSearchStrategy;
-        _pollParticipationSearchStrategy = pollParticipationSearchStrategy;
         _unitOfWork = unitOfWork;
     }
 
@@ -66,15 +59,15 @@ public class PollService : IPollService
         return _pollParticipationRepository.GetByIdAsync(participationId);
     }
 
-    public Task<SearchResult<PollParticipationModel>> GetPollParticipationsAsync(Ulid pollId, Criteria<PollParticipationModel> criteria)
+    public Task<SearchResult<PollParticipationModel>> GetPollParticipationsAsync(Ulid pollId, PollParticipationFilter filter)
     {
-        criteria.AddFilter("PollId", FilterType.Equals, pollId);
-        return _pollParticipationRepository.SearchAsync(criteria, _pollParticipationSearchStrategy);
+        filter.PollId = pollId;
+        return _pollParticipationRepository.SearchAsync(filter);
     }
 
-    public Task<SearchResult<PollModel>> GetPollsAsync(Criteria<PollModel> criteria)
+    public Task<SearchResult<PollModel>> GetPollsAsync(PollFilter filter)
     {
-        return _pollRepository.SearchAsync(criteria, _pollSearchStrategy);
+        return _pollRepository.SearchAsync(filter);
     }
 
     public async Task ParticipateAsync(Ulid pollId, PollParticipationDTO participationDto)

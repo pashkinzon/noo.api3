@@ -1,9 +1,6 @@
-using System.Net;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.OpenApi.Models;
 using Noo.Api.Core.Exceptions;
-using Noo.Api.Core.Response;
-using Noo.Api.Users.DTO;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Noo.Api.Core.Documentation;

@@ -1,12 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Noo.Api.Core.DataAbstraction.Criteria;
-using Noo.Api.Core.DataAbstraction.Criteria.Filters;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Core.Utils.Json;
 using Noo.Api.Snippets.DTO;
+using Noo.Api.Snippets.Filters;
 using Noo.Api.Snippets.Models;
 using SystemTextJsonPatch;
 
@@ -53,13 +52,14 @@ public class SnippetService : ISnippetService
 
     public Task<SearchResult<SnippetModel>> GetSnippetsAsync(Ulid userId)
     {
-        var criteria = new Criteria<SnippetModel>();
+        var filter = new SnippetFilter
+        {
+            UserId = userId,
+            Page = 1,
+            PerPage = SnippetConfig.MaxSnippetsPerUser
+        };
 
-        criteria.AddFilter("UserId", FilterType.Equals, userId);
-        criteria.Page = 1;
-        criteria.Limit = SnippetConfig.MaxSnippetsPerUser;
-
-        return _snippetRepository.GetManyAsync(criteria);
+        return _snippetRepository.GetManyAsync(filter);
     }
 
     public async Task UpdateSnippetAsync(Ulid userId, Ulid snippetId, JsonPatchDocument<UpdateSnippetDTO> updateSnippetDto, ModelStateDictionary? modelState = null)

@@ -14,6 +14,11 @@ public class SessionRepository : Repository<SessionModel>, ISessionRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<IEnumerable<SessionModel>> GetManyOfUserAsync(Ulid userId)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

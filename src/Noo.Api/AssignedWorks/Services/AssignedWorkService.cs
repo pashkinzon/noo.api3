@@ -1,7 +1,7 @@
 using AutoMapper;
 using Noo.Api.AssignedWorks.DTO;
+using Noo.Api.AssignedWorks.Filters;
 using Noo.Api.AssignedWorks.Models;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.DI;
@@ -16,16 +16,13 @@ public class AssignedWorkService : IAssignedWorkService
 
     private readonly IMapper _mapper;
 
-    private readonly ISearchStrategy<AssignedWorkModel> _searchStrategy;
-
     private readonly IAssignedWorkRepository _assignedWorkRepository;
 
     private readonly IUserRepository _userRepository;
 
-    public AssignedWorkService(IUnitOfWork unitOfWork, IMapper mapper, ISearchStrategy<AssignedWorkModel> searchStrategy)
+    public AssignedWorkService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _mapper = mapper;
-        _searchStrategy = searchStrategy;
         _unitOfWork = unitOfWork;
         _assignedWorkRepository = _unitOfWork.AssignedWorkRepository();
         _userRepository = _unitOfWork.UserRepository();
@@ -82,12 +79,12 @@ public class AssignedWorkService : IAssignedWorkService
         throw new NotImplementedException();
     }
 
-    public Task<SearchResult<AssignedWorkDTO>> GetMentorAssignedWorksAsync(Ulid mentorId, Criteria<AssignedWorkModel> criteria)
+    public Task<SearchResult<AssignedWorkDTO>> GetMentorAssignedWorksAsync(Ulid mentorId, AssignedWorkFilter filter)
     {
         throw new NotImplementedException();
     }
 
-    public Task<SearchResult<AssignedWorkDTO>> GetStudentAssignedWorksAsync(Ulid studentId, Criteria<AssignedWorkModel> criteria)
+    public Task<SearchResult<AssignedWorkDTO>> GetStudentAssignedWorksAsync(Ulid studentId, AssignedWorkFilter filter)
     {
         throw new NotImplementedException();
     }

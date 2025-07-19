@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.Utils.DI;
 
 namespace Noo.Api.Core.DataAbstraction.Db;

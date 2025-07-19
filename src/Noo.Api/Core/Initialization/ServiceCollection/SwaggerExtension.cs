@@ -1,4 +1,5 @@
 using System.Reflection;
+using AutoFilterer.Swagger;
 using Microsoft.OpenApi.Models;
 using Noo.Api.Core.Config.Env;
 using Noo.Api.Core.Documentation;
@@ -28,6 +29,9 @@ public static class AppSwaggerExtension
             options.OperationFilter<ProducesOperationFilter>();
             options.SchemaFilter<UlidSchemaFilter>();
             options.OperationFilter<JsonPatchOperationFilter>();
+
+            // for AutoFilter support
+            options.UseAutoFiltererParameters();
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

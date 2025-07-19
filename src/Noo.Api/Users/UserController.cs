@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Auth.Services;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.Exceptions;
 using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Request;
@@ -9,7 +7,7 @@ using Noo.Api.Core.Response;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Users.DTO;
-using Noo.Api.Users.Models;
+using Noo.Api.Users.Filters;
 using Noo.Api.Users.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -46,11 +44,11 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetUsersAsync([FromQuery] Criteria<UserModel> criteria)
+    public async Task<IActionResult> GetUsersAsync([FromQuery] UserFilter filter)
     {
-        var (results, count) = await _userService.GetUsersAsync(criteria);
+        var result = await _userService.GetUsersAsync(filter);
 
-        return OkResponse((results, count));
+        return OkResponse(result);
     }
 
     /// <summary>
@@ -195,11 +193,11 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetMentorAssignmentsAsync([FromRoute] Ulid id, [FromQuery] Criteria<MentorAssignmentModel> criteria)
+    public async Task<IActionResult> GetMentorAssignmentsAsync([FromRoute] Ulid id, [FromQuery] MentorAssignmentFilter filter)
     {
-        var (results, count) = await _mentorService.GetMentorAssignmentsAsync(id, criteria);
+        var result = await _mentorService.GetMentorAssignmentsAsync(id, filter);
 
-        return OkResponse((results, count));
+        return OkResponse(result);
     }
 
     /// <summary>
@@ -218,11 +216,11 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetStudentAssignmentsAsync([FromRoute] Ulid id, [FromQuery] Criteria<MentorAssignmentModel> criteria)
+    public async Task<IActionResult> GetStudentAssignmentsAsync([FromRoute] Ulid id, [FromQuery] MentorAssignmentFilter filter)
     {
-        var (results, count) = await _mentorService.GetStudentAssignmentsAsync(id, criteria);
+        var result = await _mentorService.GetStudentAssignmentsAsync(id, filter);
 
-        return OkResponse((results, count));
+        return OkResponse(result);
     }
 
     /// <summary>

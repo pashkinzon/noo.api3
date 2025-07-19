@@ -1,7 +1,7 @@
 using AutoMapper;
-using Noo.Api.Core.DataAbstraction.Criteria;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Utils.DI;
+using Noo.Api.Courses.Filters;
 using Noo.Api.Courses.Models;
 
 namespace Noo.Api.Courses.Services;
@@ -15,18 +15,14 @@ public class CourseService : ICourseService
 
     private readonly IMapper _mapper;
 
-    private readonly ISearchStrategy<CourseModel> _searchStrategy;
-
     public CourseService(
         IUnitOfWork unitOfWork,
-        IMapper mapper,
-        CourseSearchStrategy searchStrategy
+        IMapper mapper
     )
     {
         _unitOfWork = unitOfWork;
         _courseRepository = unitOfWork.CourseRepository();
         _mapper = mapper;
-        _searchStrategy = searchStrategy;
     }
 
     public Task<CourseModel?> GetByIdAsync(Ulid id, bool includeInactive)
@@ -34,8 +30,8 @@ public class CourseService : ICourseService
         return _courseRepository.GetWithChapterTreeAsync(id);
     }
 
-    public Task<SearchResult<CourseModel>> SearchAsync(Criteria<CourseModel> criteria)
+    public Task<SearchResult<CourseModel>> SearchAsync(CourseFilter filter)
     {
-        return _courseRepository.SearchAsync(criteria, _searchStrategy);
+        return _courseRepository.SearchAsync(filter);
     }
 }
