@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Noo.Api.Core.Config.Env;
@@ -22,6 +21,6 @@ public class JwtConfig : IConfig
 
     public SymmetricSecurityKey GetSymmetricSecurityKey()
     {
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
+        return new SymmetricSecurityKey(Convert.FromBase64String(Secret));
     }
 }
