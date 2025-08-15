@@ -40,6 +40,34 @@
 				"$msbuild"
 			],
 			"group": "build"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "test"
 		}
 	]
 }
