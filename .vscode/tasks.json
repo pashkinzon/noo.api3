@@ -1,16 +1,45 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "build",
-      "command": "dotnet",
-      "type": "process",
-      "args": ["build", "${workspaceFolder}/src/Noo.Api/Noo.Api.csproj"],
-      "problemMatcher": "$msCompile",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/src/Noo.Api/Noo.Api.csproj"
+			],
+			"problemMatcher": "$msCompile",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "restore-sln",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"restore",
+				"noo.api.sln"
+			],
+			"problemMatcher": [
+				"$msbuild"
+			],
+			"group": "build"
+		},
+		{
+			"label": "restore-sln",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"restore",
+				"noo.api.sln"
+			],
+			"problemMatcher": [
+				"$msbuild"
+			],
+			"group": "build"
+		}
+	]
 }

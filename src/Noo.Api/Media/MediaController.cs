@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Utils.Versioning;
@@ -12,7 +13,8 @@ public class MediaController : ApiController
 {
     private readonly IMediaService _mediaService;
 
-    public MediaController(IMediaService mediaService)
+    public MediaController(IMediaService mediaService, IMapper mapper)
+        : base(mapper)
     {
         _mediaService = mediaService;
     }

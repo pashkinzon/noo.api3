@@ -1,7 +1,9 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.AssignedWorks.DTO;
 using Noo.Api.AssignedWorks.Filters;
+using Noo.Api.AssignedWorks.Models;
 using Noo.Api.AssignedWorks.Services;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
@@ -18,7 +20,8 @@ public class AssignedWorkController : ApiController
 {
     private readonly IAssignedWorkService _assignedWorkService;
 
-    public AssignedWorkController(IAssignedWorkService assignedWorkService)
+    public AssignedWorkController(IAssignedWorkService assignedWorkService, IMapper mapper)
+        : base(mapper)
     {
         _assignedWorkService = assignedWorkService;
     }
@@ -27,7 +30,7 @@ public class AssignedWorkController : ApiController
     /// Gets the current user's list of assigned works.
     /// </summary>
     [MapToApiVersion(NooApiVersions.Current)]
-    [HttpGet("of-user/{userId?}")]
+    [HttpGet]
     [Authorize(Policy = AssignedWorkPolicies.CanGetAssignedWorks)]
     [Produces(
         typeof(ApiResponseDTO<IEnumerable<AssignedWorkDTO>>), StatusCodes.Status200OK,
@@ -36,27 +39,28 @@ public class AssignedWorkController : ApiController
         StatusCodes.Status403Forbidden
     )]
     public async Task<IActionResult> GetAssignedWorksAsync(
-        [FromQuery] AssignedWorkFilter filter,
-        [FromRoute] Ulid? userId = null
+        [FromQuery] AssignedWorkFilter filter
     )
     {
-        var neededUserId = userId is null ? User.GetId() : (Ulid)userId;
-        var userRole = User.GetRole();
+        var userId = User.GetId();
 
-        if (userRole == UserRoles.Student)
+        switch (User.GetRole())
         {
-            var result = await _assignedWorkService.GetStudentAssignedWorksAsync(neededUserId, filter);
-
-            return OkResponse(result);
+            case UserRoles.Student:
+                filter.StudentId = userId;
+                break;
+            case UserRoles.Mentor:
+                filter.MentorId = userId;
+                break;
+            case UserRoles.Assistant:
+            case UserRoles.Teacher:
+            case UserRoles.Admin:
+                break;
         }
-        else if (userRole == UserRoles.Mentor)
-        {
-            var result = await _assignedWorkService.GetMentorAssignedWorksAsync(neededUserId, filter);
 
-            return OkResponse(result);
-        }
+        var result = await _assignedWorkService.GetAssignedWorksAsync(filter);
 
-        return Forbid();
+        return SendResponse<AssignedWorkModel, AssignedWorkDTO>(result);
     }
 
     /// <summary>
@@ -76,9 +80,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var result = await _assignedWorkService.GetAssignedWorkAsync(assignedWorkId);
+        var result = await _assignedWorkService.GetAsync(assignedWorkId);
 
-        return result is null ? NotFound() : OkResponse(result);
+        return SendResponse<AssignedWorkModel, AssignedWorkDTO>(result);
     }
 
     /// <summary>
@@ -99,9 +103,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        var result = await _assignedWorkService.GetAssignedWorkProgressAsync(assignedWorkId);
+        var result = await _assignedWorkService.GetProgressAsync(assignedWorkId);
 
-        return result is null ? NotFound() : OkResponse(result);
+        return SendResponse(result);
     }
 
     /// <summary>
@@ -123,9 +127,9 @@ public class AssignedWorkController : ApiController
         [FromBody] RemakeAssignedWorkOptionsDTO options
     )
     {
-        var id = await _assignedWorkService.RemakeAssignedWorkAsync(assignedWorkId, options);
+        var id = await _assignedWorkService.RemakeAsync(assignedWorkId, options);
 
-        return CreatedResponse(id);
+        return SendResponse(id);
     }
 
     /// <summary>
@@ -155,7 +159,7 @@ public class AssignedWorkController : ApiController
     {
         var id = await _assignedWorkService.SaveAnswerAsync(assignedWorkId, answer);
 
-        return OkResponse(id);
+        return SendResponse(id);
     }
 
     /// <summary>
@@ -184,7 +188,7 @@ public class AssignedWorkController : ApiController
     {
         var id = await _assignedWorkService.SaveCommentAsync(assignedWorkId, comment);
 
-        return OkResponse(id);
+        return SendResponse(id);
     }
 
     /// <summary>
@@ -204,9 +208,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.MarkAssignedWorkAsSolvedAsync(assignedWorkId);
+        await _assignedWorkService.MarkAsSolvedAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -226,9 +230,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.MarkAssignedWorkAsCheckedAsync(assignedWorkId);
+        await _assignedWorkService.MarkAsCheckedAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -252,9 +256,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.ArchiveAssignedWorkAsync(assignedWorkId);
+        await _assignedWorkService.ArchiveAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -278,9 +282,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.UnarchiveAssignedWorkAsync(assignedWorkId);
+        await _assignedWorkService.UnarchiveAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -301,9 +305,9 @@ public class AssignedWorkController : ApiController
         [FromBody] AddHelperMentorOptionsDTO options
     )
     {
-        await _assignedWorkService.AddHelperMentorToAssignedWorkAsync(assignedWorkId, options);
+        await _assignedWorkService.AddHelperMentorAsync(assignedWorkId, options);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -324,9 +328,9 @@ public class AssignedWorkController : ApiController
         [FromBody] ReplaceMainMentorOptionsDTO options
     )
     {
-        await _assignedWorkService.ReplaceMainMentorOfAssignedWorkAsync(assignedWorkId, options);
+        await _assignedWorkService.ReplaceMainMentorAsync(assignedWorkId, options);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -347,9 +351,9 @@ public class AssignedWorkController : ApiController
         [FromBody] ShiftAssignedWorkDeadlineOptionsDTO options
     )
     {
-        await _assignedWorkService.ShiftDeadlineOfAssignedWorkAsync(assignedWorkId, options);
+        await _assignedWorkService.ShiftDeadlineAsync(assignedWorkId, options);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -370,9 +374,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.ReturnAssignedWorkToSolveAsync(assignedWorkId);
+        await _assignedWorkService.ReturnToSolveAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -393,9 +397,9 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.ReturnAssignedWorkToCheckAsync(assignedWorkId);
+        await _assignedWorkService.ReturnToCheckAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -419,8 +423,8 @@ public class AssignedWorkController : ApiController
         [FromRoute] Ulid assignedWorkId
     )
     {
-        await _assignedWorkService.DeleteAssignedWorkAsync(assignedWorkId);
+        await _assignedWorkService.DeleteAsync(assignedWorkId);
 
-        return NoContent();
+        return SendResponse();
     }
 }

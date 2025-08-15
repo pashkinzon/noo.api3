@@ -1,9 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.UserSettings.DTO;
+using Noo.Api.UserSettings.Models;
 using Noo.Api.UserSettings.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -16,7 +19,7 @@ public class UserSettingsController : ApiController
 {
     private readonly IUserSettingsService _userSettingsService;
 
-    public UserSettingsController(IUserSettingsService userSettingsService)
+    public UserSettingsController(IUserSettingsService userSettingsService, IMapper mapper) : base(mapper)
     {
         _userSettingsService = userSettingsService;
     }
@@ -41,7 +44,8 @@ public class UserSettingsController : ApiController
     {
         var userId = User.GetId();
         var settings = await _userSettingsService.GetUserSettingsAsync(userId);
-        return OkResponse(settings);
+
+        return SendResponse<UserSettingsModel, UserSettingsDTO>(settings);
     }
 
     /// <summary>
@@ -60,6 +64,7 @@ public class UserSettingsController : ApiController
     {
         var userId = User.GetId();
         await _userSettingsService.UpdateUserSettingsAsync(userId, userSettings);
-        return NoContent();
+
+        return SendResponse();
     }
 }

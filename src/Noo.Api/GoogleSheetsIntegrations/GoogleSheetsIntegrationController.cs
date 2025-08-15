@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
@@ -5,6 +6,7 @@ using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.GoogleSheetsIntegrations.DTO;
 using Noo.Api.GoogleSheetsIntegrations.Filters;
+using Noo.Api.GoogleSheetsIntegrations.Models;
 using Noo.Api.GoogleSheetsIntegrations.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -17,7 +19,8 @@ public class GoogleSheetsIntegrationController : ApiController
 {
     private readonly IGoogleSheetsIntegrationService _googleSheetsIntegrationService;
 
-    public GoogleSheetsIntegrationController(IGoogleSheetsIntegrationService googleSheetsIntegrationService)
+    public GoogleSheetsIntegrationController(IGoogleSheetsIntegrationService googleSheetsIntegrationService, IMapper mapper)
+        : base(mapper)
     {
         _googleSheetsIntegrationService = googleSheetsIntegrationService;
     }
@@ -39,7 +42,8 @@ public class GoogleSheetsIntegrationController : ApiController
     )
     {
         var result = await _googleSheetsIntegrationService.GetIntegrationsAsync(filter);
-        return OkResponse(result);
+
+        return SendResponse<GoogleSheetsIntegrationModel, GoogleSheetsIntegrationDTO>(result);
     }
 
     /// <summary>
@@ -58,7 +62,7 @@ public class GoogleSheetsIntegrationController : ApiController
     {
         var integrationId = await _googleSheetsIntegrationService.CreateIntegrationAsync(request);
 
-        return CreatedResponse(integrationId);
+        return SendResponse(integrationId);
     }
 
     /// <summary>
@@ -77,7 +81,8 @@ public class GoogleSheetsIntegrationController : ApiController
     public async Task<IActionResult> RunIntegrationAsync([FromRoute] Ulid integrationId)
     {
         await _googleSheetsIntegrationService.RunIntegrationAsync(integrationId);
-        return NoContent();
+
+        return SendResponse();
     }
 
     /// <summary>
@@ -95,6 +100,7 @@ public class GoogleSheetsIntegrationController : ApiController
     public async Task<IActionResult> DeleteIntegrationAsync([FromRoute] Ulid integrationId)
     {
         await _googleSheetsIntegrationService.DeleteIntegrationAsync(integrationId);
-        return NoContent();
+
+        return SendResponse();
     }
 }

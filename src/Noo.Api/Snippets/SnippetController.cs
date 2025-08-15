@@ -1,9 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Snippets.DTO;
+using Noo.Api.Snippets.Models;
 using Noo.Api.Snippets.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -17,7 +20,7 @@ public class SnippetController : ApiController
 {
     private readonly ISnippetService _snippetService;
 
-    public SnippetController(ISnippetService snippetService)
+    public SnippetController(ISnippetService snippetService, IMapper mapper) : base(mapper)
     {
         _snippetService = snippetService;
     }
@@ -38,7 +41,7 @@ public class SnippetController : ApiController
         var userId = User.GetId();
         var result = await _snippetService.GetSnippetsAsync(userId);
 
-        return OkResponse(result);
+        return SendResponse<SnippetModel, SnippetDTO>(result);
     }
 
     /// <summary>
@@ -59,7 +62,7 @@ public class SnippetController : ApiController
         var userId = User.GetId();
         await _snippetService.CreateSnippetAsync(userId, createSnippetDto);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -83,7 +86,7 @@ public class SnippetController : ApiController
         var userId = User.GetId();
         await _snippetService.UpdateSnippetAsync(userId, snippetId, snippetUpdateDto, ModelState);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -104,6 +107,6 @@ public class SnippetController : ApiController
         var userId = User.GetId();
         await _snippetService.DeleteSnippetAsync(userId, snippetId);
 
-        return NoContent();
+        return SendResponse();
     }
 }

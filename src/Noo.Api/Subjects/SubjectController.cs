@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
@@ -5,6 +6,7 @@ using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Subjects.DTO;
 using Noo.Api.Subjects.Filters;
+using Noo.Api.Subjects.Models;
 using Noo.Api.Subjects.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -18,7 +20,7 @@ public class SubjectController : ApiController
 {
     private readonly ISubjectService _subjectService;
 
-    public SubjectController(ISubjectService subjectService)
+    public SubjectController(ISubjectService subjectService, IMapper mapper) : base(mapper)
     {
         _subjectService = subjectService;
     }
@@ -37,13 +39,14 @@ public class SubjectController : ApiController
     public async Task<IActionResult> GetSubjectsAsync([FromQuery] SubjectFilter filter)
     {
         var result = await _subjectService.GetSubjectsAsync(filter);
-        return OkResponse(result);
+
+        return SendResponse<SubjectModel, SubjectDTO>(result);
     }
 
     /// <summary>
     /// Retrieves a subject by its unique identifier.
     /// </summary>
-    [HttpGet("{id}")]
+    [HttpGet("{subjectId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanGetSubject)]
     [Produces(
@@ -53,10 +56,11 @@ public class SubjectController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> GetSubjectByIdAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> GetSubjectByIdAsync([FromRoute] Ulid subjectId)
     {
-        var subject = await _subjectService.GetSubjectByIdAsync(id);
-        return subject is null ? NotFound() : OkResponse(subject);
+        var subject = await _subjectService.GetSubjectByIdAsync(subjectId);
+
+        return SendResponse<SubjectModel, SubjectDTO>(subject);
     }
 
     /// <summary>
@@ -74,13 +78,14 @@ public class SubjectController : ApiController
     public async Task<IActionResult> CreateSubjectAsync([FromBody] SubjectCreationDTO subject)
     {
         var id = await _subjectService.CreateSubjectAsync(subject);
-        return CreatedResponse(id);
+
+        return SendResponse(id);
     }
 
     /// <summary>
     /// Updates an existing subject with the provided details.
     /// </summary>
-    [HttpPatch("{id}")]
+    [HttpPatch("{subjectId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanPatchSubject)]
     [Produces(
@@ -90,17 +95,17 @@ public class SubjectController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> UpdateSubjectAsync([FromRoute] Ulid id, [FromBody] JsonPatchDocument<SubjectUpdateDTO> subject)
+    public async Task<IActionResult> UpdateSubjectAsync([FromRoute] Ulid subjectId, [FromBody] JsonPatchDocument<SubjectUpdateDTO> subject)
     {
-        await _subjectService.UpdateSubjectAsync(id, subject);
+        await _subjectService.UpdateSubjectAsync(subjectId, subject);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
     /// Deletes a subject by its unique identifier.
     /// </summary>
-    [HttpDelete("{id}")]
+    [HttpDelete("{subjectId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = SubjectPolicies.CanDeleteSubject)]
     [Produces(
@@ -110,10 +115,10 @@ public class SubjectController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> DeleteSubjectAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> DeleteSubjectAsync([FromRoute] Ulid subjectId)
     {
-        await _subjectService.DeleteSubjectAsync(id);
+        await _subjectService.DeleteSubjectAsync(subjectId);
 
-        return NoContent();
+        return SendResponse();
     }
 }

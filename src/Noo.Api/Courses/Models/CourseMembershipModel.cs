@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Courses.Types;
 using Noo.Api.Users.Models;
 
 namespace Noo.Api.Courses.Models;
@@ -29,6 +30,9 @@ public class CourseMembershipModel : BaseModel
     [Column("assigner_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(Assigner))]
     public Ulid? AssignerId { get; set; }
+
+    [Column("type", TypeName = CourseEnumDbDataTypes.CourseMembershipType)]
+    public CourseMembershipType Type { get; init; }
 
     #region Navigation Properties
 

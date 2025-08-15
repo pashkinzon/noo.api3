@@ -11,6 +11,10 @@ public record UpdateSupportArticleDTO
     [MaxLength(255)]
     public string? Title { get; set; }
 
+    [JsonPropertyName("order")]
+    [Range(0, 255)]
+    public int? Order { get; set; }
+
     [JsonPropertyName("content")]
     [RichText(AllowEmpty = false, AllowNull = true)]
     public IRichTextType? Content { get; set; }

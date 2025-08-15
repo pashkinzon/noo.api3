@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Utils.Versioning;
@@ -14,7 +15,8 @@ public class NootubeController : ApiController
 
     private readonly IVideoAccessService _videoAccessService;
 
-    public NootubeController(INooTubeService nootubeService, IVideoAccessService videoAccessService)
+    public NootubeController(INooTubeService nootubeService, IVideoAccessService videoAccessService, IMapper mapper)
+        : base(mapper)
     {
         _nootubeService = nootubeService;
         _videoAccessService = videoAccessService;
@@ -42,6 +44,6 @@ public class NootubeController : ApiController
 
         var result = await _nootubeService.GetVideosAsync(filter, selector);
 
-        return OkResponse(result);
+        return SendResponse<NooTubeVideoModel, NooTubeVideoDTO>(result);
     } */
 }

@@ -13,6 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Specification" Version="9.2.0" />
+    <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.2.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="AutoFilterer" Version="3.2.0" />
     <PackageReference Include="AutoFilterer.Swagger" Version="3.2.0" />
@@ -27,12 +29,12 @@
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.5" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
     <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">

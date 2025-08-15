@@ -13,7 +13,7 @@ namespace Noo.Api.Courses.Models;
 
 [Model("course")]
 [Index(nameof(Name), IsUnique = false)]
-public class CourseModel : BaseModel
+public class CourseModel : BaseModel, ISoftDeletableModel
 {
     [Required]
     [Column("name", TypeName = DbDataTypes.Varchar255)]
@@ -37,6 +37,9 @@ public class CourseModel : BaseModel
     [Column("subject_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(Subject))]
     public Ulid? SubjectId { get; set; }
+
+    [Column("is_deleted", TypeName = DbDataTypes.Boolean)]
+    public bool IsDeleted { get; set; }
 
     #region Navigation Properties
 

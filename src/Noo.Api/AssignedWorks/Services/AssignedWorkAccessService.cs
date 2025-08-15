@@ -13,13 +13,13 @@ public class AssignedWorkAccessService : IAssignedWorkAccessService
 
     private readonly IAssignedWorkRepository _assignedWorkRepository;
 
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUser _currentUser;
 
-    public AssignedWorkAccessService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+    public AssignedWorkAccessService(IUnitOfWork unitOfWork, ICurrentUser currentUser)
     {
         _unitOfWork = unitOfWork;
         _assignedWorkRepository = _unitOfWork.AssignedWorkRepository();
-        _httpContextAccessor = httpContextAccessor;
+        _currentUser = currentUser;
     }
 
     public Task<bool> CanGetAssignedWorkAsync(Ulid assignedWorkId)
@@ -116,8 +116,8 @@ public class AssignedWorkAccessService : IAssignedWorkAccessService
 
     private (Ulid, UserRoles) GetUserInfo()
     {
-        var userId = _httpContextAccessor.HttpContext?.User?.GetId();
-        var userRole = _httpContextAccessor.HttpContext?.User?.GetRole();
+        var userId = _currentUser.UserId;
+        var userRole = _currentUser.UserRole;
 
         if (userId == null || userRole == null)
         {

@@ -1,9 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Calendar.DTO;
+using Noo.Api.Calendar.Models;
 using Noo.Api.Calendar.Services;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -16,7 +19,8 @@ public class CalendarController : ApiController
 {
     private readonly ICalendarService _calendarService;
 
-    public CalendarController(ICalendarService calendarService)
+    public CalendarController(ICalendarService calendarService, IMapper mapper)
+        : base(mapper)
     {
         _calendarService = calendarService;
     }
@@ -40,7 +44,8 @@ public class CalendarController : ApiController
     )
     {
         var result = await _calendarService.GetCalendarEventsAsync(userId, year, month);
-        return OkResponse(result);
+
+        return SendResponse<CalendarEventModel, CalendarEventDTO>(result);
     }
 
     /// <summary>
@@ -59,7 +64,8 @@ public class CalendarController : ApiController
     {
         var userId = User.GetId();
         var eventId = await _calendarService.CreateCalendarEventAsync(userId, dto);
-        return CreatedResponse(eventId);
+
+        return SendResponse(eventId);
     }
 
     /// <summary>
@@ -78,6 +84,7 @@ public class CalendarController : ApiController
     {
         var userId = User.GetId();
         await _calendarService.DeleteCalendarEventAsync(userId, id);
-        return NoContent();
+
+        return SendResponse();
     }
 }

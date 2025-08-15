@@ -11,10 +11,17 @@ public class AssignedWorkMapperProfile : Profile
     {
         CreateMap<UpsertAssignedWorkAnswerDTO, AssignedWorkAnswerModel>()
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.AssignedWorkId, opt => opt.Ignore())
+            .ForMember(dest => dest.Task, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
 
         CreateMap<UpsertAssignedWorkCommentDTO, AssignedWorkCommentModel>()
+            .ForMember(dest => dest.AssignedWorkAsHelperMentor, opt => opt.Ignore())
+            .ForMember(dest => dest.AssignedWorkAsMainMentor, opt => opt.Ignore())
+            .ForMember(dest => dest.AssignedWorkAsStudent, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+        CreateMap<AssignedWorkModel, AssignedWorkDTO>();
     }
 }

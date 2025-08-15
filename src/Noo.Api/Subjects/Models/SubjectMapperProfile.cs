@@ -18,13 +18,15 @@ public class SubjectMapperProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.MentorAssignments, opt => opt.Ignore())
-            .ForMember(dest => dest.Works, opt => opt.Ignore());
+            .ForMember(dest => dest.Works, opt => opt.Ignore())
+            .ForMember(dest => dest.Courses, opt => opt.Ignore());
 
         CreateMap<SubjectCreationDTO, SubjectModel>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.MentorAssignments, opt => opt.Ignore())
-            .ForMember(dest => dest.Works, opt => opt.Ignore());
+            .ForMember(dest => dest.Works, opt => opt.Ignore())
+            .ForMember(dest => dest.Courses, opt => opt.Ignore());
     }
 }

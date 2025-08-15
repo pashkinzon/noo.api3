@@ -12,6 +12,11 @@ public record CreateSupportArticleDTO
     [MaxLength(255)]
     public string Title { get; set; } = string.Empty;
 
+    [JsonPropertyName("order")]
+    [Required]
+    [Range(0, 255)]
+    public int Order { get; set; }
+
     [JsonPropertyName("content")]
     [RichText(AllowEmpty = false, AllowNull = false)]
     public IRichTextType Content { get; set; } = default!;

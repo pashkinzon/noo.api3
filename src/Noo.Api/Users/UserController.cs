@@ -1,13 +1,14 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Exceptions;
-using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Users.DTO;
 using Noo.Api.Users.Filters;
+using Noo.Api.Users.Models;
 using Noo.Api.Users.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -25,8 +26,9 @@ public class UserController : ApiController
 
     public UserController(
         IUserService userService,
-        IMentorService mentorService
-    )
+        IMentorService mentorService,
+        IMapper mapper
+    ) : base(mapper)
     {
         _userService = userService;
         _mentorService = mentorService;
@@ -48,13 +50,13 @@ public class UserController : ApiController
     {
         var result = await _userService.GetUsersAsync(filter);
 
-        return OkResponse(result);
+        return SendResponse<UserModel, UserDTO>(result);
     }
 
     /// <summary>
     /// Retrieves a user by their unique username
     /// </summary>
-    [HttpGet("{id}")]
+    [HttpGet("{userId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
     [Produces(
@@ -64,22 +66,17 @@ public class UserController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> GetUserByIdAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> GetUserByIdAsync([FromRoute] Ulid userId)
     {
-        var result = await _userService.GetUserByIdAsync(id);
+        var result = await _userService.GetUserByIdAsync(userId);
 
-        if (result is null)
-        {
-            throw new NotFoundException();
-        }
-
-        return OkResponse(result);
+        return SendResponse<UserModel, UserDTO>(result);
     }
 
     /// <summary>
     /// Patches a user by their unique identifier.
     /// </summary>
-    [HttpPatch("{id}")]
+    [HttpPatch("{userId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanPatchUser)]
     [Produces(
@@ -88,11 +85,11 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> PatchUserAsync([FromRoute] Ulid id, [FromBody] JsonPatchDocument<UpdateUserDTO> patchUser)
+    public async Task<IActionResult> PatchUserAsync([FromRoute] Ulid userId, [FromBody] JsonPatchDocument<UpdateUserDTO> patchUser)
     {
-        await _userService.UpdateUserAsync(id, patchUser, ModelState);
+        await _userService.UpdateUserAsync(userId, patchUser, ModelState);
 
-        return NoContent();
+        return SendResponse();
     }
 
 
@@ -103,7 +100,7 @@ public class UserController : ApiController
     /// <remarks>
     /// After role change, all the user sessions will be invalidated, the user will be logged out.
     /// </remarks>
-    [HttpPatch("{id}/role")]
+    [HttpPatch("{userId}/role")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanChangeRole)]
     [Produces(
@@ -114,17 +111,17 @@ public class UserController : ApiController
         StatusCodes.Status404NotFound,
         StatusCodes.Status409Conflict
     )]
-    public async Task<IActionResult> ChangeRoleAsync([FromRoute] Ulid id, [FromBody] UserRoles newRole)
+    public async Task<IActionResult> ChangeRoleAsync([FromRoute] Ulid userId, [FromBody] UserRoles newRole)
     {
-        await _userService.ChangeRoleAsync(id, newRole);
+        await _userService.ChangeRoleAsync(userId, newRole);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
     /// Blocks a user by their unique identifier.
     /// </summary>
-    [HttpPatch("{id}/block")]
+    [HttpPatch("{userId}/block")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanBlockUser)]
     [Produces(
@@ -134,17 +131,17 @@ public class UserController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> BlockUserAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> BlockUserAsync([FromRoute] Ulid userId)
     {
-        await _userService.BlockUserAsync(id);
+        await _userService.BlockUserAsync(userId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
     /// Unblocks a user by their unique identifier.
     /// </summary>
-    [HttpPatch("{id}/unblock")]
+    [HttpPatch("{userId}/unblock")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanBlockUser)]
     [Produces(
@@ -154,17 +151,17 @@ public class UserController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> UnblockUserAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> UnblockUserAsync([FromRoute] Ulid userId)
     {
-        await _userService.UnblockUserAsync(id);
+        await _userService.UnblockUserAsync(userId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
     /// Verifies a user manually by their unique identifier.
     /// </summary>
-    [HttpPatch("{id}/verify-manual")]
+    [HttpPatch("{userId}/verify-manual")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanVerifyUser)]
     [Produces(
@@ -174,17 +171,17 @@ public class UserController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> VerifyUserAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> VerifyUserAsync([FromRoute] Ulid userId)
     {
-        await _userService.VerifyUserAsync(id);
+        await _userService.VerifyUserAsync(userId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
     /// Retrieves a student's mentor assignments by their unique identifier.
     /// </summary>
-    [HttpGet("{id}/mentor-assignment")]
+    [HttpGet("{studentId}/mentor-assignment")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
     [Produces(
@@ -193,17 +190,17 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetMentorAssignmentsAsync([FromRoute] Ulid id, [FromQuery] MentorAssignmentFilter filter)
+    public async Task<IActionResult> GetMentorAssignmentsAsync([FromRoute] Ulid studentId, [FromQuery] MentorAssignmentFilter filter)
     {
-        var result = await _mentorService.GetMentorAssignmentsAsync(id, filter);
+        var result = await _mentorService.GetMentorAssignmentsAsync(studentId, filter);
 
-        return OkResponse(result);
+        return SendResponse<MentorAssignmentModel, MentorAssignmentDTO>(result);
     }
 
     /// <summary>
     /// Retrieves a mentor's assignments by their unique identifier.
     /// </summary>
-    [HttpGet("{id}/student-assignment")]
+    [HttpGet("{mentorId}/student-assignment")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanGetUser)]
     [ProducesResponseType(typeof(ApiResponseDTO<IEnumerable<MentorAssignmentDTO>>), StatusCodes.Status200OK)]
@@ -216,11 +213,11 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> GetStudentAssignmentsAsync([FromRoute] Ulid id, [FromQuery] MentorAssignmentFilter filter)
+    public async Task<IActionResult> GetStudentAssignmentsAsync([FromRoute] Ulid mentorId, [FromQuery] MentorAssignmentFilter filter)
     {
-        var result = await _mentorService.GetStudentAssignmentsAsync(id, filter);
+        var result = await _mentorService.GetStudentAssignmentsAsync(mentorId, filter);
 
-        return OkResponse(result);
+        return SendResponse<MentorAssignmentModel, MentorAssignmentDTO>(result);
     }
 
     /// <summary>
@@ -229,7 +226,7 @@ public class UserController : ApiController
     /// <remarks>
     /// If a user already has a mentor assigned for the subject, it will be unassigned and a new one will be assigned.
     /// </remarks>
-    [HttpPatch("{id}/assign-mentor")]
+    [HttpPatch("{studentId}/assign-mentor")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanAssignMentor)]
     [Produces(
@@ -240,17 +237,17 @@ public class UserController : ApiController
         StatusCodes.Status404NotFound,
         StatusCodes.Status409Conflict
     )]
-    public async Task<IActionResult> AssignMentorAsync([FromRoute] Ulid id, [FromBody] CreateMentorAssignmentDTO assignment)
+    public async Task<IActionResult> AssignMentorAsync([FromRoute] Ulid studentId, [FromBody] CreateMentorAssignmentDTO assignment)
     {
-        var assignmentId = await _mentorService.AssignMentorAsync(id, assignment.MentorId, assignment.SubjectId);
+        var assignmentId = await _mentorService.AssignMentorAsync(studentId, assignment.MentorId, assignment.SubjectId);
 
-        return OkResponse(assignmentId);
+        return SendResponse(assignmentId);
     }
 
     /// <summary>
     /// Unassigns a mentor from a student.
     /// </summary>
-    [HttpPatch("{id}/unassign-mentor")]
+    [HttpPatch("{studentId}/unassign-mentor")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanAssignMentor)]
     [Produces(
@@ -260,17 +257,17 @@ public class UserController : ApiController
         StatusCodes.Status403Forbidden,
         StatusCodes.Status404NotFound
     )]
-    public async Task<IActionResult> UnassignMentorAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> UnassignMentorAsync([FromRoute] Ulid studentId)
     {
-        await _mentorService.UnassignMentorAsync(id);
+        await _mentorService.UnassignMentorAsync(studentId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
     /// Deletes a user by their unique identifier.
     /// </summary>
-    [HttpDelete("{id}")]
+    [HttpDelete("{userId}")]
     [MapToApiVersion(NooApiVersions.Current)]
     [Authorize(Policy = UserPolicies.CanDeleteUser)]
     [Produces(
@@ -279,9 +276,9 @@ public class UserController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> DeleteUserAsync([FromRoute] Ulid id)
+    public async Task<IActionResult> DeleteUserAsync([FromRoute] Ulid userId)
     {
-        await _userService.DeleteUserAsync(id);
-        return NoContent();
+        await _userService.DeleteUserAsync(userId);
+        return SendResponse();
     }
 }

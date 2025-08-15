@@ -10,6 +10,12 @@ public class UserSettingsMapperProfile : Profile
     public UserSettingsMapperProfile()
     {
         CreateMap<UserSettingsModel, UserSettingsDTO>();
-        CreateMap<UserSettingsUpdateDTO, UserSettingsModel>();
+
+        CreateMap<UserSettingsUpdateDTO, UserSettingsModel>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
     }
 }

@@ -21,4 +21,10 @@ public record CourseMaterialDTO
 
     [JsonPropertyName("contentId")]
     public Ulid ContentId { get; init; }
+
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; init; }
+
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; init; }
 }

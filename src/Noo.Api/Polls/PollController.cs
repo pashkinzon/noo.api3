@@ -1,11 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Polls.DTO;
 using Noo.Api.Polls.Filters;
+using Noo.Api.Polls.Models;
 using Noo.Api.Polls.Services;
 using SystemTextJsonPatch;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
@@ -19,7 +20,7 @@ public class PollController : ApiController
 {
     private readonly IPollService _pollService;
 
-    public PollController(IPollService pollService)
+    public PollController(IPollService pollService, IMapper mapper) : base(mapper)
     {
         _pollService = pollService;
     }
@@ -38,7 +39,8 @@ public class PollController : ApiController
     public async Task<IActionResult> GetPollsAsync([FromQuery] PollFilter filter)
     {
         var result = await _pollService.GetPollsAsync(filter);
-        return OkResponse(result);
+
+        return SendResponse<PollModel, PollDTO>(result);
     }
 
     /// <summary>
@@ -56,7 +58,8 @@ public class PollController : ApiController
     public async Task<IActionResult> GetPollAsync([FromRoute] Ulid pollId)
     {
         var result = await _pollService.GetPollAsync(pollId);
-        return OkResponse(result);
+
+        return SendResponse<PollModel, PollDTO>(result);
     }
 
     /// <summary>
@@ -74,7 +77,8 @@ public class PollController : ApiController
     public async Task<IActionResult> CreatePollAsync([FromBody] CreatePollDTO poll)
     {
         var id = await _pollService.CreatePollAsync(poll);
-        return CreatedResponse(id);
+
+        return SendResponse(id);
     }
 
     /// <summary>
@@ -93,7 +97,8 @@ public class PollController : ApiController
     public async Task<IActionResult> UpdatePollAsync([FromRoute] Ulid pollId, [FromBody] JsonPatchDocument<UpdatePollDTO> poll)
     {
         await _pollService.UpdatePollAsync(pollId, poll);
-        return NoContent();
+
+        return SendResponse();
     }
 
     /// <summary>
@@ -111,7 +116,8 @@ public class PollController : ApiController
     public async Task<IActionResult> DeletePollAsync([FromRoute] Ulid pollId)
     {
         await _pollService.DeletePollAsync(pollId);
-        return NoContent();
+
+        return SendResponse();
     }
 
     /// <summary>
@@ -130,7 +136,8 @@ public class PollController : ApiController
     public async Task<IActionResult> GetPollParticipationsAsync([FromRoute] Ulid pollId, [FromQuery] PollParticipationFilter filter)
     {
         var result = await _pollService.GetPollParticipationsAsync(pollId, filter);
-        return OkResponse(result);
+
+        return SendResponse<PollParticipationModel, PollParticipationDTO>(result);
     }
 
     /// <summary>
@@ -150,12 +157,7 @@ public class PollController : ApiController
     {
         var result = await _pollService.GetPollParticipationAsync(participationId);
 
-        if (result == null)
-        {
-            throw new NotFoundException();
-        }
-
-        return OkResponse(result);
+        return SendResponse<PollParticipationModel, PollParticipationDTO>(result);
     }
 
     /// <summary>
@@ -173,7 +175,8 @@ public class PollController : ApiController
     public async Task<IActionResult> ParticipateInPollAsync([FromRoute] Ulid pollId, [FromBody] PollParticipationDTO participationDto)
     {
         await _pollService.ParticipateAsync(pollId, participationDto);
-        return NoContent();
+
+        return SendResponse();
     }
 
     /// <summary>
@@ -192,6 +195,7 @@ public class PollController : ApiController
     public async Task<IActionResult> UpdatePollAnswerAsync([FromRoute] Ulid answerId, [FromBody] JsonPatchDocument<UpdatePollAnswerDTO> updateAnswerDto)
     {
         await _pollService.UpdatePollAnswerAsync(answerId, updateAnswerDto, ModelState);
-        return NoContent();
+
+        return SendResponse();
     }
 }

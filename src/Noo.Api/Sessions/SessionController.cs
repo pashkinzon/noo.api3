@@ -1,9 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Sessions.DTO;
+using Noo.Api.Sessions.Models;
 using Noo.Api.Sessions.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -16,7 +19,8 @@ public class SessionController : ApiController
 {
     private readonly ISessionService _sessionService;
 
-    public SessionController(ISessionService sessionService)
+    public SessionController(ISessionService sessionService, IMapper mapper)
+        : base(mapper)
     {
         _sessionService = sessionService;
     }
@@ -37,7 +41,7 @@ public class SessionController : ApiController
         var userId = User.GetId();
         var sessions = await _sessionService.GetSessionsAsync(userId);
 
-        return OkResponse(sessions);
+        return SendResponse<IEnumerable<SessionModel>, IEnumerable<SessionDTO>>(sessions);
     }
 
     /// <summary>
@@ -59,7 +63,7 @@ public class SessionController : ApiController
 
         await _sessionService.DeleteSessionAsync(sessionId, userId);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -78,6 +82,6 @@ public class SessionController : ApiController
         var userId = User.GetId();
         await _sessionService.DeleteSessionAsync(sessionId, userId);
 
-        return NoContent();
+        return SendResponse();
     }
 }

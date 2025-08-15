@@ -6,6 +6,7 @@ using Noo.Api.Calendar.Models;
 using Noo.Api.Core.DataAbstraction;
 using Noo.Api.Core.DataAbstraction.Model;
 using Noo.Api.Core.DataAbstraction.Model.Attributes;
+using Noo.Api.Core.Utils.Ulid;
 using Noo.Api.Users.Models;
 using Noo.Api.Works.Models;
 using Noo.Api.Works.Types;
@@ -70,8 +71,8 @@ public class AssignedWorkModel : BaseModel
     [Column("is_archived_by_assistants", TypeName = DbDataTypes.Boolean)]
     public bool IsArchivedByAssistants { get; set; }
 
-    [Column("excluded_task_ids", TypeName = DbDataTypes.BigStringArray)]
-    public string[]? ExcludedTaskIds { get; set; }
+    [UlidArrayColumnAttribute("excluded_task_ids")]
+    public Ulid[]? ExcludedTaskIds { get; set; }
 
     [Column("student_comment_id", TypeName = DbDataTypes.Ulid)]
     [ForeignKey(nameof(StudentComment))]
@@ -131,4 +132,22 @@ public class AssignedWorkModel : BaseModel
     public ICollection<CalendarEventModel> Events { get; set; } = [];
 
     #endregion
+
+    public bool IsChecked() => CheckedAt.HasValue;
+
+    public bool IsSolved() => SolvedAt.HasValue;
+
+    public bool IsRemakeable() => IsChecked() && Type == WorkType.Test;
+
+    public AssignedWorkModel NewAttempt()
+    {
+        return new AssignedWorkModel
+        {
+            WorkId = WorkId,
+            Title = $"[Пересдача] {Title}",
+            Attempt = Attempt + 1,
+            StudentId = StudentId,
+            ExcludedTaskIds = ExcludedTaskIds
+        };
+    }
 }

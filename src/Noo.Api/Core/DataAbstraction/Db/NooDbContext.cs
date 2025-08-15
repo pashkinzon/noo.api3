@@ -30,6 +30,7 @@ public class NooDbContext : DbContext
         modelBuilder.ConfigureManyToManyTables();
         modelBuilder.UseRichTextColumns();
         modelBuilder.UseJsonDictionaryColumns();
+        modelBuilder.UseUlidArrayColumns();
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

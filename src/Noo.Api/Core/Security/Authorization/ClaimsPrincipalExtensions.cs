@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Noo.Api.Core.Exceptions.Http;
-using Noo.Api.Core.Security.Authorization;
+
+namespace Noo.Api.Core.Security.Authorization;
 
 public static class ClaimsPrincipalExtensions
 {

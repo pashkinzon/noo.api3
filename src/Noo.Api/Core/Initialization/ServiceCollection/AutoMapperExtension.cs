@@ -17,7 +17,7 @@ public static class AutoMapperExtension
             }
         });
 
-        //config.AssertConfigurationIsValid();
+        config.AssertConfigurationIsValid();
 
         services.AddSingleton(config);
         services.AddSingleton(_ => config.CreateMapper());

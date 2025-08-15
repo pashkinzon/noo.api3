@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
@@ -16,7 +17,7 @@ public class PlatformController : ApiController
 {
     private readonly IPlatformService _platformService;
 
-    public PlatformController(IPlatformService platformService)
+    public PlatformController(IPlatformService platformService, IMapper mapper) : base(mapper)
     {
         _platformService = platformService;
     }
@@ -36,7 +37,8 @@ public class PlatformController : ApiController
     public IActionResult GetPlatformVersion()
     {
         var version = _platformService.GetPlatformVersion();
-        return OkResponse(version);
+
+        return SendResponse(version);
     }
 
     /// <summary>
@@ -55,6 +57,6 @@ public class PlatformController : ApiController
     {
         var changeLog = _platformService.GetChangelog();
 
-        return OkResponse(changeLog);
+        return SendResponse(changeLog);
     }
 }

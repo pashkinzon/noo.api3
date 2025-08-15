@@ -25,6 +25,20 @@ Backend API for Noo project.
    dotnet ef database update
    ```
 7. Run or Debug the application
+
+   ```bash
+   ./scripts.sh run dev
+   ```
+
+   Possible commands:
+
+   - `test integration`
+   - `test unit`
+   - `run dev`
+   - `run prod`
+
+   To debug, use options from your IDE (Typically `F5` in VS code)
+
 8. Open the Swagger UI in your browser (usually at `http://localhost:5001/api-docs`, the path can be configured in `appsettings.json`)
 
 ## Configuration

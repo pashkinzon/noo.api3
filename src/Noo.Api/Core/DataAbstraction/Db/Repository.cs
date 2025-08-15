@@ -1,3 +1,5 @@
+using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
 using AutoFilterer.Abstractions;
 using AutoFilterer.Extensions;
 using AutoMapper;
@@ -49,9 +51,17 @@ public class Repository<T> : IRepository<T> where T : BaseModel, new()
         Context.GetDbSet<T>().Remove(new() { Id = id });
     }
 
-    public async Task<SearchResult<T>> SearchAsync(IPaginationFilter filter)
+    public async Task<SearchResult<T>> SearchAsync(IPaginationFilter filter, IEnumerable<ISpecification<T>>? specifications = default)
     {
         var query = Context.GetDbSet<T>().AsQueryable();
+
+        if (specifications != null)
+        {
+            foreach (var spec in specifications)
+            {
+                query = query.WithSpecification(spec);
+            }
+        }
 
         var total = await query
             .ApplyFilterWithoutPagination(filter)

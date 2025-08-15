@@ -7,13 +7,14 @@ public record CreateCourseDTO
 {
     [JsonPropertyName("name")]
     [MaxLength(255)]
+    [Required]
     public string Name { get; init; } = string.Empty;
 
     [JsonPropertyName("startDate")]
     public DateTime? StartDate { get; set; }
 
     [JsonPropertyName("endDate")]
-    public DateTime? Duration { get; set; }
+    public DateTime? EndDate { get; set; }
 
     [JsonPropertyName("description")]
     [MaxLength(500)]
@@ -21,4 +22,8 @@ public record CreateCourseDTO
 
     [JsonPropertyName("thumbnailId")]
     public Ulid? ThumbnailId { get; init; }
+
+    [JsonPropertyName("subjectId")]
+    [Required]
+    public Ulid SubjectId { get; init; }
 }

@@ -8,6 +8,7 @@ using Noo.Api.Core.Utils;
 using Noo.Api.Core.Utils.Json;
 using Noo.Api.Core.Utils.Richtext;
 using Noo.Api.Core.Utils.Richtext.Delta;
+using Noo.Api.Core.Utils.Ulid;
 
 namespace Noo.Api.Core.DataAbstraction.Db;
 
@@ -185,12 +186,30 @@ public static class DbContextExtensions
             }
 
             var converterType = typeof(JsonDictionaryConverter<>).MakeGenericType(valueType);
-            var converter = (ValueConverter?)Activator.CreateInstance(converterType) ?? throw new InvalidCastException($"Failed creating ValuConverter for {property.DeclaringType!.Name}.{property.Name}");
+            var converter = (ValueConverter?)Activator.CreateInstance(converterType) ?? throw new InvalidCastException($"Failed creating ValueConverter for {property.DeclaringType!.Name}.{property.Name}");
 
             modelBuilder.Entity(property.DeclaringType!)
                 .Property(property.Name)
                 .HasColumnName(jsonAttribute.Name)
                 .HasConversion(converter)
+                .HasColumnType("json");
+        }
+    }
+
+    public static void UseUlidArrayColumns(this ModelBuilder modelBuilder)
+    {
+        var ulidArrayProperties = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseModel)))
+            .SelectMany(t => t.GetProperties())
+            .Where(p => p?.GetCustomAttribute<UlidArrayColumnAttribute>() != null);
+
+        foreach (var property in ulidArrayProperties)
+        {
+            var ulidArrayAttribute = property.GetCustomAttribute<UlidArrayColumnAttribute>()!;
+
+            modelBuilder.Entity(property.DeclaringType!)
+                .Property(property.Name)
+                .HasConversion(new UlidArrayToJsonConverter())
                 .HasColumnType("json");
         }
     }

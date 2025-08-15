@@ -8,6 +8,8 @@ using Noo.Api.Works.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 using SystemTextJsonPatch;
 using Noo.Api.Works.Filters;
+using AutoMapper;
+using Noo.Api.Works.Models;
 
 namespace Noo.Api.Works;
 
@@ -18,7 +20,7 @@ public class WorkController : ApiController
 {
     private readonly IWorkService _workService;
 
-    public WorkController(IWorkService workService)
+    public WorkController(IWorkService workService, IMapper mapper) : base(mapper)
     {
         _workService = workService;
     }
@@ -38,7 +40,8 @@ public class WorkController : ApiController
     public async Task<IActionResult> GetWorksAsync([FromQuery] WorkFilter filter)
     {
         var result = await _workService.GetWorksAsync(filter);
-        return OkResponse(result);
+
+        return SendResponse<WorkModel, WorkDTO>(result);
     }
 
     /// <summary>
@@ -59,12 +62,7 @@ public class WorkController : ApiController
     {
         var work = await _workService.GetWorkAsync(id);
 
-        if (work == null)
-        {
-            return NotFound();
-        }
-
-        return OkResponse(work);
+        return SendResponse<WorkModel, WorkDTO>(work);
     }
 
     /// <summary>
@@ -82,7 +80,7 @@ public class WorkController : ApiController
     public async Task<IActionResult> CreateWorkAsync([FromBody] CreateWorkDTO work)
     {
         var id = await _workService.CreateWorkAsync(work);
-        return CreatedResponse(id);
+        return SendResponse(id);
     }
 
     /// <summary>
@@ -102,7 +100,7 @@ public class WorkController : ApiController
     {
         await _workService.UpdateWorkAsync(id, work, ModelState);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -121,6 +119,6 @@ public class WorkController : ApiController
     public async Task<IActionResult> DeleteWorkAsync([FromRoute] Ulid id)
     {
         await _workService.DeleteWorkAsync(id);
-        return NoContent();
+        return SendResponse();
     }
 }

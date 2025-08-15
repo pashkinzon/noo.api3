@@ -1,9 +1,11 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Auth.DTO;
 using Noo.Api.Auth.Services;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -22,7 +24,8 @@ public class AuthController : ApiController
 {
     private readonly IAuthService _authService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IMapper mapper)
+        : base(mapper)
     {
         _authService = authService;
     }
@@ -43,7 +46,7 @@ public class AuthController : ApiController
     {
         var result = await _authService.LoginAsync(request);
 
-        return OkResponse(result);
+        return SendResponse(result);
     }
 
     /// <summary>
@@ -62,7 +65,7 @@ public class AuthController : ApiController
     {
         await _authService.RegisterAsync(request);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -81,7 +84,7 @@ public class AuthController : ApiController
     {
         bool isUsernameFree = await _authService.CheckUsernameAsync(username);
 
-        return OkResponse(isUsernameFree);
+        return SendResponse<bool>(isUsernameFree);
     }
 
     /// <summary>
@@ -99,7 +102,7 @@ public class AuthController : ApiController
     {
         await _authService.RequestPasswordResetAsync(request.Email);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -117,7 +120,7 @@ public class AuthController : ApiController
     {
         await _authService.ConfirmPasswordResetAsync(request.Token, request.NewPassword);
 
-        return NoContent();
+        return SendResponse();
     }
 
     /// <summary>
@@ -137,6 +140,6 @@ public class AuthController : ApiController
     {
         await _authService.ConfirmEmailChangeAsync(User.GetId(), request.Token);
 
-        return NoContent();
+        return SendResponse();
     }
 }

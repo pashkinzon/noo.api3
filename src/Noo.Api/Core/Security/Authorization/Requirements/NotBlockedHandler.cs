@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Users.Services;
@@ -20,14 +19,7 @@ public class NotBlockedHandler : AuthorizationHandler<NotBlockedRequirement>
         NotBlockedRequirement requirement
     )
     {
-        var idClaim = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (idClaim is null)
-        {
-            return;
-        }
-
-        var userId = Ulid.Parse(idClaim);
+        var userId = context.User.GetId();
         var isBlocked = await _userService.IsBlockedAsync(userId);
 
         if (isBlocked)

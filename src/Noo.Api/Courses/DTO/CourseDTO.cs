@@ -42,4 +42,10 @@ public record CourseDTO
     [JsonPropertyName("chapters")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IEnumerable<CourseChapterDTO> Chapters = [];
+
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; init; }
+
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; init; }
 }

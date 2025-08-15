@@ -25,4 +25,10 @@ public class AssignedWorkFilter : PaginationFilterBase
     public AssignedWorkSolveStatus? SolveStatus { get; set; }
 
     public AssignedWorkCheckStatus? CheckStatus { get; set; }
+
+    [CompareTo(nameof(AssignedWorkModel.MainMentorId))]
+    [CompareTo(nameof(AssignedWorkModel.HelperMentorId))]
+    public Ulid? MentorId { get; set; }
+
+    public Ulid? StudentId { get; set; }
 }

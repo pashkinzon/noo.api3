@@ -1,10 +1,13 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Notifications.DTO;
 using Noo.Api.Notifications.Filters;
+using Noo.Api.Notifications.Models;
 using Noo.Api.Notifications.Services;
 using ProducesAttribute = Noo.Api.Core.Documentation.ProducesAttribute;
 
@@ -17,7 +20,8 @@ public class NotificationController : ApiController
 {
     private readonly INotificationService _notificationService;
 
-    public NotificationController(INotificationService notificationService)
+    public NotificationController(INotificationService notificationService, IMapper mapper)
+        : base(mapper)
     {
         _notificationService = notificationService;
     }
@@ -40,7 +44,8 @@ public class NotificationController : ApiController
     {
         var userId = User.GetId();
         var result = await _notificationService.GetNotificationsAsync(userId, filter);
-        return OkResponse(result);
+
+        return SendResponse<NotificationModel, NotificationDTO>(result);
     }
 
     /// <summary>
@@ -62,7 +67,8 @@ public class NotificationController : ApiController
     {
         var userId = User.GetId();
         await _notificationService.MarkAsReadAsync(userId, notificationId);
-        return NoContent();
+
+        return SendResponse();
     }
 
     /// <summary>
@@ -82,7 +88,8 @@ public class NotificationController : ApiController
     )
     {
         await _notificationService.BulkCreateNotificationsAsync(options);
-        return NoContent();
+
+        return SendResponse();
     }
 
     /// <summary>
@@ -103,6 +110,7 @@ public class NotificationController : ApiController
     {
         var userId = User.GetId();
         await _notificationService.DeleteNotificationAsync(notificationId, userId);
-        return NoContent();
+
+        return SendResponse();
     }
 }

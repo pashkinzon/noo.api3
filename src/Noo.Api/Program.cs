@@ -1,6 +1,7 @@
 using Noo.Api.Core.Initialization.App;
 using Noo.Api.Core.Initialization.ServiceCollection;
 using Noo.Api.Core.Initialization.WebHostBuilder;
+using Noo.Api.Core.DataAbstraction.Db;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,14 +24,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCorsPolicy(builder.Configuration);
 builder.Services.AddNooResponseCompression();
 builder.Services.AddHealthcheckServices();
+builder.Services.AddRouteConstraints();
 builder.Services.AddRequestRateLimiter();
-// TODO: understand response caching and add it
-// builder.Services.AddNooResponseCaching(builder.Configuration);
 builder.Services.AddRouting();
 builder.Services.AddAutoMapperProfiles();
 builder.Services.AddCacheProvider(builder.Configuration);
-// TODO: builder.Services.AddMetrics();
-// TODO: builder.Services.AddHostFiltering();
+builder.Services.AddMetrics();
 
 builder.WebHost.AddWebServerConfiguration(builder.Configuration);
 
@@ -48,5 +47,13 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHealthAllChecks();
 app.UseExceptionHandling();
+
+// Ensure database is created when running tests
+if (app.Environment.IsEnvironment("Testing"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<NooDbContext>();
+    await db.Database.EnsureCreatedAsync();
+}
 
 await app.RunAsync();

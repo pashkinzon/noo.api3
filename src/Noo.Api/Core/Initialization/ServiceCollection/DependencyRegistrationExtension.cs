@@ -12,9 +12,7 @@ public static class DependencyRegistrationExtension
 
     private static void RegisterServices(IServiceCollection services)
     {
-        var types = GetClassesImplementing<RegisterClassAttribute>();
-
-        foreach (var type in types)
+        foreach (var type in GetClassesImplementing<RegisterClassAttribute>())
         {
             var attribute = type.GetCustomAttribute<RegisterClassAttribute>()!;
             var serviceType = attribute.Type ?? type;

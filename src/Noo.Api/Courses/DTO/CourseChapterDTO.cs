@@ -24,4 +24,10 @@ public record CourseChapterDTO
 
     [JsonPropertyName("materials")]
     public IEnumerable<CourseMaterialDTO> Materials { get; init; } = [];
+
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; init; }
+
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; init; }
 }

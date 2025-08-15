@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
@@ -16,7 +17,8 @@ public class StatisticsController : ApiController
 {
     private readonly IStatisticsService _statisticsService;
 
-    public StatisticsController(IStatisticsService statisticsService)
+    public StatisticsController(IStatisticsService statisticsService, IMapper mapper)
+        : base(mapper)
     {
         _statisticsService = statisticsService;
     }
@@ -40,7 +42,7 @@ public class StatisticsController : ApiController
     {
         var statistics = await _statisticsService.GetPlatformStatisticsAsync(from, to);
 
-        return OkResponse(statistics);
+        return SendResponse(statistics);
     }
 
     /// <summary>
@@ -66,7 +68,7 @@ public class StatisticsController : ApiController
     {
         var statistics = await _statisticsService.GetStudentStatisticsAsync(studentId, from, to);
 
-        return OkResponse(statistics);
+        return SendResponse(statistics);
     }
 
     /// <summary>
@@ -92,6 +94,6 @@ public class StatisticsController : ApiController
     {
         var statistics = await _statisticsService.GetMentorStatisticsAsync(mentorId, from, to);
 
-        return OkResponse(statistics);
+        return SendResponse(statistics);
     }
 }
