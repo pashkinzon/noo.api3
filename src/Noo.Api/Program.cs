@@ -30,6 +30,7 @@ builder.Services.AddRouting();
 builder.Services.AddAutoMapperProfiles();
 builder.Services.AddCacheProvider(builder.Configuration);
 builder.Services.AddMetrics();
+builder.Services.AddDomainEventsBackgroundWorker();
 
 builder.WebHost.AddWebServerConfiguration(builder.Configuration);
 

@@ -1,31 +1,68 @@
 using Noo.Api.Core.DataAbstraction.Db;
+using Noo.Api.Core.System.Events;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Notifications.DTO;
 using Noo.Api.Notifications.Filters;
 using Noo.Api.Notifications.Models;
+using Noo.Api.Notifications.Types;
 
 namespace Noo.Api.Notifications.Services;
 
 [RegisterScoped(typeof(INotificationService))]
 public class NotificationService : INotificationService
 {
-    public Task BulkCreateNotificationsAsync(BulkCreateNotificationsDTO options)
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationRepository _repository;
+    private readonly IEventPublisher _events;
+
+    public NotificationService(IUnitOfWork unitOfWork, IEventPublisher events)
     {
-        throw new NotImplementedException();
+        _unitOfWork = unitOfWork;
+        _repository = _unitOfWork.NotificationRepository();
+        _events = events;
     }
 
-    public Task DeleteNotificationAsync(Ulid notificationId, Ulid userId)
+    public async Task BulkCreateNotificationsAsync(BulkCreateNotificationsDTO options)
     {
-        throw new NotImplementedException();
+        foreach (var userId in options.UserIds)
+        {
+            var model = new NotificationModel
+            {
+                UserId = userId,
+                Type = options.Type,
+                Title = options.Title,
+                Message = options.Message,
+                IsBanner = options.IsBanner,
+                IsRead = false,
+                Link = options.Link,
+                LinkText = options.LinkText
+            };
+
+            _repository.Add(model);
+
+            // Publish event for delivery handlers
+            await _events.PublishAsync(new NotificationCreatedEvent(model, options.Channels));
+        }
+
+        await _unitOfWork.CommitAsync();
+    }
+
+    public async Task DeleteNotificationAsync(Ulid notificationId, Ulid userId)
+    {
+        await _repository.DeleteForUserAsync(userId, notificationId);
+        await _unitOfWork.CommitAsync();
     }
 
     public Task<SearchResult<NotificationModel>> GetNotificationsAsync(Ulid userId, NotificationFilter filter)
     {
-        throw new NotImplementedException();
+        return _repository.GetForUserAsync(userId, filter);
     }
 
-    public Task MarkAsReadAsync(Ulid userId, Ulid notificationId)
+    public async Task MarkAsReadAsync(Ulid userId, Ulid notificationId)
     {
-        throw new NotImplementedException();
+        await _repository.MarkAsReadAsync(userId, notificationId);
+        await _unitOfWork.CommitAsync();
     }
 }
+
+public record NotificationCreatedEvent(NotificationModel Model, IEnumerable<NotificationChannelType>? Channels) : IDomainEvent;

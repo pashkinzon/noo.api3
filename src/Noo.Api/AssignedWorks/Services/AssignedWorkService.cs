@@ -8,6 +8,7 @@ using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Users.Services;
+using Noo.Api.Notifications.Services;
 
 namespace Noo.Api.AssignedWorks.Services;
 
@@ -24,13 +25,16 @@ public class AssignedWorkService : IAssignedWorkService
 
     private readonly ICurrentUser _currentUser;
 
-    public AssignedWorkService(IUnitOfWork unitOfWork, ICurrentUser currentUser)
+    private readonly INotificationService _notificationService;
+
+    public AssignedWorkService(IUnitOfWork unitOfWork, ICurrentUser currentUser, INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
         _assignedWorkRepository = _unitOfWork.AssignedWorkRepository();
         _assignedWorkAnswerRepository = _unitOfWork.AssignedWorkAnswerRepository();
         _userRepository = _unitOfWork.UserRepository();
         _currentUser = currentUser;
+        _notificationService = notificationService;
     }
 
     public async Task AddHelperMentorAsync(Ulid assignedWorkId, AddHelperMentorOptionsDTO options)
@@ -61,7 +65,13 @@ public class AssignedWorkService : IAssignedWorkService
 
         if (assignedWork.HelperMentorId != options.MentorId && assignedWork.HelperMentorId != null)
         {
-            // TODO: notify helper mentor about being removed from the work
+            await _notificationService.BulkCreateNotificationsAsync(new()
+            {
+                UserIds = new[] { assignedWork.HelperMentorId.Value },
+                Type = "assigned_work.helper_removed",
+                Title = "Removed from helper mentor",
+                Message = $"You were removed from '{assignedWork.Title}'.",
+            });
         }
 
         assignedWork.HelperMentorId = options.MentorId;
@@ -69,12 +79,24 @@ public class AssignedWorkService : IAssignedWorkService
 
         if (options.NotifyStudent)
         {
-            // TODO: notify student about the new helper mentor
+            await _notificationService.BulkCreateNotificationsAsync(new()
+            {
+                UserIds = new[] { assignedWork.StudentId },
+                Type = "assigned_work.helper_added",
+                Title = "New helper mentor",
+                Message = "A helper mentor was added to your work.",
+            });
         }
 
         if (options.NotifyMentor)
         {
-            // TODO: notify mentor about being added as a helper mentor
+            await _notificationService.BulkCreateNotificationsAsync(new()
+            {
+                UserIds = new[] { options.MentorId },
+                Type = "assigned_work.helper_added",
+                Title = "Added as helper mentor",
+                Message = $"You were added as a helper mentor to '{assignedWork.Title}'.",
+            });
         }
     }
 
@@ -141,7 +163,13 @@ public class AssignedWorkService : IAssignedWorkService
 
         // TODO: push in history checked event
 
-        // TODO: notify student about work being checked
+        await _notificationService.BulkCreateNotificationsAsync(new()
+        {
+            UserIds = new[] { assignedWork.StudentId },
+            Type = "assigned_work.checked",
+            Title = "Work checked",
+            Message = $"Your work '{assignedWork.Title}' was checked.",
+        });
     }
 
     public async Task MarkAsSolvedAsync(Ulid assignedWorkId)
@@ -165,8 +193,21 @@ public class AssignedWorkService : IAssignedWorkService
 
         // TODO: push in history solved event
 
-        // TODO: notify student about work being solved
-        // TODO: notify mentor about work being solved
+        await _notificationService.BulkCreateNotificationsAsync(new()
+        {
+            UserIds = new[] { assignedWork.StudentId },
+            Type = "assigned_work.solved",
+            Title = "Work solved",
+            Message = $"Your work '{assignedWork.Title}' is marked as solved.",
+        });
+
+        await _notificationService.BulkCreateNotificationsAsync(new()
+        {
+            UserIds = new[] { assignedWork.MainMentorId },
+            Type = "assigned_work.solved",
+            Title = "Student solved work",
+            Message = $"The work '{assignedWork.Title}' was solved by the student.",
+        });
     }
 
     public async Task<Ulid> RemakeAsync(Ulid assignedWorkId, RemakeAssignedWorkOptionsDTO options)
@@ -220,12 +261,24 @@ public class AssignedWorkService : IAssignedWorkService
 
         if (options.NotifyStudent)
         {
-            // TODO: send a notification to the student about the mentor change
+            await _notificationService.BulkCreateNotificationsAsync(new()
+            {
+                UserIds = new[] { assignedWork.StudentId },
+                Type = "assigned_work.mentor_changed",
+                Title = "Main mentor changed",
+                Message = "Your main mentor was changed.",
+            });
         }
 
         if (options.NotifyMentor)
         {
-            // TODO: send a notification to the mentor about the mentor change
+            await _notificationService.BulkCreateNotificationsAsync(new()
+            {
+                UserIds = new[] { options.MentorId },
+                Type = "assigned_work.mentor_changed",
+                Title = "Assigned as main mentor",
+                Message = $"You are now the main mentor for '{assignedWork.Title}'.",
+            });
         }
 
         // TODO: push the replace mentor event to the assigned work history
@@ -317,7 +370,13 @@ public class AssignedWorkService : IAssignedWorkService
 
         if (options.NotifyOthers)
         {
-            // TODO: send a notification to a student and to a mentor
+            await _notificationService.BulkCreateNotificationsAsync(new()
+            {
+                UserIds = new[] { assignedWork.StudentId, assignedWork.MainMentorId },
+                Type = "assigned_work.deadline_shifted",
+                Title = "Deadline updated",
+                Message = "The deadline was updated.",
+            });
         }
 
         // TODO: push the shift deadline event to the assigned work history

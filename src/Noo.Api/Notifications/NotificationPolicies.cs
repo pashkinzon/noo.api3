@@ -22,7 +22,7 @@ public class NotificationPolicies : IPolicyRegistrar
             policy.RequireAuthenticatedUser().RequireNotBlocked();
         });
 
-        options.AddPolicy(CanReadNotifications, policy =>
+        options.AddPolicy(CanBulkCreateNotifications, policy =>
         {
             policy.RequireRole(
                 nameof(UserRoles.Admin),

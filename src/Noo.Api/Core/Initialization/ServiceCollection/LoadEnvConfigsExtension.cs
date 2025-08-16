@@ -16,6 +16,7 @@ public static class LoadEnvConfigsExtension
         AddConfig<LogConfig>(services, configuration, LogConfig.SectionName);
         AddConfig<SwaggerConfig>(services, configuration, SwaggerConfig.SectionName);
         AddConfig<TelegramConfig>(services, configuration, TelegramConfig.SectionName);
+        AddConfig<EventsConfig>(services, configuration, EventsConfig.SectionName);
     }
 
     private static void AddConfig<TConfig>(IServiceCollection services, IConfiguration config, string sectionName) where TConfig : class, IConfig
