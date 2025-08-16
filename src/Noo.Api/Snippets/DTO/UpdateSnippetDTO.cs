@@ -8,7 +8,7 @@ namespace Noo.Api.Snippets.DTO;
 public record UpdateSnippetDTO
 {
     [JsonPropertyName("name")]
-    [MaxLength(63)]
+    [StringLength(63)]
     public string? Name { get; set; }
 
     [JsonPropertyName("content")]

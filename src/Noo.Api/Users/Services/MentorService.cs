@@ -31,7 +31,7 @@ public class MentorService : IMentorService
                 SubjectId = subjectId
             };
 
-            _mentorAssignmentRepository.Update(existingAssignment);
+            _mentorAssignmentRepository.Add(existingAssignment);
             await _unitOfWork.CommitAsync();
         }
 

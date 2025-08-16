@@ -8,10 +8,22 @@ public class PollParticipationRepository : Repository<PollParticipationModel>, I
 {
     public Task<bool> ParticipationExistsAsync(Ulid pollId, Ulid? userId, string? userExternalIdentifier)
     {
-        return Context.Set<PollParticipationModel>()
-            .Where(p => p.PollId == pollId &&
-                        (p.UserId == userId || p.UserExternalIdentifier == userExternalIdentifier))
-            .AnyAsync();
+        var query = Context.Set<PollParticipationModel>()
+            .AsNoTracking()
+            .Where(p => p.PollId == pollId);
+
+        if (userId.HasValue)
+        {
+            return query.AnyAsync(p => p.UserId == userId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(userExternalIdentifier))
+        {
+            return query.AnyAsync(p => p.UserExternalIdentifier == userExternalIdentifier);
+        }
+
+        // No identifier provided; treat as no duplicate
+        return Task.FromResult(false);
     }
 }
 

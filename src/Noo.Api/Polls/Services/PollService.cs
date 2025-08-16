@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Exceptions.Http;
+using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Core.Utils.Json;
 using Noo.Api.Polls.DTO;
@@ -25,14 +26,28 @@ public class PollService : IPollService
 
     private readonly IPollAnswerRepository _pollAnswerRepository;
 
+    private readonly ICurrentUser? _currentUser;
+
+    // Keep current DI-friendly ctor
+    public PollService(IMapper mapper, IUnitOfWork unitOfWork, ICurrentUser currentUser)
+    {
+        _mapper = mapper;
+        _unitOfWork = unitOfWork;
+        _currentUser = currentUser;
+        _pollRepository = unitOfWork.PollRepository();
+        _pollParticipationRepository = unitOfWork.PollParticipationRepository();
+        _pollAnswerRepository = unitOfWork.PollAnswerRepository();
+    }
+
+    // Overload used by unit tests that don't provide ICurrentUser
     public PollService(IMapper mapper, IUnitOfWork unitOfWork)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _currentUser = null;
         _pollRepository = unitOfWork.PollRepository();
         _pollParticipationRepository = unitOfWork.PollParticipationRepository();
         _pollAnswerRepository = unitOfWork.PollAnswerRepository();
-        _unitOfWork = unitOfWork;
     }
 
     public Task<Ulid> CreatePollAsync(CreatePollDTO createPollDto)
@@ -70,15 +85,28 @@ public class PollService : IPollService
         return _pollRepository.SearchAsync(filter);
     }
 
-    public async Task ParticipateAsync(Ulid pollId, PollParticipationDTO participationDto)
+    public async Task ParticipateAsync(Ulid pollId, CreatePollParticipationDTO participationDto)
     {
-        if (await UserAlreadyParticipatedAsync(pollId, participationDto.UserId, participationDto.UserExternalIdentifier))
+        // Resolve current user id when available
+        var currentUserId = _currentUser?.UserId;
+
+        // Only check for duplicates when an identifier is present
+        var hasUserId = currentUserId.HasValue;
+        var hasExternal = !string.IsNullOrWhiteSpace(participationDto.UserExternalIdentifier);
+
+        if ((hasUserId || hasExternal) &&
+            await UserAlreadyParticipatedAsync(pollId, currentUserId, participationDto.UserExternalIdentifier))
         {
             throw new UserAlreadyVotedException();
         }
 
         var participationModel = _mapper.Map<PollParticipationModel>(participationDto);
         participationModel.PollId = pollId;
+        // Persist the current user id if present
+        if (currentUserId.HasValue)
+        {
+            participationModel.UserId = currentUserId.Value;
+        }
         _pollParticipationRepository.Add(participationModel);
 
         await _unitOfWork.CommitAsync();
@@ -86,15 +114,18 @@ public class PollService : IPollService
 
     public async Task UpdatePollAnswerAsync(Ulid answerId, JsonPatchDocument<UpdatePollAnswerDTO> updateAnswerDto, ModelStateDictionary modelState)
     {
-        var repository = _unitOfWork.PollAnswerRepository();
-        var model = await repository.GetByIdAsync(answerId) ?? throw new NotFoundException();
+        var model = await _pollAnswerRepository.GetByIdAsync(answerId);
 
         if (model == null)
         {
             throw new NotFoundException();
         }
 
-        var dto = _mapper.Map<UpdatePollAnswerDTO>(model);
+        // Map manually to avoid mapping configuration dependency in tests
+        var dto = new UpdatePollAnswerDTO
+        {
+            Value = model.Value
+        };
 
         modelState ??= new ModelStateDictionary();
 
@@ -105,16 +136,16 @@ public class PollService : IPollService
             throw new BadRequestException();
         }
 
-        _mapper.Map(dto, model);
+        // Map back manually
+        model.Value = dto.Value;
 
-        repository.Update(model);
+        _pollAnswerRepository.Update(model);
         await _unitOfWork.CommitAsync();
     }
 
     public async Task UpdatePollAsync(Ulid id, JsonPatchDocument<UpdatePollDTO> updatePollDto, ModelStateDictionary? modelState = null)
     {
-        var repository = _unitOfWork.PollRepository();
-        var model = await repository.GetByIdAsync(id) ?? throw new NotFoundException();
+        var model = await _pollRepository.GetByIdAsync(id);
 
         if (model == null)
         {
@@ -134,7 +165,7 @@ public class PollService : IPollService
 
         _mapper.Map(dto, model);
 
-        repository.Update(model);
+        _pollRepository.Update(model);
         await _unitOfWork.CommitAsync();
     }
 

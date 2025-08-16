@@ -172,7 +172,7 @@ public class PollController : ApiController
         StatusCodes.Status401Unauthorized,
         StatusCodes.Status403Forbidden
     )]
-    public async Task<IActionResult> ParticipateInPollAsync([FromRoute] Ulid pollId, [FromBody] PollParticipationDTO participationDto)
+    public async Task<IActionResult> ParticipateInPollAsync([FromRoute] Ulid pollId, [FromBody] CreatePollParticipationDTO participationDto)
     {
         await _pollService.ParticipateAsync(pollId, participationDto);
 

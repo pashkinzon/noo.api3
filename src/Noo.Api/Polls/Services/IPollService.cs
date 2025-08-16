@@ -14,7 +14,7 @@ public interface IPollService
     public Task DeletePollAsync(Ulid id);
     public Task<PollModel?> GetPollAsync(Ulid id);
     public Task<SearchResult<PollModel>> GetPollsAsync(PollFilter filter);
-    public Task ParticipateAsync(Ulid pollId, PollParticipationDTO participationDto);
+    public Task ParticipateAsync(Ulid pollId, CreatePollParticipationDTO participationDto);
     public Task<SearchResult<PollParticipationModel>> GetPollParticipationsAsync(Ulid pollId, PollParticipationFilter filter);
     public Task<PollParticipationModel?> GetPollParticipationAsync(Ulid participationId);
     public Task UpdatePollAnswerAsync(Ulid answerId, JsonPatchDocument<UpdatePollAnswerDTO> updateAnswerDto, ModelStateDictionary modelState);

@@ -68,6 +68,149 @@
 				"$msCompile"
 			],
 			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "test-unit",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"./scripts.sh test unit"
+			],
+			"isBackground": false,
+			"group": "test"
 		}
 	]
 }

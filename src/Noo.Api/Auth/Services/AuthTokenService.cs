@@ -136,8 +136,8 @@ public class AuthTokenService : IAuthTokenService
 
             if (validatedToken is JwtSecurityToken jwt)
             {
-                var userIdClaim = principal.FindFirst("userId");
-                var typeClaim = principal.FindFirst("type");
+                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+                var typeClaim = principal.FindFirst(ClaimTypes.Name);
 
                 if (userIdClaim != null
                     && typeClaim != null
