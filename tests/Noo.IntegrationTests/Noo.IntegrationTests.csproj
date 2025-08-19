@@ -29,4 +29,8 @@
     <ProjectReference Include="..\..\src\Noo.Api\Noo.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<None Include="..\..\src\Noo.Api\appsettings.testing.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
 </Project>

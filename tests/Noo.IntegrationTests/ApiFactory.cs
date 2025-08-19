@@ -9,82 +9,86 @@ using Noo.Api;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Users.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Noo.IntegrationTests;
 
 public class ApiFactory : WebApplicationFactory<Program>
 {
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.UseEnvironment("Testing"); // enables appsettings.Testing.json if you have it
+	protected override void ConfigureWebHost(IWebHostBuilder builder)
+	{
+		builder.UseEnvironment("Testing"); // enables appsettings.Testing.json if you have it
 
-        builder.ConfigureServices(services =>
-        {
-            // 0) Remove any mysql registrations
-            services.RemoveAll<NooDbContext>();
-            services.RemoveAll<DbContextOptions<NooDbContext>>();
-            services.RemoveAll<IDbContextFactory<NooDbContext>>();
+		// load appsettings.testing.json
+		builder.ConfigureAppConfiguration((_, config) => config.AddJsonFile("appsettings.Testing.json", optional: true, reloadOnChange: true));
 
-            // Build an EF-only provider for InMemory to avoid mixing with Pomelo
-            var efInMemory = new ServiceCollection()
-                .AddEntityFrameworkInMemoryDatabase()
-                .BuildServiceProvider();
+		builder.ConfigureServices(services =>
+		{
+			// 0) Remove any mysql registrations
+			services.RemoveAll<NooDbContext>();
+			services.RemoveAll<DbContextOptions<NooDbContext>>();
+			services.RemoveAll<IDbContextFactory<NooDbContext>>();
 
-            // 1) Add InMemory provider (single DB name per factory to share across requests within a test)
-            // IMPORTANT: Do NOT call Guid.NewGuid() inside the options lambda; that would create a new
-            // in-memory store for every DbContext instance, making data from one request invisible to the next.
-            var dbName = $"TestDb-{Guid.NewGuid()}"; // one per ApiFactory instance
-            services.AddDbContext<NooDbContext>(options =>
-            {
-                options.UseInMemoryDatabase(dbName);
-                options.UseInternalServiceProvider(efInMemory);
-            });
+			// Build an EF-only provider for InMemory to avoid mixing with Pomelo
+			var efInMemory = new ServiceCollection()
+				.AddEntityFrameworkInMemoryDatabase()
+				.BuildServiceProvider();
 
-            // 2) Replace Redis IDistributedCache with in-memory implementation
-            // Remove any existing IDistributedCache registration (e.g., Redis)
-            var cacheDescriptors = services
-                .Where(d => d.ServiceType == typeof(IDistributedCache))
-                .ToList();
-            foreach (var d in cacheDescriptors)
-                services.Remove(d);
+			// 1) Add InMemory provider (single DB name per factory to share across requests within a test)
+			// IMPORTANT: Do NOT call Guid.NewGuid() inside the options lambda; that would create a new
+			// in-memory store for every DbContext instance, making data from one request invisible to the next.
+			var dbName = $"TestDb-{Guid.NewGuid()}"; // one per ApiFactory instance
+			services.AddDbContext<NooDbContext>(options =>
+			{
+				options.UseInMemoryDatabase(dbName);
+				options.UseInternalServiceProvider(efInMemory);
+			});
 
-            // Register distributed memory cache
-            services.AddDistributedMemoryCache();
+			// 2) Replace Redis IDistributedCache with in-memory implementation
+			// Remove any existing IDistributedCache registration (e.g., Redis)
+			var cacheDescriptors = services
+				.Where(d => d.ServiceType == typeof(IDistributedCache))
+				.ToList();
+			foreach (var d in cacheDescriptors)
+				services.Remove(d);
 
-            // 3) Seed data for tests
-            using var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<NooDbContext>();
-            db.Database.EnsureCreated();
-            // Seed users for all roles
-            var users = db.GetDbSet<UserModel>();
+			// Register distributed memory cache
+			services.AddDistributedMemoryCache();
 
-            if (!users.Any())
-            {
-                users.AddRange(
-                [
-                    NewUser("Admin User", "admin", "admin@example.com", UserRoles.Admin),
-                    NewUser("Teacher User", "teacher", "teacher@example.com", UserRoles.Teacher),
-                    NewUser("Mentor User", "mentor", "mentor@example.com", UserRoles.Mentor),
-                    NewUser("Assistant User", "assistant", "assistant@example.com", UserRoles.Assistant),
-                    NewUser("Student User", "student", "student@example.com", UserRoles.Student)
-                ]);
+			// 3) Seed data for tests
+			using var sp = services.BuildServiceProvider();
+			using var scope = sp.CreateScope();
+			var db = scope.ServiceProvider.GetRequiredService<NooDbContext>();
+			db.Database.EnsureCreated();
+			// Seed users for all roles
+			var users = db.GetDbSet<UserModel>();
 
-                db.SaveChanges();
-            }
-        });
-    }
+			if (!users.Any())
+			{
+				users.AddRange(
+				[
+					NewUser("Admin User", "admin", "admin@example.com", UserRoles.Admin),
+					NewUser("Teacher User", "teacher", "teacher@example.com", UserRoles.Teacher),
+					NewUser("Mentor User", "mentor", "mentor@example.com", UserRoles.Mentor),
+					NewUser("Assistant User", "assistant", "assistant@example.com", UserRoles.Assistant),
+					NewUser("Student User", "student", "student@example.com", UserRoles.Student)
+				]);
 
-    private static UserModel NewUser(string name, string username, string email, UserRoles role)
-        => new UserModel
-        {
-            // Id is auto-generated by BaseModel (Ulid)
-            Name = name,
-            Username = username,
-            Email = email,
-            PasswordHash = "test", // any non-empty string to satisfy validation
-            Role = role,
-            IsBlocked = false,
-            IsVerified = true
-        };
+				db.SaveChanges();
+			}
+		});
+	}
+
+	private static UserModel NewUser(string name, string username, string email, UserRoles role)
+		=> new UserModel
+		{
+			// Id is auto-generated by BaseModel (Ulid)
+			Name = name,
+			Username = username,
+			Email = email,
+			PasswordHash = "test", // any non-empty string to satisfy validation
+			Role = role,
+			IsBlocked = false,
+			IsVerified = true
+		};
 }
