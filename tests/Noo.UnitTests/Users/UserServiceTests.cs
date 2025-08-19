@@ -19,19 +19,44 @@ public class UserServiceTests
 	{
 		var config = new MapperConfiguration(cfg =>
 		{
-			cfg.CreateMap<UserCreationPayload, UserModel>();
+			// Explicit mapping for creation to avoid requiring all navigations
+			cfg.CreateMap<UserCreationPayload, UserModel>()
+				.ForMember(d => d.Id, opt => opt.Ignore())
+				.ForMember(d => d.CreatedAt, opt => opt.Ignore())
+				.ForMember(d => d.UpdatedAt, opt => opt.Ignore())
+				.ForMember(d => d.TelegramId, opt => opt.Ignore())
+				.ForMember(d => d.TelegramUsername, opt => opt.Ignore())
+				.ForMember(d => d.CoursesAsMember, opt => opt.Ignore())
+				.ForMember(d => d.CoursesAsAssigner, opt => opt.Ignore())
+				.ForMember(d => d.CoursesAsAuthor, opt => opt.Ignore())
+				.ForMember(d => d.CoursesAsEditor, opt => opt.Ignore())
+				.ForMember(d => d.CourseMaterialReactions, opt => opt.Ignore())
+				.ForMember(d => d.Avatar, opt => opt.Ignore())
+				.ForMember(d => d.Sessions, opt => opt.Ignore())
+				.ForMember(d => d.Snippets, opt => opt.Ignore())
+				.ForMember(d => d.PollParticipations, opt => opt.Ignore())
+				.ForMember(d => d.CalendarEvents, opt => opt.Ignore())
+				.ForMember(d => d.Notifications, opt => opt.Ignore())
+				.ForMember(d => d.Settings, opt => opt.Ignore())
+				.ForMember(d => d.UploadedVideos, opt => opt.Ignore())
+				.ForMember(d => d.NooTubeVideoComments, opt => opt.Ignore())
+				.ForMember(d => d.NooTubeVideoReactions, opt => opt.Ignore())
+				.ForMember(d => d.AssignedWorkHistoryChanges, opt => opt.Ignore())
+				.ForMember(d => d.IsBlocked, opt => opt.MapFrom(_ => false))
+				.ForMember(d => d.IsVerified, opt => opt.MapFrom(_ => false));
+
 			cfg.CreateMap<UserModel, UpdateUserDTO>();
-			cfg.CreateMap<UpdateUserDTO, UserModel>()
-				.AfterMap((src, dest) =>
-				{
-					if (src.Username != null) dest.Username = src.Username;
-					if (src.Email != null) dest.Email = src.Email;
-					if (src.Name != null) dest.Name = src.Name;
-					if (src.TelegramId != null) dest.TelegramId = src.TelegramId;
-					if (src.TelegramUsername != null) dest.TelegramUsername = src.TelegramUsername;
-				});
+			var map = cfg.CreateMap<UpdateUserDTO, UserModel>();
+			map.ForAllMembers(opt => opt.Ignore());
+			map.AfterMap((src, dest) =>
+			{
+				if (src.Username != null) dest.Username = src.Username;
+				if (src.Email != null) dest.Email = src.Email;
+				if (src.Name != null) dest.Name = src.Name;
+				if (src.TelegramId != null) dest.TelegramId = src.TelegramId;
+				if (src.TelegramUsername != null) dest.TelegramUsername = src.TelegramUsername;
+			});
 		});
-		config.AssertConfigurationIsValid();
 		return config.CreateMapper();
 	}
 

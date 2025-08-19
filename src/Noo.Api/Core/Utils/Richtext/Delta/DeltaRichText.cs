@@ -6,7 +6,12 @@ namespace Noo.Api.Core.Utils.Richtext.Delta;
 
 public class DeltaRichText : IRichTextType
 {
+    [JsonIgnore]
     public const string TypeDiscriminator = "delta";
+
+    //[Required]
+    //[JsonPropertyName("$type")]
+    //public string Type { get; } = TypeDiscriminator;
 
     [Required]
     [MinLength(1)]

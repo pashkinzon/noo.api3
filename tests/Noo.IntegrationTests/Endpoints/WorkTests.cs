@@ -5,8 +5,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using FluentAssertions;
 using Noo.Api.Core.Response;
+using Noo.Api.Core.Utils.Richtext;
 using Noo.Api.Subjects.DTO;
 using Noo.Api.Works.Types;
+using Xunit.Abstractions;
 
 namespace Noo.IntegrationTests.Endpoints;
 
@@ -15,21 +17,20 @@ public class WorkTests : IClassFixture<ApiFactory>
 	private readonly ApiFactory _factory;
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-	public WorkTests(ApiFactory factory)
+	private readonly ITestOutputHelper _outputHelper;
+
+	public WorkTests(ApiFactory factory, ITestOutputHelper outputHelper)
 	{
 		_factory = factory;
+		_outputHelper = outputHelper;
 	}
-
-	// Helpers
-	private static StringContent Json(string json)
-		=> new(json, Encoding.UTF8, "application/json");
 
 	private static async Task<Ulid> CreateSubjectAsync(HttpClient client, string? name = null, string? color = null)
 	{
 		name ??= $"Subj-{Guid.NewGuid():N}";
 		color ??= "#00AAFF";
 
-		var resp = await client.AsTeacher()
+		var resp = await client.AsAdmin()
 			.PostAsJsonAsync("/subject", new SubjectCreationDTO { Name = name, Color = color }, JsonOptions);
 		resp.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -42,7 +43,7 @@ public class WorkTests : IClassFixture<ApiFactory>
 	private static object BuildValidCreateWorkPayload(Ulid subjectId, string? title = null, WorkType type = WorkType.Test)
 	{
 		title ??= $"Work-{Guid.NewGuid():N}";
-		var contentNode = JsonNode.Parse("{\"ops\":[{\"insert\":\"Question 1\\n\"}]}");
+
 		return new
 		{
 			title,
@@ -55,16 +56,18 @@ public class WorkTests : IClassFixture<ApiFactory>
 					type = WorkTaskType.Word.ToString(),
 					order = 0,
 					maxScore = 1,
-					content = contentNode
+					content = RichTextFactory.Create("Question 1")
 				}
 			}
 		};
 	}
 
-	private static async Task<Ulid> CreateWorkAsync(HttpClient client, Ulid subjectId, string? title = null, WorkType type = WorkType.Test)
+	private async Task<Ulid> CreateWorkAsync(HttpClient client, Ulid subjectId, string? title = null, WorkType type = WorkType.Test)
 	{
 		var createPayload = BuildValidCreateWorkPayload(subjectId, title, type);
+
 		var resp = await client.AsTeacher().PostAsJsonAsync("/work", createPayload, JsonOptions);
+
 		resp.StatusCode.Should().Be(HttpStatusCode.Created);
 		var result = await resp.Content.ReadFromJsonAsync<ApiResponseDTO<IdResponseDTO>>(JsonOptions);
 		result.Should().NotBeNull();
@@ -99,7 +102,12 @@ public class WorkTests : IClassFixture<ApiFactory>
 
 		var workId = await CreateWorkAsync(client, subjectId, title: "Initial Title", type: WorkType.Test);
 
+		_outputHelper.WriteLine($"Created work with ID: {workId}");
+
 		var getResp = await client.AsTeacher().GetAsync($"/work/{workId}");
+
+		_outputHelper.WriteLine($"Get work response: {await getResp.Content.ReadAsStringAsync()}");
+
 		getResp.StatusCode.Should().Be(HttpStatusCode.OK);
 		var doc = JsonDocument.Parse(await getResp.Content.ReadAsStringAsync());
 		var idInPayload = doc.RootElement.GetProperty("data").GetProperty("id").GetString();

@@ -172,7 +172,7 @@ run_tests_by_project() {
 	start_ts=$(date +%s)
 	# Capture output while preserving original exit code
 	set +o pipefail 2>/dev/null || true
-	dotnet test "$project" -c Release | tee "$tmp"
+	dotnet test "$project" -c Release --logger "trx" | tee "$tmp"
 	rc=${PIPESTATUS[0]:-${?}}
 	end_ts=$(date +%s)
 	elapsed=$((end_ts-start_ts))

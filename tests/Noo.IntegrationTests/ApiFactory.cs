@@ -30,10 +30,13 @@ public class ApiFactory : WebApplicationFactory<Program>
 				.AddEntityFrameworkInMemoryDatabase()
 				.BuildServiceProvider();
 
-			// 1) Add InMemory provider (unique DB per factory to avoid test cross-talk)
+			// 1) Add InMemory provider (single DB name per factory to share across requests within a test)
+			// IMPORTANT: Do NOT call Guid.NewGuid() inside the options lambda; that would create a new
+			// in-memory store for every DbContext instance, making data from one request invisible to the next.
+			var dbName = $"TestDb-{Guid.NewGuid()}"; // one per ApiFactory instance
 			services.AddDbContext<NooDbContext>(options =>
 			{
-				options.UseInMemoryDatabase($"TestDb-{Guid.NewGuid()}");
+				options.UseInMemoryDatabase(dbName);
 				options.UseInternalServiceProvider(efInMemory);
 			});
 

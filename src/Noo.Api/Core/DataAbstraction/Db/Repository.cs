@@ -48,7 +48,19 @@ public class Repository<T> : IRepository<T> where T : BaseModel, new()
 
     public void DeleteById(Ulid id)
     {
-        Context.GetDbSet<T>().Remove(new() { Id = id });
+        var set = Context.GetDbSet<T>();
+        // If an entity with the same key is already tracked, remove that instance to avoid tracking conflicts
+        var entity = set.Local.FirstOrDefault(e => e.Id == id) ?? set.Find(id);
+        if (entity != null)
+        {
+            set.Remove(entity);
+            return;
+        }
+
+        // Otherwise, attach a stub entity and remove it
+        var stub = new T { Id = id };
+        set.Attach(stub);
+        set.Remove(stub);
     }
 
     public async Task<SearchResult<T>> SearchAsync(IPaginationFilter filter, IEnumerable<ISpecification<T>>? specifications = default)

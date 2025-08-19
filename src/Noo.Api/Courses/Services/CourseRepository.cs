@@ -1,4 +1,4 @@
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Courses.Models;
 
@@ -17,6 +17,11 @@ public class CourseRepository : Repository<CourseModel>, ICourseRepository
         var course = await Context.GetDbSet<CourseModel>()
             .Where(c => c.Id == courseId)
             .FirstOrDefaultAsync();
+
+        if (course is null)
+        {
+            return null;
+        }
 
         return BuildTree(course, chapters, maxDepth);
     }

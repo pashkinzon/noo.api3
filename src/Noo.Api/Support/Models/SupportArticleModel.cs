@@ -17,7 +17,7 @@ public class SupportArticleModel : OrderedModel
     public string Title { get; set; } = string.Empty;
 
     [RichTextColumn("content")]
-    public IRichTextType Content { get; set; } = default!;
+    public IRichTextType Content { get; set; } = RichTextFactory.Create("\n");
 
     [Column("is_active", TypeName = DbDataTypes.Boolean)]
     public bool IsActive { get; set; } = true;
