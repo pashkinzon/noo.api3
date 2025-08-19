@@ -20,7 +20,12 @@ public class ApiFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Testing"); // enables appsettings.Testing.json if you have it
 
         // load appsettings.testing.json
-        builder.ConfigureAppConfiguration((_, config) => config.AddJsonFile("appsettings.Testing.json", optional: true, reloadOnChange: true));
+        builder.ConfigureAppConfiguration((_, config) =>
+        {
+            config.Sources.Clear();
+            config.AddJsonFile("appsettings.Testing.json", optional: true, reloadOnChange: true);
+            config.AddEnvironmentVariables();
+        });
 
         builder.ConfigureServices(services =>
         {

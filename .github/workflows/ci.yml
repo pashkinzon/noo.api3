@@ -22,7 +22,7 @@ jobs:
       - name: Build
         run: dotnet build src/Noo.Api/Noo.Api.csproj -c Release --no-restore
       - name: Test unit
-        run: dotnet test tests/Noo.UnitTests/Noo.UnitTests.csproj -c Release --verbosity normal
+        run: dotnet test tests/Noo.UnitTests/Noo.UnitTests.csproj -c Release
       - name: Test integration
         if: ${{ hashFiles('tests/Noo.IntegrationTests/Noo.IntegrationTests.csproj') != '' }}
-        run: dotnet test tests/Noo.IntegrationTests/Noo.IntegrationTests.csproj -c Release --verbosity normal
+        run: dotnet test tests/Noo.IntegrationTests/Noo.IntegrationTests.csproj -c Release
