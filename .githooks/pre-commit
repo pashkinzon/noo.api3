@@ -7,6 +7,16 @@ if ! command -v dotnet >/dev/null 2>&1; then
   exit 1
 fi
 
+# Check code formatting
+echo "[pre-commit] Running dotnet format..."
+dotnet format --verify-no-changes
+if [ $? -ne 0 ]; then
+  echo "Code is not formatted. Running formatter..."
+  dotnet format
+  echo "Files have been formatted. Please stage the changes and commit again."
+  exit 1
+fi
+
 echo "[pre-commit] Building solution..."
 # Build the main API project fast (Release to match CI, no restore overhead due to implicit restore)
 if ! dotnet build ./src/Noo.Api/Noo.Api.csproj -c Release -clp:ErrorsOnly >/dev/null; then
