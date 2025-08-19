@@ -14,7 +14,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '9.0.202'
       - name: Restore
         run: dotnet restore noo.api.sln
       - name: Verify formatting
@@ -22,7 +22,7 @@ jobs:
       - name: Build
         run: dotnet build src/Noo.Api/Noo.Api.csproj -c Release --no-restore
       - name: Test unit
-        run: dotnet test tests/Noo.UnitTests/Noo.UnitTests.csproj -c Release --no-build --verbosity normal
+        run: dotnet test tests/Noo.UnitTests/Noo.UnitTests.csproj -c Release --verbosity normal
       - name: Test integration
         if: ${{ hashFiles('tests/Noo.IntegrationTests/Noo.IntegrationTests.csproj') != '' }}
-        run: dotnet test tests/Noo.IntegrationTests/Noo.IntegrationTests.csproj -c Release --no-build --verbosity normal
+        run: dotnet test tests/Noo.IntegrationTests/Noo.IntegrationTests.csproj -c Release --verbosity normal
