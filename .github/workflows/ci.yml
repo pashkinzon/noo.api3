@@ -17,6 +17,8 @@ jobs:
           dotnet-version: '9.0.x'
       - name: Restore
         run: dotnet restore noo.api.sln
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes
       - name: Build
         run: dotnet build src/Noo.Api/Noo.Api.csproj -c Release --no-restore
       - name: Test unit
