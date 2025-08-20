@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,9 @@ using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Users.Models;
 using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
+using Noo.Api.Core.DataAbstraction.Cache;
+using Microsoft.Extensions.Options;
 
 namespace Noo.IntegrationTests;
 
@@ -22,8 +26,8 @@ public class ApiFactory : WebApplicationFactory<Program>
         // load appsettings.testing.json
         builder.ConfigureAppConfiguration((_, config) =>
         {
-            config.Sources.Clear();
-            config.AddJsonFile("appsettings.Testing.json", optional: true, reloadOnChange: true);
+            // Keep existing sources and append test settings last to override
+            config.AddJsonFile("appsettings.testing.json", optional: true, reloadOnChange: true);
             config.AddEnvironmentVariables();
         });
 
@@ -33,32 +37,41 @@ public class ApiFactory : WebApplicationFactory<Program>
             services.RemoveAll<NooDbContext>();
             services.RemoveAll<DbContextOptions<NooDbContext>>();
             services.RemoveAll<IDbContextFactory<NooDbContext>>();
-
-            // Build an EF-only provider for InMemory to avoid mixing with Pomelo
-            var efInMemory = new ServiceCollection()
-                .AddEntityFrameworkInMemoryDatabase()
-                .BuildServiceProvider();
+            services.RemoveAll<IConfigureOptions<DbContextOptions<NooDbContext>>>();
+            services.RemoveAll<IPostConfigureOptions<DbContextOptions<NooDbContext>>>();
 
             // 1) Add InMemory provider (single DB name per factory to share across requests within a test)
             // IMPORTANT: Do NOT call Guid.NewGuid() inside the options lambda; that would create a new
             // in-memory store for every DbContext instance, making data from one request invisible to the next.
             var dbName = $"TestDb-{Guid.NewGuid()}"; // one per ApiFactory instance
-            services.AddDbContext<NooDbContext>(options =>
+                                                     // Remove all option configurations for NooDbContext that might point to MySQL
+            services.RemoveAll<IOptions<DbContextOptions<NooDbContext>>>();
+            services.RemoveAll<IOptionsSnapshot<DbContextOptions<NooDbContext>>>();
+            services.RemoveAll<IOptionsMonitor<DbContextOptions<NooDbContext>>>();
+            services.RemoveAll<IOptionsFactory<DbContextOptions<NooDbContext>>>();
+
+            // Register in-memory DbContextOptions and NooDbContext explicitly (avoid AddDbContext to prevent hidden factories)
+            services.AddSingleton(provider =>
+                new DbContextOptionsBuilder<NooDbContext>()
+                    .UseInMemoryDatabase(dbName)
+                    .Options);
+            services.AddScoped<NooDbContext>(sp =>
             {
-                options.UseInMemoryDatabase(dbName);
-                options.UseInternalServiceProvider(efInMemory);
+                var options = sp.GetRequiredService<DbContextOptions<NooDbContext>>();
+                var cfg = sp.GetRequiredService<IOptions<Noo.Api.Core.Config.Env.DbConfig>>();
+                return new NooDbContext(cfg, options);
             });
 
-            // 2) Replace Redis IDistributedCache with in-memory implementation
-            // Remove any existing IDistributedCache registration (e.g., Redis)
-            var cacheDescriptors = services
-                .Where(d => d.ServiceType == typeof(IDistributedCache))
-                .ToList();
-            foreach (var d in cacheDescriptors)
-                services.Remove(d);
+            // 2) Replace Redis with in-memory caching
+            // Remove IDistributedCache (Redis), IConnectionMultiplexer and any existing ICacheRepository
+            services.RemoveAll<IDistributedCache>();
+            services.RemoveAll<IConnectionMultiplexer>();
+            services.RemoveAll<ICacheRepository>();
 
-            // Register distributed memory cache
+            // Register distributed in-memory cache and a lightweight test ICacheRepository
             services.AddDistributedMemoryCache();
+            // TODO: add inmemory cache
+            //services.AddScoped<ICacheRepository, TestMemoryCacheRepository>();
 
             // 3) Seed data for tests
             using var sp = services.BuildServiceProvider();
