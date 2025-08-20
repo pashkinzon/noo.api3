@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -29,9 +27,8 @@ public class ApiFactory : WebApplicationFactory<Program>
             // Keep existing sources and append test settings last to override
             config.AddJsonFile("appsettings.testing.json", optional: true, reloadOnChange: true);
             config.AddEnvironmentVariables();
-        });
-
-        builder.ConfigureServices(services =>
+        })
+            .ConfigureServices(services =>
         {
             // 0) Remove any mysql registrations
             services.RemoveAll<NooDbContext>();
@@ -43,22 +40,21 @@ public class ApiFactory : WebApplicationFactory<Program>
             // 1) Add InMemory provider (single DB name per factory to share across requests within a test)
             // IMPORTANT: Do NOT call Guid.NewGuid() inside the options lambda; that would create a new
             // in-memory store for every DbContext instance, making data from one request invisible to the next.
-            var dbName = $"TestDb-{Guid.NewGuid()}"; // one per ApiFactory instance
-                                                     // Remove all option configurations for NooDbContext that might point to MySQL
+            var dbName = $"TestDb-{Guid.NewGuid()}";
             services.RemoveAll<IOptions<DbContextOptions<NooDbContext>>>();
             services.RemoveAll<IOptionsSnapshot<DbContextOptions<NooDbContext>>>();
             services.RemoveAll<IOptionsMonitor<DbContextOptions<NooDbContext>>>();
             services.RemoveAll<IOptionsFactory<DbContextOptions<NooDbContext>>>();
 
             // Register in-memory DbContextOptions and NooDbContext explicitly (avoid AddDbContext to prevent hidden factories)
-            services.AddSingleton(provider =>
+            services.AddSingleton(_ =>
                 new DbContextOptionsBuilder<NooDbContext>()
                     .UseInMemoryDatabase(dbName)
                     .Options);
-            services.AddScoped<NooDbContext>(sp =>
+            services.AddScoped(sp =>
             {
                 var options = sp.GetRequiredService<DbContextOptions<NooDbContext>>();
-                var cfg = sp.GetRequiredService<IOptions<Noo.Api.Core.Config.Env.DbConfig>>();
+                var cfg = sp.GetRequiredService<IOptions<Api.Core.Config.Env.DbConfig>>();
                 return new NooDbContext(cfg, options);
             });
 
@@ -95,6 +91,70 @@ public class ApiFactory : WebApplicationFactory<Program>
                 db.SaveChanges();
             }
         });
+
+
+
+        // 0) Remove any mysql registrations
+
+
+
+
+
+
+        // 1) Add InMemory provider (single DB name per factory to share across requests within a test)
+        // IMPORTANT: Do NOT call Guid.NewGuid() inside the options lambda; that would create a new
+        // in-memory store for every DbContext instance, making data from one request invisible to the next.
+
+
+
+
+
+
+        // Register in-memory DbContextOptions and NooDbContext explicitly (avoid AddDbContext to prevent hidden factories)
+
+
+
+
+
+
+
+
+
+
+
+        // 2) Replace Redis with in-memory caching
+        // Remove IDistributedCache (Redis), IConnectionMultiplexer and any existing ICacheRepository
+
+
+
+
+        // Register distributed in-memory cache and a lightweight test ICacheRepository
+
+        // TODO: add inmemory cache
+        //services.AddScoped<ICacheRepository, TestMemoryCacheRepository>();
+
+        // 3) Seed data for tests
+
+
+
+
+        // Seed users for all roles
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     private static UserModel NewUser(string name, string username, string email, UserRoles role)

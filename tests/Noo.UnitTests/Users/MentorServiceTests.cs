@@ -1,5 +1,4 @@
 using Noo.Api.Users.Filters;
-using Noo.Api.Users.Models;
 using Noo.Api.Users.Services;
 using Noo.UnitTests.Common;
 

@@ -1,7 +1,4 @@
-using Ardalis.Specification;
-using Ardalis.Specification.EntityFrameworkCore;
 using Noo.Api.Core.Security.Authorization;
-using Noo.Api.Courses.Models;
 using Noo.Api.Courses.QuerySpecifications;
 
 namespace Noo.UnitTests.Courses.Specifications;

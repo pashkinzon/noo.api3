@@ -11,10 +11,7 @@ public class UserSettingsMapperProfileTests
 
     public UserSettingsMapperProfileTests()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<UserSettingsMapperProfile>();
-        });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserSettingsMapperProfile>());
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
     }

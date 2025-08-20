@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System.Linq;
-using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.System.Events;
 using Noo.Api.Notifications.DTO;
 using Noo.Api.Notifications.Filters;

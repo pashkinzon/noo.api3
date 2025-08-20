@@ -1,4 +1,3 @@
-using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -37,7 +36,7 @@ public class SupportServiceTests
         var uow = new Mock<IUnitOfWork>();
         uow.SetupGet(x => x.Context).Returns(ctx);
         uow.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .Returns<CancellationToken>(async _ => await ctx.SaveChangesAsync());
+            .Returns<CancellationToken>(_ => ctx.SaveChangesAsync());
 
         var mapperCfg = new MapperConfiguration(cfg => cfg.AddProfile(new SupportMapperProfile()));
         var mapper = mapperCfg.CreateMapper();
@@ -167,19 +166,13 @@ public class SupportServiceTests
     public async Task UpdateArticleAsync_IsNotImplemented_Yet()
     {
         var (svc, _) = CreateService();
-        await Assert.ThrowsAsync<NotImplementedException>(async () =>
-        {
-            await svc.UpdateArticleAsync(Ulid.NewUlid(), new SystemTextJsonPatch.JsonPatchDocument<UpdateSupportArticleDTO>());
-        });
+        await Assert.ThrowsAsync<NotImplementedException>(async () => await svc.UpdateArticleAsync(Ulid.NewUlid(), new SystemTextJsonPatch.JsonPatchDocument<UpdateSupportArticleDTO>()));
     }
 
     [Fact]
     public async Task UpdateCategoryAsync_IsNotImplemented_Yet()
     {
         var (svc, _) = CreateService();
-        await Assert.ThrowsAsync<NotImplementedException>(async () =>
-        {
-            await svc.UpdateCategoryAsync(Ulid.NewUlid(), new SystemTextJsonPatch.JsonPatchDocument<UpdateSupportCategoryDTO>());
-        });
+        await Assert.ThrowsAsync<NotImplementedException>(async () => await svc.UpdateCategoryAsync(Ulid.NewUlid(), new SystemTextJsonPatch.JsonPatchDocument<UpdateSupportCategoryDTO>()));
     }
 }

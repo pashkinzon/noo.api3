@@ -13,10 +13,7 @@ public class SnippetServiceTests
 {
     private static IMapper CreateMapper()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<SnippetMapperProfile>();
-        });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<SnippetMapperProfile>());
         config.AssertConfigurationIsValid();
         return config.CreateMapper();
     }

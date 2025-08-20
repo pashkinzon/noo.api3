@@ -1,6 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
-using Noo.Api.Auth;
 using Noo.Api.Auth.Services;
 using Noo.Api.Core.Config.Env;
 
@@ -54,7 +52,7 @@ public class AuthTokenServiceTests
     {
         var svc = CreateSvc();
         var userId = Ulid.NewUlid();
-        var newEmail = "new@example.com";
+        const string newEmail = "new@example.com";
 
         var token = svc.GenerateEmailChangeToken(userId, newEmail);
         Assert.False(string.IsNullOrWhiteSpace(token));

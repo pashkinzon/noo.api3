@@ -10,10 +10,7 @@ public class SnippetMapperProfileTests
 
     public SnippetMapperProfileTests()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<SnippetMapperProfile>();
-        });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<SnippetMapperProfile>());
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
     }

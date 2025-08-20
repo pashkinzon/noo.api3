@@ -1,6 +1,4 @@
 using AutoMapper;
-using Moq;
-using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.UserSettings.DTO;
 using Noo.Api.UserSettings.Models;
 using Noo.Api.UserSettings.Services;
@@ -13,10 +11,7 @@ public class UserSettingsServiceTests
 {
     private static IMapper CreateMapper()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<UserSettingsMapperProfile>();
-        });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserSettingsMapperProfile>());
         config.AssertConfigurationIsValid();
         return config.CreateMapper();
     }

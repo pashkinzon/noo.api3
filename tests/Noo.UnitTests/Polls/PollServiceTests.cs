@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Polls.DTO;
 using Noo.Api.Polls.Filters;
 using Noo.Api.Polls.Models;
@@ -30,10 +29,7 @@ public class PollServiceTests
     }
     private static IMapper CreateMapper()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<Noo.Api.Polls.Models.PollMapperProfile>();
-        });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<Noo.Api.Polls.Models.PollMapperProfile>());
         config.AssertConfigurationIsValid();
         return config.CreateMapper();
     }
@@ -117,7 +113,7 @@ public class PollServiceTests
         await context.SaveChangesAsync();
 
         var userId = Ulid.NewUlid();
-        var extId = "ext-42";
+        const string extId = "ext-42";
 
         // 1) By userId: create with a current user, then attempt duplicate with the same user
         var withUser = new PollService(mapper, uow, new TestCurrentUser(userId));

@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using FluentAssertions;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Utils.Richtext;
@@ -159,7 +158,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         var subjectId = await CreateSubjectAsync(client);
         var workId = await CreateWorkAsync(client, subjectId, title: "Before");
 
-        var patchJson = "[ { \"op\": \"replace\", \"path\": \"/title\", \"value\": \"After\" } ]";
+        const string patchJson = "[ { \"op\": \"replace\", \"path\": \"/title\", \"value\": \"After\" } ]";
         var patchResp = await client.AsTeacher().PatchAsync($"/work/{workId}", new StringContent(patchJson, Encoding.UTF8, "application/json-patch+json"));
         patchResp.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
@@ -177,7 +176,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         var workId = await CreateWorkAsync(client, subjectId);
 
         // maxScore must be >= 1, set to 0 -> validation error
-        var patchJson = "[ { \"op\": \"replace\", \"path\": \"/tasks/0/maxScore\", \"value\": 0 } ]";
+        const string patchJson = "[ { \"op\": \"replace\", \"path\": \"/tasks/0/maxScore\", \"value\": 0 } ]";
         var resp = await client.AsTeacher().PatchAsync($"/work/{workId}", new StringContent(patchJson, Encoding.UTF8, "application/json-patch+json"));
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -186,7 +185,7 @@ public class WorkTests : IClassFixture<ApiFactory>
     public async Task Patch_Work_NotFound()
     {
         using var client = _factory.CreateClient();
-        var patchJson = "[ { \"op\": \"replace\", \"path\": \"/title\", \"value\": \"T\" } ]";
+        const string patchJson = "[ { \"op\": \"replace\", \"path\": \"/title\", \"value\": \"T\" } ]";
         var resp = await client.AsTeacher().PatchAsync($"/work/{Ulid.NewUlid()}", new StringContent(patchJson, Encoding.UTF8, "application/json-patch+json"));
         resp.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

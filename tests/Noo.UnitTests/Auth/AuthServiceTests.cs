@@ -40,7 +40,7 @@ public class AuthServiceTests
     [Fact]
     public async Task Login_HappyPath_ReturnsToken_AndUserInfo()
     {
-        var pwd = "pwd";
+        const string pwd = "pwd";
         var hash = new HashService().Hash(pwd);
         var user = new UserModel
         {

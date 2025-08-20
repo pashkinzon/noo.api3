@@ -10,10 +10,7 @@ public class SubjectMapperProfileTests
 
     public SubjectMapperProfileTests()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<SubjectMapperProfile>();
-        });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<SubjectMapperProfile>());
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
     }

@@ -1,6 +1,5 @@
 using AutoMapper;
 using Moq;
-using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Courses.DTO;
 using Noo.Api.Courses.Filters;
