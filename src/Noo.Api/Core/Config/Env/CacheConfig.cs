@@ -16,4 +16,7 @@ public class CacheConfig : IConfig
 
     [Required]
     public required string Prefix { get; init; }
+
+    // Optional selector to allow in-memory fallback in tests or local dev
+    public string Provider { get; init; } = "Redis"; // Redis | Memory
 }

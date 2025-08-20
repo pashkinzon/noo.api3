@@ -21,7 +21,7 @@ public class WorkMapperProfileTests
         _mapper = config.CreateMapper();
     }
 
-    [Fact]
+    [Fact(DisplayName = "Mapper: CreateWorkDTO -> WorkModel maps correctly")]
     public void Map_CreateWorkDTO_To_WorkModel()
     {
         var dto = new CreateWorkDTO
@@ -46,7 +46,7 @@ public class WorkMapperProfileTests
         Assert.NotNull(model.CourseMaterialContents);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Mapper: WorkModel -> UpdateWorkDTO and back updates title only")]
     public void Map_WorkModel_To_UpdateWorkDTO_And_Back()
     {
         var model = new WorkModel

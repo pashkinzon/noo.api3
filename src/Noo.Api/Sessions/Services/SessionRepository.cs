@@ -1,5 +1,6 @@
 using Noo.Api.Core.DataAbstraction.Db;
 using Noo.Api.Sessions.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Noo.Api.Sessions.Services;
 
@@ -7,17 +8,30 @@ public class SessionRepository : Repository<SessionModel>, ISessionRepository
 {
     public Task DeleteAllSessionsAsync(Ulid userId)
     {
-        throw new NotImplementedException();
+        var set = Context.GetDbSet<SessionModel>();
+        var toRemove = set.Where(s => s.UserId == userId);
+        set.RemoveRange(toRemove);
+        return Task.CompletedTask;
     }
 
-    public Task DeleteSessionAsync(Ulid sessionId, Ulid userId)
+    public async Task DeleteSessionAsync(Ulid sessionId, Ulid userId)
     {
-        throw new NotImplementedException();
+        var set = Context.GetDbSet<SessionModel>();
+        var entity = await set.FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId);
+        if (entity != null)
+        {
+            set.Remove(entity);
+        }
     }
 
-    public Task<IEnumerable<SessionModel>> GetManyOfUserAsync(Ulid userId)
+    public async Task<IEnumerable<SessionModel>> GetManyOfUserAsync(Ulid userId)
     {
-        throw new NotImplementedException();
+        var set = Context.GetDbSet<SessionModel>();
+        var nowOrdered = await set
+            .Where(s => s.UserId == userId)
+            .OrderByDescending(s => s.LastRequestAt ?? s.UpdatedAt ?? s.CreatedAt)
+            .ToListAsync();
+        return nowOrdered;
     }
 }
 

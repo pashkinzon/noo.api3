@@ -73,7 +73,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         return result!.Data!.Id;
     }
 
-    [Fact]
+    [Fact(DisplayName = "GET /work as teacher returns 200 OK")]
     public async Task Search_Works_AsTeacher_ReturnsOk()
     {
         using var client = _factory.CreateClient();
@@ -85,7 +85,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         json.Should().Contain("meta");
     }
 
-    [Fact]
+    [Fact(DisplayName = "GET /work as student returns 403 Forbidden")]
     public async Task Search_Works_AsStudent_Forbidden()
     {
         using var client = _factory.CreateClient();
@@ -93,19 +93,14 @@ public class WorkTests : IClassFixture<ApiFactory>
         resp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
-    [Fact]
+    [Fact(DisplayName = "POST /work as teacher returns 201 Created then GET by id returns 200 OK")]
     public async Task Create_Work_AsTeacher_ReturnsCreated_Then_GetById_Ok()
     {
         using var client = _factory.CreateClient();
         var subjectId = await CreateSubjectAsync(client);
 
         var workId = await CreateWorkAsync(client, subjectId, title: "Initial Title", type: WorkType.Test);
-
-        _outputHelper.WriteLine($"Created work with ID: {workId}");
-
         var getResp = await client.AsTeacher().GetAsync($"/work/{workId}");
-
-        _outputHelper.WriteLine($"Get work response: {await getResp.Content.ReadAsStringAsync()}");
 
         getResp.StatusCode.Should().Be(HttpStatusCode.OK);
         var doc = JsonDocument.Parse(await getResp.Content.ReadAsStringAsync());
@@ -115,7 +110,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         doc.RootElement.GetProperty("data").GetProperty("tasks").EnumerateArray().Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Fact(DisplayName = "POST /work as student returns 403 Forbidden")]
     public async Task Create_Work_AsStudent_Forbidden()
     {
         using var client = _factory.CreateClient();
@@ -125,7 +120,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         resp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
-    [Fact]
+    [Fact(DisplayName = "POST /work with invalid payload returns 400 Bad Request")]
     public async Task Create_Work_InvalidPayload_BadRequest()
     {
         using var client = _factory.CreateClient();
@@ -143,7 +138,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
-    [Fact]
+    [Fact(DisplayName = "GET /work/{id} for non-existing id returns 404 Not Found")]
     public async Task Get_Work_NotFound()
     {
         using var client = _factory.CreateClient();
@@ -151,7 +146,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         resp.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Fact(DisplayName = "PATCH /work updates title returns 204 No Content and persists")]
     public async Task Patch_Work_UpdateTitle_NoContent_Then_Persists()
     {
         using var client = _factory.CreateClient();
@@ -168,7 +163,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         doc.RootElement.GetProperty("data").GetProperty("title").GetString().Should().Be("After");
     }
 
-    [Fact]
+    [Fact(DisplayName = "PATCH /work with invalid value returns 400 Bad Request")]
     public async Task Patch_Work_InvalidValue_BadRequest()
     {
         using var client = _factory.CreateClient();
@@ -181,7 +176,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
-    [Fact]
+    [Fact(DisplayName = "PATCH /work/{id} non-existing returns 404 Not Found")]
     public async Task Patch_Work_NotFound()
     {
         using var client = _factory.CreateClient();
@@ -190,7 +185,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         resp.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Fact(DisplayName = "DELETE /work returns 204 No Content then GET returns 404 Not Found")]
     public async Task Delete_Work_NoContent_And_After_Get_NotFound()
     {
         using var client = _factory.CreateClient();
@@ -204,7 +199,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         getResp.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Fact(DisplayName = "DELETE /work as student returns 403 Forbidden")]
     public async Task Delete_Work_AsStudent_Forbidden()
     {
         using var client = _factory.CreateClient();
@@ -212,7 +207,7 @@ public class WorkTests : IClassFixture<ApiFactory>
         delResp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
-    [Fact]
+    [Fact(DisplayName = "GET /work filtered by type returns expected results")]
     public async Task Search_Filter_ByType_Works()
     {
         using var client = _factory.CreateClient();

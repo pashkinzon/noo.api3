@@ -1,6 +1,7 @@
 using Noo.Api.Core.Initialization.App;
 using Noo.Api.Core.Initialization.ServiceCollection;
 using Noo.Api.Core.Initialization.WebHostBuilder;
+using Noo.Api.Sessions.Middleware;
 using Noo.Api.Core.DataAbstraction.Db;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,7 @@ builder.Services.AddAutoMapperProfiles();
 builder.Services.AddCacheProvider(builder.Configuration);
 builder.Services.AddMetrics();
 builder.Services.AddDomainEventsBackgroundWorker();
+builder.Services.AddHostedService<Noo.Api.Sessions.Background.SessionCleanupWorker>();
 
 builder.WebHost.AddWebServerConfiguration(builder.Configuration);
 
@@ -45,6 +47,7 @@ app.UseResponseCompression();
 //app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSessionActivity();
 app.MapControllers();
 app.MapHealthAllChecks();
 app.UseExceptionHandling();

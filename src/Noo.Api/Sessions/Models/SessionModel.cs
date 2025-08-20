@@ -15,6 +15,10 @@ public class SessionModel : BaseModel
     [MaxLength(63)]
     public string? IpAddress { get; set; }
 
+    [Column("device_id", TypeName = DbDataTypes.Varchar255)]
+    [MaxLength(255)]
+    public string? DeviceId { get; set; }
+
     [Column("user_agent", TypeName = DbDataTypes.Varchar255)]
     [MaxLength(255)]
     public string? UserAgent { get; set; }
@@ -33,6 +37,9 @@ public class SessionModel : BaseModel
     [Column("browser", TypeName = DbDataTypes.Varchar255)]
     [MaxLength(255)]
     public string? Browser { get; set; }
+
+    [Column("last_request_at", TypeName = "TIMESTAMP(6)")]
+    public DateTime? LastRequestAt { get; set; }
 
     [Required]
     [Column("user_id", TypeName = DbDataTypes.Ulid)]

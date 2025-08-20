@@ -5,7 +5,7 @@ namespace Noo.UnitTests.Core.Response;
 
 public class ApiResponseDTOTests
 {
-    [Fact]
+    [Fact(DisplayName = "ApiResponseDTO serializes data with optional meta")]
     public void ApiResponseDTO_Serializes_WithDataAndOptionalMeta()
     {
         var dto = new ApiResponseDTO<string>("hello", new { page = 1 });
@@ -14,7 +14,7 @@ public class ApiResponseDTOTests
         Assert.Contains("\"meta\":{\"page\":1}", json);
     }
 
-    [Fact]
+    [Fact(DisplayName = "ApiResponseDTO omits meta when null")]
     public void ApiResponseDTO_OmitsNullMeta()
     {
         var dto = new ApiResponseDTO<string>("hello", null);
@@ -23,7 +23,7 @@ public class ApiResponseDTOTests
         Assert.DoesNotContain("\"meta\"", json);
     }
 
-    [Fact]
+    [Fact(DisplayName = "ErrorApiResponseDTO serializes error object")]
     public void ErrorApiResponseDTO_Serializes()
     {
         var dto = new ErrorApiResponseDTO(new { code = "X" });
@@ -31,7 +31,7 @@ public class ApiResponseDTOTests
         Assert.Contains("\"error\":{\"code\":\"X\"}", json);
     }
 
-    [Fact]
+    [Fact(DisplayName = "IdResponseDTO serializes Ulid as string")]
     public void IdResponseDTO_Serializes()
     {
         var id = Ulid.NewUlid();

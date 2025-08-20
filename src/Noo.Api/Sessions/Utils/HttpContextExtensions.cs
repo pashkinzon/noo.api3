@@ -12,20 +12,25 @@ public static class HttpContextExtensions
             throw new ArgumentNullException(nameof(context), "HttpContext or User cannot be null.");
         }
 
+        var deviceId = context.Request.Headers["X-Device-Id"].ToString();
         var userAgent = context.Request.Headers.UserAgent.ToString();
         var ip = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
 
-        var info = UserAgentParser.Parse(userAgent);
+        var info = string.IsNullOrWhiteSpace(userAgent)
+            ? new UserAgentInfo { Browser = "Unknown", Os = "Unknown", Device = "Unknown", DeviceType = DeviceType.Unknown }
+            : UserAgentParser.Parse(userAgent);
 
         return new SessionModel
         {
             UserId = userId,
             UserAgent = userAgent,
+            DeviceId = string.IsNullOrWhiteSpace(deviceId) ? null : deviceId,
             Os = info.Os,
             Browser = info.Browser,
             Device = info.Device,
             DeviceType = info.DeviceType,
-            IpAddress = ip
+            IpAddress = ip,
+            LastRequestAt = DateTime.UtcNow
         };
     }
 }

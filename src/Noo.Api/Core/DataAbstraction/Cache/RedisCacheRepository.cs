@@ -2,12 +2,10 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Noo.Api.Core.Config.Env;
-using Noo.Api.Core.Utils.DI;
 using StackExchange.Redis;
 
 namespace Noo.Api.Core.DataAbstraction.Cache;
 
-[RegisterScoped(typeof(ICacheRepository))]
 public class RedisCacheRepository : ICacheRepository
 {
     private readonly IConnectionMultiplexer _connectionMultiplexer;

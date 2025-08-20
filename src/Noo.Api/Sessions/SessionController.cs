@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Noo.Api.Core.Request;
 using Noo.Api.Core.Response;
 using Noo.Api.Core.Security.Authorization;
+using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Utils.Versioning;
 using Noo.Api.Sessions.DTO;
 using Noo.Api.Sessions.Models;
@@ -61,7 +62,14 @@ public class SessionController : ApiController
         var userId = User.GetId();
         var sessionId = User.GetSessionId();
 
-        await _sessionService.DeleteSessionAsync(sessionId, userId);
+        try
+        {
+            await _sessionService.DeleteSessionAsync(sessionId, userId);
+        }
+        catch (NotFoundException)
+        {
+            // If the current session isn't persisted, treat as successful logout.
+        }
 
         return SendResponse();
     }
@@ -75,7 +83,8 @@ public class SessionController : ApiController
     [Produces(
         null, StatusCodes.Status204NoContent,
         StatusCodes.Status401Unauthorized,
-        StatusCodes.Status403Forbidden
+    StatusCodes.Status403Forbidden,
+    StatusCodes.Status404NotFound
     )]
     public async Task<IActionResult> DeleteSessionAsync([FromRoute] Ulid sessionId)
     {

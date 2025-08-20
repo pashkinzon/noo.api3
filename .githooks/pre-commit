@@ -9,6 +9,8 @@ fi
 
 # Check code formatting
 echo "[pre-commit] Running dotnet format..."
+dotnet format
+echo "[pre-commit] Verifying everything is formatted..."
 dotnet format --verify-no-changes
 if [ $? -ne 0 ]; then
   echo "Code is not formatted. Running formatter..."

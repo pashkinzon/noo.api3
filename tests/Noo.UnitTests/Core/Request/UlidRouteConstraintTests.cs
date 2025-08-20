@@ -5,7 +5,7 @@ namespace Noo.UnitTests.Core.Request;
 
 public class UlidRouteConstraintTests
 {
-    [Theory]
+    [Theory(DisplayName = "UlidRouteConstraint matches valid ULIDs and rejects invalid inputs")]
     [InlineData("01H84V6K3M4CQP2W6E3Q2X8V7Z", true)]
     [InlineData("01H84V6K3M4CQP2W6E3Q2X8V7Z_extra", false)]
     [InlineData("", false)]

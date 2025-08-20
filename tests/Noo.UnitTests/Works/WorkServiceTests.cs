@@ -23,7 +23,7 @@ public class WorkServiceTests
         return config.CreateMapper();
     }
 
-    [Fact]
+    [Fact(DisplayName = "WorkService: create, get, update, delete flow works")]
     public async Task CreateGetUpdateDelete_Work_Flow()
     {
         var dbName = Guid.NewGuid().ToString();

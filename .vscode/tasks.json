@@ -1,216 +1,58 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "build",
-			"command": "dotnet",
-			"type": "process",
-			"args": [
-				"build",
-				"${workspaceFolder}/src/Noo.Api/Noo.Api.csproj"
-			],
-			"problemMatcher": "$msCompile",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
-			"label": "restore-sln",
-			"type": "shell",
-			"command": "dotnet",
-			"args": [
-				"restore",
-				"noo.api.sln"
-			],
-			"problemMatcher": [
-				"$msbuild"
-			],
-			"group": "build"
-		},
-		{
-			"label": "restore-sln",
-			"type": "shell",
-			"command": "dotnet",
-			"args": [
-				"restore",
-				"noo.api.sln"
-			],
-			"problemMatcher": [
-				"$msbuild"
-			],
-			"group": "build"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		},
-		{
-			"label": "test-unit",
-			"type": "shell",
-			"command": "bash",
-			"args": [
-				"-lc",
-				"./scripts.sh test unit"
-			],
-			"isBackground": false,
-			"group": "test"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/src/Noo.Api/Noo.Api.csproj"],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "restore-sln",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["restore", "noo.api.sln"],
+      "problemMatcher": ["$msbuild"],
+      "group": "build"
+    },
+    {
+      "label": "restore-sln",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["restore", "noo.api.sln"],
+      "problemMatcher": ["$msbuild"],
+      "group": "build"
+    },
+    {
+      "label": "format",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["format"],
+      "problemMatcher": ["$msbuild"],
+      "group": "none"
+    },
+    {
+      "label": "test-unit",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-lc", "./scripts.sh test unit"],
+      "isBackground": false,
+      "problemMatcher": ["$msCompile"],
+      "group": "test"
+    },
+    {
+      "label": "test-integration",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-lc", "./scripts.sh test integration"],
+      "isBackground": false,
+      "problemMatcher": ["$msCompile"],
+      "group": "test"
+    }
+  ]
 }

@@ -66,8 +66,7 @@ public class ApiFactory : WebApplicationFactory<Program>
 
             // Register distributed in-memory cache and a lightweight test ICacheRepository
             services.AddDistributedMemoryCache();
-            // TODO: add inmemory cache
-            //services.AddScoped<ICacheRepository, TestMemoryCacheRepository>();
+            services.AddSingleton<ICacheRepository, MemoryCacheRepository>();
 
             // 3) Seed data for tests
             using var sp = services.BuildServiceProvider();
