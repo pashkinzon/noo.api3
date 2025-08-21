@@ -139,7 +139,7 @@ public class AssignedWorkModel : BaseModel
 
     public bool IsRemakeable() => IsChecked() && Type == WorkType.Test;
 
-    public AssignedWorkModel NewAttempt()
+    public AssignedWorkModel NewAttemptCopy()
     {
         return new AssignedWorkModel
         {

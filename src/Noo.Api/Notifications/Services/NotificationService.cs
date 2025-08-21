@@ -47,6 +47,26 @@ public class NotificationService : INotificationService
         await _unitOfWork.CommitAsync();
     }
 
+    public async Task CreateNotificationAsync(CreateNotificationDTO options)
+    {
+        var model = new NotificationModel
+        {
+            UserId = options.UserId,
+            Type = options.Type,
+            Title = options.Title,
+            Message = options.Message,
+            IsBanner = options.IsBanner,
+            IsRead = false,
+            Link = options.Link,
+            LinkText = options.LinkText
+        };
+
+        _repository.Add(model);
+
+        await _unitOfWork.CommitAsync();
+        await _events.PublishAsync(new NotificationCreatedEvent(model));
+    }
+
     public async Task DeleteNotificationAsync(Ulid notificationId, Ulid userId)
     {
         await _repository.DeleteForUserAsync(userId, notificationId);
@@ -65,4 +85,4 @@ public class NotificationService : INotificationService
     }
 }
 
-public record NotificationCreatedEvent(NotificationModel Model, IEnumerable<NotificationChannelType>? Channels) : IDomainEvent;
+public record NotificationCreatedEvent(NotificationModel Model, IEnumerable<NotificationChannelType>? Channels = null) : IDomainEvent;

@@ -20,7 +20,8 @@ public class AssignedWorkRepository : Repository<AssignedWorkModel>, IAssignedWo
                 CheckStatus = aw.CheckStatus,
                 CheckedAt = aw.CheckedAt,
                 Score = aw.Score,
-                MaxScore = aw.MaxScore
+                MaxScore = aw.MaxScore,
+                Attempt = aw.Attempt
             })
             .FirstOrDefaultAsync();
     }
@@ -121,6 +122,14 @@ public class AssignedWorkRepository : Repository<AssignedWorkModel>, IAssignedWo
             .FirstOrDefaultAsync();
 
         return assignedWork != null && statuses.Contains(assignedWork.SolveStatus);
+    }
+
+    public Task<AssignedWorkModel?> GetWithStudentAsync(Ulid assignedWorkId)
+    {
+        return Context.Set<AssignedWorkModel>()
+            .Where(aw => aw.Id == assignedWorkId)
+            .Include(aw => aw.Student)
+            .FirstOrDefaultAsync();
     }
 }
 

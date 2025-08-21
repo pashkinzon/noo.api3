@@ -50,7 +50,7 @@ public class Repository<T> : IRepository<T> where T : BaseModel, new()
     {
         var set = Context.GetDbSet<T>();
         // If an entity with the same key is already tracked, remove that instance to avoid tracking conflicts
-        var entity = set.Local.FirstOrDefault(e => e.Id == id) ?? set.Find(id);
+        var entity = set.Local.FirstOrDefault(e => e.Id == id);
         if (entity != null)
         {
             set.Remove(entity);

@@ -1,10 +1,11 @@
+using Noo.Api.Core.System.Events;
+
 namespace Noo.Api.Core.Initialization.ServiceCollection;
 
 public static class DomainEventsExtension
 {
-    public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddDomainEventsBackgroundWorker(this Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+    public static void AddDomainEventsBackgroundWorker(this IServiceCollection services)
     {
-        services.AddHostedService<Noo.Api.Core.System.Events.DomainEventDispatcher>();
-        return services;
+        services.AddHostedService<DomainEventDispatcher>();
     }
 }

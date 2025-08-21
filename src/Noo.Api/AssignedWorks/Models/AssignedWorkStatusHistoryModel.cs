@@ -13,7 +13,7 @@ namespace Noo.Api.AssignedWorks.Models;
 public class AssignedWorkStatusHistoryModel : BaseModel
 {
     [Column("type", TypeName = AssignedWorkEnumDbDataTypes.AssignedWorkStatusHistoryType)]
-    public AssignedWorkStatusHistoryType Status { get; set; } = default!;
+    public AssignedWorkStatusHistoryType Type { get; set; } = default!;
 
     [Column("changed_at", TypeName = DbDataTypes.DateTimeWithoutTZ)]
     public DateTime ChangedAt { get; set; }

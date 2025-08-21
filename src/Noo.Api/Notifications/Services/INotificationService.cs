@@ -7,6 +7,7 @@ namespace Noo.Api.Notifications.Services;
 
 public interface INotificationService
 {
+    public Task CreateNotificationAsync(CreateNotificationDTO options);
     public Task BulkCreateNotificationsAsync(BulkCreateNotificationsDTO options);
     public Task DeleteNotificationAsync(Ulid notificationId, Ulid userId);
     public Task<SearchResult<NotificationModel>> GetNotificationsAsync(Ulid userId, NotificationFilter filter);

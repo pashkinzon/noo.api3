@@ -1,8 +1,8 @@
 using Noo.Api.Core.Initialization.App;
 using Noo.Api.Core.Initialization.ServiceCollection;
 using Noo.Api.Core.Initialization.WebHostBuilder;
-using Noo.Api.Sessions.Middleware;
 using Noo.Api.Core.DataAbstraction.Db;
+using Noo.Api.Sessions.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +20,6 @@ builder.Services.AddNooSwagger(builder.Configuration);
 builder.Services.AddLogger(builder.Configuration);
 builder.Services.RegisterDependencies();
 builder.Services.AddNooControllersAndConfigureJson();
-builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCorsPolicy(builder.Configuration);
 builder.Services.AddNooResponseCompression();
@@ -32,7 +31,8 @@ builder.Services.AddAutoMapperProfiles();
 builder.Services.AddCacheProvider(builder.Configuration);
 builder.Services.AddMetrics();
 builder.Services.AddDomainEventsBackgroundWorker();
-builder.Services.AddHostedService<Noo.Api.Sessions.Background.SessionCleanupWorker>();
+builder.Services.AddHostedServices();
+builder.Services.AddMediatR();
 
 builder.WebHost.AddWebServerConfiguration(builder.Configuration);
 

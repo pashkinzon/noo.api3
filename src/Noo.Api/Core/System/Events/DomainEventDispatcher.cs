@@ -1,7 +1,7 @@
 
 namespace Noo.Api.Core.System.Events;
 
-public class DomainEventDispatcher : Microsoft.Extensions.Hosting.BackgroundService
+public class DomainEventDispatcher : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly DomainEventQueue _queue;

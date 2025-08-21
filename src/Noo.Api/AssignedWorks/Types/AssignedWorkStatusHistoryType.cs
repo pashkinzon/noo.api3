@@ -9,5 +9,8 @@ public enum AssignedWorkStatusHistoryType
     CheckDeadlineShifted,
     Checked,
     SentOnRecheck,
-    SentOnResolve
+    SentOnResolve,
+    HelperMentorAdded,
+    HelperMentorRemoved,
+    MainMentorChanged
 }

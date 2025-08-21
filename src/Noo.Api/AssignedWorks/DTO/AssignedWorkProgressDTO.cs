@@ -25,4 +25,7 @@ public record AssignedWorkProgressDTO
 
     [JsonPropertyName("maxScore")]
     public int? MaxScore { get; init; }
+
+    [JsonPropertyName("attempt")]
+    public int Attempt { get; init; } = 1;
 }

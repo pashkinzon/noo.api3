@@ -8,7 +8,8 @@ using Noo.Api.Core.Exceptions.Http;
 using Noo.Api.Core.Security.Authorization;
 using Noo.Api.Core.Utils.DI;
 using Noo.Api.Users.Services;
-using Noo.Api.Notifications.Services;
+using MediatR;
+using Noo.Api.AssignedWorks.Events;
 
 namespace Noo.Api.AssignedWorks.Services;
 
@@ -25,16 +26,16 @@ public class AssignedWorkService : IAssignedWorkService
 
     private readonly ICurrentUser _currentUser;
 
-    private readonly INotificationService _notificationService;
+    private readonly IMediator _mediator;
 
-    public AssignedWorkService(IUnitOfWork unitOfWork, ICurrentUser currentUser, INotificationService notificationService)
+    public AssignedWorkService(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _assignedWorkRepository = _unitOfWork.AssignedWorkRepository();
         _assignedWorkAnswerRepository = _unitOfWork.AssignedWorkAnswerRepository();
         _userRepository = _unitOfWork.UserRepository();
         _currentUser = currentUser;
-        _notificationService = notificationService;
+        _mediator = mediator;
     }
 
     public async Task AddHelperMentorAsync(Ulid assignedWorkId, AddHelperMentorOptionsDTO options)
@@ -63,41 +64,10 @@ public class AssignedWorkService : IAssignedWorkService
             throw new AssignedWorkAlreadyCheckedException();
         }
 
-        if (assignedWork.HelperMentorId != options.MentorId && assignedWork.HelperMentorId != null)
-        {
-            await _notificationService.BulkCreateNotificationsAsync(new()
-            {
-                UserIds = new[] { assignedWork.HelperMentorId.Value },
-                Type = "assigned_work.helper_removed",
-                Title = "Removed from helper mentor",
-                Message = $"You were removed from '{assignedWork.Title}'.",
-            });
-        }
-
         assignedWork.HelperMentorId = options.MentorId;
+
+        await _mediator.Publish(new HelperMentorAddedEvent(AssignedWorkId: assignedWork.Id, HelperMentorId: options.MentorId));
         await _unitOfWork.CommitAsync();
-
-        if (options.NotifyStudent)
-        {
-            await _notificationService.BulkCreateNotificationsAsync(new()
-            {
-                UserIds = new[] { assignedWork.StudentId },
-                Type = "assigned_work.helper_added",
-                Title = "New helper mentor",
-                Message = "A helper mentor was added to your work.",
-            });
-        }
-
-        if (options.NotifyMentor)
-        {
-            await _notificationService.BulkCreateNotificationsAsync(new()
-            {
-                UserIds = new[] { options.MentorId },
-                Type = "assigned_work.helper_added",
-                Title = "Added as helper mentor",
-                Message = $"You were added as a helper mentor to '{assignedWork.Title}'.",
-            });
-        }
     }
 
     public async Task DeleteAsync(Ulid assignedWorkId)
@@ -105,7 +75,6 @@ public class AssignedWorkService : IAssignedWorkService
         if (await _assignedWorkRepository.IsWorkSolveStatusAsync(assignedWorkId, AssignedWorkSolveStatus.NotSolved, AssignedWorkSolveStatus.InProgress))
         {
             _assignedWorkRepository.DeleteById(assignedWorkId);
-
             await _unitOfWork.CommitAsync();
         }
     }
@@ -139,6 +108,11 @@ public class AssignedWorkService : IAssignedWorkService
 
     public async Task MarkAsCheckedAsync(Ulid assignedWorkId)
     {
+        if (!_currentUser.UserId.HasValue)
+        {
+            throw new InvalidOperationException("Current user ID is not set.");
+        }
+
         var assignedWork = await _assignedWorkRepository.GetAsync(assignedWorkId, _currentUser.UserId);
 
         if (assignedWork == null)
@@ -159,17 +133,11 @@ public class AssignedWorkService : IAssignedWorkService
         assignedWork.CheckedAt = DateTime.UtcNow;
         assignedWork.CheckStatus = AssignedWorkCheckStatus.Checked;
 
+        await _mediator.Publish(new AssignedWorkCheckedEvent(
+            AssignedWorkId: assignedWork.Id,
+            CheckedBy: _currentUser.UserId.Value
+        ));
         await _unitOfWork.CommitAsync();
-
-        // TODO: push in history checked event
-
-        await _notificationService.BulkCreateNotificationsAsync(new()
-        {
-            UserIds = new[] { assignedWork.StudentId },
-            Type = "assigned_work.checked",
-            Title = "Work checked",
-            Message = $"Your work '{assignedWork.Title}' was checked.",
-        });
     }
 
     public async Task MarkAsSolvedAsync(Ulid assignedWorkId)
@@ -189,25 +157,8 @@ public class AssignedWorkService : IAssignedWorkService
         assignedWork.SolvedAt = DateTime.UtcNow;
         assignedWork.SolveStatus = AssignedWorkSolveStatus.Solved;
 
+        await _mediator.Publish(new AssignedWorkSolvedEvent(AssignedWorkId: assignedWork.Id));
         await _unitOfWork.CommitAsync();
-
-        // TODO: push in history solved event
-
-        await _notificationService.BulkCreateNotificationsAsync(new()
-        {
-            UserIds = new[] { assignedWork.StudentId },
-            Type = "assigned_work.solved",
-            Title = "Work solved",
-            Message = $"Your work '{assignedWork.Title}' is marked as solved.",
-        });
-
-        await _notificationService.BulkCreateNotificationsAsync(new()
-        {
-            UserIds = new[] { assignedWork.MainMentorId },
-            Type = "assigned_work.solved",
-            Title = "Student solved work",
-            Message = $"The work '{assignedWork.Title}' was solved by the student.",
-        });
     }
 
     public async Task<Ulid> RemakeAsync(Ulid assignedWorkId, RemakeAssignedWorkOptionsDTO options)
@@ -224,7 +175,7 @@ public class AssignedWorkService : IAssignedWorkService
             throw new AssignedWorkNotRemakeableException();
         }
 
-        var newAssignedWork = assignedWork.NewAttempt();
+        var newAssignedWork = assignedWork.NewAttemptCopy();
 
         if (options.IncludeOnlyWrongTasks)
         {
@@ -256,32 +207,17 @@ public class AssignedWorkService : IAssignedWorkService
             throw new AssignedWorkAlreadyCheckedException();
         }
 
+        var OldMentorId = assignedWork.MainMentorId;
         assignedWork.MainMentorId = options.MentorId;
+
+        await _mediator.Publish(new MainMentorChangedEvent(
+            OldMentorId: OldMentorId,
+            NewMentorId: options.MentorId,
+            AssignedWorkId: assignedWork.Id,
+            NotifyMentor: options.NotifyMentor,
+            NotifyStudent: options.NotifyStudent
+        ));
         await _unitOfWork.CommitAsync();
-
-        if (options.NotifyStudent)
-        {
-            await _notificationService.BulkCreateNotificationsAsync(new()
-            {
-                UserIds = new[] { assignedWork.StudentId },
-                Type = "assigned_work.mentor_changed",
-                Title = "Main mentor changed",
-                Message = "Your main mentor was changed.",
-            });
-        }
-
-        if (options.NotifyMentor)
-        {
-            await _notificationService.BulkCreateNotificationsAsync(new()
-            {
-                UserIds = new[] { options.MentorId },
-                Type = "assigned_work.mentor_changed",
-                Title = "Assigned as main mentor",
-                Message = $"You are now the main mentor for '{assignedWork.Title}'.",
-            });
-        }
-
-        // TODO: push the replace mentor event to the assigned work history
     }
 
     public async Task ReturnToCheckAsync(Ulid assignedWorkId)
@@ -301,9 +237,8 @@ public class AssignedWorkService : IAssignedWorkService
         assignedWork.CheckedAt = null;
         assignedWork.CheckStatus = AssignedWorkCheckStatus.NotChecked;
 
+        await _mediator.Publish(new AssignedWorkReturnedToCheckEvent(AssignedWorkId: assignedWork.Id));
         await _unitOfWork.CommitAsync();
-
-        // TODO: push the return to check event to the assigned work history
     }
 
     public async Task ReturnToSolveAsync(Ulid assignedWorkId)
@@ -327,9 +262,8 @@ public class AssignedWorkService : IAssignedWorkService
         assignedWork.SolvedAt = null;
         assignedWork.SolveStatus = AssignedWorkSolveStatus.InProgress;
 
+        await _mediator.Publish(new AssignedWorkReturnedToSolveEvent(AssignedWorkId: assignedWork.Id));
         await _unitOfWork.CommitAsync();
-
-        // TODO: push the return to solve event to the assigned work history
     }
 
     public Task<Ulid> SaveAnswerAsync(Ulid assignedWorkId, UpsertAssignedWorkAnswerDTO answer)
@@ -344,6 +278,11 @@ public class AssignedWorkService : IAssignedWorkService
 
     public async Task ShiftDeadlineAsync(Ulid assignedWorkId, ShiftAssignedWorkDeadlineOptionsDTO options)
     {
+        if (!_currentUser.UserId.HasValue)
+        {
+            throw new InvalidOperationException("Current user ID is not set.");
+        }
+
         var assignedWork = await _assignedWorkRepository.GetAsync(assignedWorkId, _currentUser.UserId);
 
         if (assignedWork == null)
@@ -366,24 +305,33 @@ public class AssignedWorkService : IAssignedWorkService
             throw new ForbiddenException();
         }
 
-        await _unitOfWork.CommitAsync();
 
-        if (options.NotifyOthers)
+        if (_currentUser.UserRole == UserRoles.Student)
         {
-            await _notificationService.BulkCreateNotificationsAsync(new()
-            {
-                UserIds = new[] { assignedWork.StudentId, assignedWork.MainMentorId },
-                Type = "assigned_work.deadline_shifted",
-                Title = "Deadline updated",
-                Message = "The deadline was updated.",
-            });
+            await _mediator.Publish(new AssignedWorkSolveDeadlineShiftedEvent(
+                AssignedWorkId: assignedWork.Id,
+                NotifyOthers: options.NotifyOthers
+            ));
+        }
+        else if (_currentUser.UserRole == UserRoles.Mentor)
+        {
+            await _mediator.Publish(new AssignedWorkCheckDeadlineShiftedEvent(
+                AssignedWorkId: assignedWork.Id,
+                ShiftedById: _currentUser.UserId.Value,
+                NotifyOthers: options.NotifyOthers
+            ));
         }
 
-        // TODO: push the shift deadline event to the assigned work history
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task ArchiveAsync(Ulid assignedWorkId)
     {
+        if (!_currentUser.UserId.HasValue)
+        {
+            throw new InvalidOperationException("Current user ID is not set.");
+        }
+
         var assignedWork = await _assignedWorkRepository.GetAsync(assignedWorkId, _currentUser.UserId);
 
         if (assignedWork == null)
@@ -409,8 +357,6 @@ public class AssignedWorkService : IAssignedWorkService
         }
 
         await _unitOfWork.CommitAsync();
-
-        // TODO: push the archive event to the assigned work history
     }
 
     public async Task UnarchiveAsync(Ulid assignedWorkId)
@@ -440,8 +386,6 @@ public class AssignedWorkService : IAssignedWorkService
         }
 
         await _unitOfWork.CommitAsync();
-
-        // TODO: push the unarchive event to the assigned work history
     }
 
     private void AssertCorrectStudentDeadlineShift(AssignedWorkModel assignedWork, DateTime newDeadline)

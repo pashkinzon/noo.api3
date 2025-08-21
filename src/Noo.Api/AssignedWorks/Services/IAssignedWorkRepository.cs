@@ -15,4 +15,5 @@ public interface IAssignedWorkRepository : IRepository<AssignedWorkModel>
     public Task<bool> IsWorkCheckStatusAsync(Ulid assignedWorkId, params AssignedWorkCheckStatus[] statuses);
     public Task<bool> IsWorkSolveStatusAsync(Ulid assignedWorkId, params AssignedWorkSolveStatus[] statuses);
     public Task<AssignedWorkModel?> GetWithTasksAndAnswersAsync(Ulid assignedWorkId);
+    public Task<AssignedWorkModel?> GetWithStudentAsync(Ulid assignedWorkId);
 }
