@@ -40,6 +40,15 @@ public class MediaModel : OrderedModel
     [Column("size", TypeName = DbDataTypes.Int)]
     public long Size { get; set; }
 
+    [Column("reason", TypeName = "varchar(63)")]
+    public string Reason { get; set; } = string.Empty;
+
+    [Column("entity_id", TypeName = DbDataTypes.Ulid)]
+    public Ulid? EntityId { get; set; }
+
+    [Column("owner_id", TypeName = DbDataTypes.Ulid)]
+    public Ulid? OwnerId { get; set; }
+
     #region Navigation Properties
 
     public ICollection<CourseModel> Courses { get; set; } = [];

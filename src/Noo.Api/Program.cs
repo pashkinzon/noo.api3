@@ -13,6 +13,7 @@ builder.Host.UseDefaultServiceProvider((context, options) =>
 });
 
 builder.Services.LoadEnvConfigs(builder.Configuration);
+builder.Services.AddS3Storage();
 builder.Services.AddNooDbContext(builder.Configuration);
 builder.Services.AddNooAuthentication(builder.Configuration);
 builder.Services.AddNooAuthorization();
